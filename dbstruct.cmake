@@ -18,8 +18,16 @@ macro    (dbstructInit
 
     # compose the list of headers and sources
     set(DBSTRUCT_HEADERS
+        "dbobject.h"
+        "dbview.h"
+        "dbcolumn.h"
+        "dbtable.h"
         "dbstruct.h")
     set(DBSTRUCT_SOURCES
+        "dbobject.cc"
+        "dbview.cc"
+        "dbcolumn.cc"
+        "dbtable.cc"
         "dbstruct.cc")
 
     pileSetSources(

@@ -1,26 +1,26 @@
 /**
- * @file dbstruct.cc
- * @brief Definitions for DbStruct class.
+ * @file dbobject.cc
+ * @brief Definitions for DbObject class.
  * @author Nicu Tofan <nicu.tofan@gmail.com>
  * @copyright Copyright 2015 piles contributors. All rights reserved.
  * This file is released under the
  * [MIT License](http://opensource.org/licenses/mit-license.html)
  */
 
-#include "dbstruct.h"
+#include "dbobject.h"
 #include "dbstruct-private.h"
 
 /**
- * @class DbStruct
+ * @class DbObject
  *
  * Detailed description.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for constructor.
+ * Detailed description for conobjector.
  */
-DbStruct::DbStruct()
+DbObject::DbObject()
 {
     DBSTRUCT_TRACE_ENTRY;
 
@@ -30,9 +30,9 @@ DbStruct::DbStruct()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for destructor.
+ * Detailed description for deobjector.
  */
-DbStruct::~DbStruct()
+DbObject::~DbObject()
 {
     DBSTRUCT_TRACE_ENTRY;
 

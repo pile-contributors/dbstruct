@@ -1,26 +1,26 @@
 /**
- * @file dbstruct.cc
- * @brief Definitions for DbStruct class.
+ * @file dbtable.cc
+ * @brief Definitions for DbTable class.
  * @author Nicu Tofan <nicu.tofan@gmail.com>
  * @copyright Copyright 2015 piles contributors. All rights reserved.
  * This file is released under the
  * [MIT License](http://opensource.org/licenses/mit-license.html)
  */
 
-#include "dbstruct.h"
+#include "dbtable.h"
 #include "dbstruct-private.h"
 
 /**
- * @class DbStruct
+ * @class DbTable
  *
  * Detailed description.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for constructor.
+ * Detailed description for contableor.
  */
-DbStruct::DbStruct()
+DbTable::DbTable()
 {
     DBSTRUCT_TRACE_ENTRY;
 
@@ -30,9 +30,9 @@ DbStruct::DbStruct()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for destructor.
+ * Detailed description for detableor.
  */
-DbStruct::~DbStruct()
+DbTable::~DbTable()
 {
     DBSTRUCT_TRACE_ENTRY;
 

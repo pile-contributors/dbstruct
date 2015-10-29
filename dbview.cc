@@ -1,26 +1,26 @@
 /**
- * @file dbstruct.cc
- * @brief Definitions for DbStruct class.
+ * @file dbview.cc
+ * @brief Definitions for DbView class.
  * @author Nicu Tofan <nicu.tofan@gmail.com>
  * @copyright Copyright 2015 piles contributors. All rights reserved.
  * This file is released under the
  * [MIT License](http://opensource.org/licenses/mit-license.html)
  */
 
-#include "dbstruct.h"
+#include "dbview.h"
 #include "dbstruct-private.h"
 
 /**
- * @class DbStruct
+ * @class DbView
  *
  * Detailed description.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for constructor.
+ * Detailed description for conviewor.
  */
-DbStruct::DbStruct()
+DbView::DbView()
 {
     DBSTRUCT_TRACE_ENTRY;
 
@@ -30,9 +30,9 @@ DbStruct::DbStruct()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for destructor.
+ * Detailed description for deviewor.
  */
-DbStruct::~DbStruct()
+DbView::~DbView()
 {
     DBSTRUCT_TRACE_ENTRY;
 
