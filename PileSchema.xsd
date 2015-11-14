@@ -1,0 +1,954 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="PileSchema" 
+    targetNamespace="http://pile-contributors.github.io/database/PileSchema.xsd" 
+    elementFormDefault="qualified" 
+    xmlns="http://pile-contributors.github.io/database/PileSchema.xsd" 
+    xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+    <!-- Helper Types -->
+
+    <xs:complexType name="parameterlessType"/>
+
+    <xs:complexType name="identity">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The column containing this element is the identity column.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="seed" use="optional" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="increment" use="optional" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The increment step to use.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="notForReplication" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:group name="withIdentity">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Elements part of this group may use the `identity` element.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="identity" minOccurs="0" maxOccurs="1" type="identity"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:attributeGroup name="withDefaultExpression">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Elements part of this group may use the `defaultExpression` attribute.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="defaultExpression" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default for a variable or column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+
+    <!-- INTEGER Types -->
+    
+    <xs:complexType name="bit">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Boolean column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="bool">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="int">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Common integer (int) column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:group ref="withIdentity"/>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="default" use="optional" type="xs:int">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="int">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="bigint">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Large integer (long) column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:group ref="withIdentity"/>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:long">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="long">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="smallint">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Small integer (short) column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:group ref="withIdentity"/>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:short">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="short">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="tinyint">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Tiny integer (byte) column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:group ref="withIdentity"/>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:byte">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="byte">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- DECIMAL Types -->
+    <xs:simpleType name="mantissaBits">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Restriction on real numbers to allow defining the float data type.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="53"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="float">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Real number (float) column data type.</xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="mantissaBits" use="optional" type="mantissaBits"/>
+        <xs:attribute name="default" use="optional" type="xs:decimal"/>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="float">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="real">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Real number (double) column data type.</xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="default" use="optional" type="xs:decimal">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="decimal">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Real number (float) column data type with precision and scale.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="precision" use="required" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Number of significant digits after decimal dot.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="scale" use="required" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="default" use="optional" type="xs:decimal">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for this column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="decimalScale0">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Real number (float) column data type without a scale TODO: explain scale.</xs:documentation>
+        </xs:annotation>
+
+        <xs:group ref="withIdentity"/>
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="precision" use="required" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Number of significant digits after decimal dot.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="default" use="optional" type="xs:decimal">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for this column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- MONEY Types -->
+
+    <xs:simpleType name="moneydefault">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="10"/>
+            <xs:fractionDigits value="4"/>
+            <xs:minInclusive value="-922337203685477.5808"/>
+            <xs:maxInclusive value="922337203685477.5807"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="money">
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="default" use="optional" type="moneydefault">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    
+    <xs:simpleType name="smallmoneyDefault">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="10"/>
+            <xs:fractionDigits value="4"/>
+            <xs:minInclusive value="-214748.3648"/>
+            <xs:maxInclusive value="214748.3647"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="smallmoney">
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="default" use="optional" type="smallmoneyDefault">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- STRING Types -->
+
+    <xs:attributeGroup name="withStringDefault">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Adds an default attribute of type string to the element.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="default" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:complexType name="parameterlessStringType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">String column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withStringDefault"/>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="GUID">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The representation of a GUID with restrictions added to validate input.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="uniqueidentifier">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A unique identifier (GUID).</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attribute name="default" use="optional" type="GUID"/>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+
+    <!-- DATE & TIME Types -->
+
+    <xs:simpleType name="fractionalSecondsPrecision">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Type to represent fractional seconds.</xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="7"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="variablePrecisionTime">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Date and time column data type.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withStringDefault"/>
+
+        <xs:attribute name="fractionalSecondsPrecision" use="optional" type="fractionalSecondsPrecision" />
+    </xs:complexType>
+
+    <xs:complexType name="dateType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A date (without time component).</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:date">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QDate">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="timeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A time (without date component).</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:time">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QTime">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="dateTimeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A date and a time.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="xs:time">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QDateTime">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- CHAR Types -->
+
+    <xs:simpleType name="withMax">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Allows the use of `max` as a keyword in attribute.</xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="max"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="charInteger">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Allows as value an integer in 1-8000 range.</xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="8000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="charLength">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Allowed values are `max` or an integer in 1-8000 range.</xs:documentation>
+        </xs:annotation>
+
+        <xs:union memberTypes="charInteger withMax"/>
+    </xs:simpleType>
+
+    <xs:complexType name="char">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withStringDefault"/>
+        <xs:attribute name="length" use="optional" type="charLength">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The length may be an integer (1-8000) or it may be `max` to use the largest possible value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="binary">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="length" use="optional" type="charLength">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The length may be an integer (1-8000) or it may be `max` to use the largest possible value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="ncharInteger">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Allows as value an integer in 1-4000 range.</xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="4000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ncharLength">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Restriction placed on the number of characters.</xs:documentation>
+        </xs:annotation>
+
+        <xs:union memberTypes="ncharInteger withMax">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Allows as value an integer (1-4000) or `max`.</xs:documentation>
+            </xs:annotation>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:complexType name="nchar">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withStringDefault"/>
+
+        <xs:attribute name="length" use="optional" type="ncharLength">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Maximum number of characters (an integer in 1-4000 range) or `max` to use maximum length.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <!-- Columns -->
+
+    <xs:complexType name="column">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A column in a table.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <!-- Exact numerics -->
+            <xs:element name="bit" type="bit"/>
+            <xs:element name="int" type="int"/>
+            <xs:element name="bigint" type="bigint"/>
+            <xs:element name="smallint" type="smallint"/>
+            <xs:element name="tinyint" type="tinyint"/>
+            
+            <xs:element name="numeric" type="decimal"/>
+            <xs:element name="decimal" type="decimal"/>
+            <xs:element name="numericScale0" type="decimalScale0"/>
+            <xs:element name="decimalScale0" type="decimalScale0"/>
+
+            <xs:element name="smallmoney" type="smallmoney"/>
+            <xs:element name="money" type="money"/>
+
+            <!-- Approximate numerics -->
+            <xs:element name="float" type="float"/>
+            <xs:element name="real" type="real"/>
+
+            <!-- Date and time -->
+            <xs:element name="date" type="dateType"/>
+            <xs:element name="datetime" type="dateTimeType"/>
+            <xs:element name="time" type="timeType"/>
+            <xs:element name="datetimeoffset" type="variablePrecisionTime"/>
+            <xs:element name="datetime2" type="variablePrecisionTime"/>
+            <xs:element name="smalldatetime" type="parameterlessStringType"/>
+
+            <!--Character strings-->
+            <xs:element name="char" type="char"/>
+            <xs:element name="varchar" type="char"/>
+            <xs:element name="text" type="parameterlessStringType"/>
+
+            <!--Unicode character strings-->
+            <xs:element name="nchar" type="nchar"/>
+            <xs:element name="nvarchar" type="nchar"/>
+            <xs:element name="ntext" type="parameterlessStringType"/>
+
+            <!--Binary strings-->
+            <xs:element name="binary" type="binary"/>
+            <xs:element name="varbinary" type="binary"/>
+            <xs:element name="image" type="parameterlessType"/>
+
+            <!--Other data types-->
+            <xs:element name="rowversion" type="parameterlessType"/>
+            <xs:element name="hierarchyid" type="parameterlessStringType"/>
+            <xs:element name="uniqueidentifier" type="uniqueidentifier"/>
+            <xs:element name="sql_variant" type="parameterlessStringType"/>
+            <xs:element name="xml" type="parameterlessStringType"/>
+
+        </xs:choice>
+
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of this column as it will be known to the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="label" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">User visible string; if not provided `name` is used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowNulls" use="optional" type="xs:boolean" default="true">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Does this column allows NULL values or not?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="columnList">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The list of columns for a table.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="column"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Constraints -->
+    
+    <xs:simpleType name="sortOrder">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">indicated the direction of the sorting for a column.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Ascending"/>
+            <xs:enumeration value="Descending"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="constraintColumn">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A column that is part of a constraint.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The name of the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="sortOrder" use="optional" type="sortOrder">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The order used to sort the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="constraint">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A column(s) based constraint.</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="constraintColumn"/>
+        </xs:sequence>
+        
+        <xs:attribute name="name" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the constraint.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="clustered" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fillFactor" use="optional" type="xs:integer">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="padIndex" use="optional" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="primaryKey">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The (optional) primary key for a table.</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="key" maxOccurs="1" minOccurs="0" type="constraint"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="uniqueConstraints">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The list of unique constraints associated with a table.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="constraint" maxOccurs="unbounded" minOccurs="0" type="constraint"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Indexes -->
+
+    <xs:complexType name="index">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">One entry in the list of indexes in a table.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="constraint">
+                <xs:attribute name="unique" use="optional" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="indexes">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The list of indexes in a table.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="index" maxOccurs="unbounded" minOccurs="0" type="index"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Relationships -->
+
+    <xs:complexType name="relationshipColumn">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A column in a relationship.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="foreignKeyColumns">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The list of foreign keys.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="primaryKeyTable">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">TODO: What is this?.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn"/>
+        </xs:sequence>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the table? TODO.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="relationship">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A single relation for a table.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="foreignKeyColumns" maxOccurs="1" minOccurs="1" type="foreignKeyColumns"/>
+            <xs:element name="primaryKeyTable" maxOccurs="1" minOccurs="1" type="primaryKeyTable"/>
+        </xs:sequence>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the relation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="relationships">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">List of relations for a table; can only consist of `relationship` entries.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="relationship" maxOccurs="unbounded" minOccurs="0" type="relationship" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- High Level Containers -->
+
+    <xs:complexType name="table">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">An actual table (not view).</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="columns" maxOccurs="1" minOccurs="1" type="columnList"/>
+            <xs:element name="primaryKey" maxOccurs="1" minOccurs="0" type="primaryKey"/>
+            <xs:element name="uniqueConstraints" maxOccurs="1" minOccurs="0" type="uniqueConstraints"/>
+            <xs:element name="indexes" maxOccurs="1" minOccurs="0" type="indexes"/>
+            <xs:element name="relationships" maxOccurs="1" minOccurs="0" type="relationships"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="tables">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A single element inside the database; contains the list of actual tables (not views).</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="table" maxOccurs="unbounded" minOccurs="0" type="table"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="viewSubset">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <p>One type of view is the subset view that simply extracts information from another table.</p>
+                <p>It may act as a simple `SELECT * FROM name1 WHERE col1=value` by using the `name1`, `col1`, `constraint` and `value` attributes.</p>
+                <p>It may also act as `SELECT * FROM name1 WHERE col1 IN (SELECT in FROM incol WHERE where=value)` by using additional attributes: `in`, `incol`, `where` attributes.</p>
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="name1" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Top level table from where we're selecting.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        
+        <xs:attribute name="col1" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Column in top level table from where we're selecting.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="in" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Second level table used as source (of ids) for primary table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="incol" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Column in second level table used as source for primary table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="where" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Column in second level table used to filter secondary table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="constraint" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Operator to apply to `value` and either `col1` or `where` depending on the variant that's being used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="value" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The value to compare using `constraint` against `col1` or `where` depending on the variant that's being used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+    <xs:complexType name="view">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A view inside another table or tables.</xs:documentation>
+        </xs:annotation>
+
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="subset" type="viewSubset"/>
+        </xs:choice>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the view.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="views">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A single element inside the database; contains the list of views.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="view" maxOccurs="unbounded" minOccurs="0" type="view"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="database">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes a database and (optionally) connection details.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="tables" maxOccurs="1" minOccurs="0" type="tables"/>
+            <xs:element name="views" maxOccurs="1" minOccurs="0" type="views"/>
+            <!--xs:element name="procedures" maxOccurs="1" minOccurs="1" /-->
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="driver" type ="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The actual kind of this database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="path" type ="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The path on local computer where database is located (for SqLite, for example).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="username" type ="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Database user that will access the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" type ="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Password for database user.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="host" type ="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The host for databases on remote hosts.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="port" type ="xs:unsignedShort" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The port for databases on remote hosts.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="database" type="database"/>
+</xs:schema>
