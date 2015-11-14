@@ -29,6 +29,8 @@ macro    (dbstructInit
         "dbcolumn.cc"
         "dbtable.cc"
         "dbstruct.cc")
+    set(DBDELEGATE_QT_MODS
+        Core Sql)
 
     pileSetSources(
         "${DBSTRUCT_INIT_NAME}"
