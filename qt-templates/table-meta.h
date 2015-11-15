@@ -24,8 +24,11 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
+%(IMPORTH)s
 #include <dbstruct/dbcolumn.h>
 %(MetaClassInclude)s
+#include <QCoreApplication>
+#include <QSqlTableModel>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -45,7 +48,7 @@ namespace %(namespace)s {
 namespace %(database)s {
 namespace meta {
 
-//! Mirrors $TABLE_NAME_U$ database table.
+//! Mirrors %(Table)s database table.
 ///
 class %(EXPORT)s %(Table)s : public %(BaseClass)s {
     //
@@ -156,6 +159,16 @@ public:
     static QString
     columnString (
         int i);
+
+    //! The (translated) label for a column given an index.
+    static QString
+    columnLabel (
+        int i);
+
+    //! Sets all (translated) labels for a model.
+    static void
+    setHeaderData (
+        QSqlTableModel *model);
 
     //! Number of columns in this table.
     static inline int

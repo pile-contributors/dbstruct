@@ -204,13 +204,17 @@ class QtDriver(Driver):
     """
     Build C++ classes with Qt support.
     """
-    def __init__(self, out_dir, template_dir, namespace='', export_macro='', base_class=META_TABLE_BASE):
+    def __init__(self, out_dir, template_dir,
+                 namespace='', export_macro='',
+                 import_header='',
+                 base_class=META_TABLE_BASE):
 
         self.out_dir = out_dir
         self.template_dir = template_dir
         self.data = {}
         self.templates = {}
         self.db_name = ''
+        self.import_header = import_header
         self.namespace = namespace
         self.export_macro = export_macro
         self.base_class = base_class
@@ -307,6 +311,7 @@ class QtDriver(Driver):
             'MetaClassInclude': META_TABLE_BASE_FILE,
             'RecordBaseClass': RECORD_BASE,
             'EXPORT': self.export_macro,
+            'IMPORTH': '#include <%s>' % self.import_header,
             'Year': str(now.year),
             'Month': now.strftime("%B"),
             'Author': AUTHOR
@@ -324,6 +329,8 @@ class QtDriver(Driver):
         id_column = -1
         pipe_columns = ''
         case_columns = ''
+        case_label = ''
+        model_label = ''
         bind_columns = ''
         bind_one_column = ''
         comma_columns = ''
@@ -334,6 +341,9 @@ class QtDriver(Driver):
         record_columns = ''
         column_getters = ''
         table_data_members = ''
+        default_constr = ''
+        assign_constr = ''
+        copy_constr = ''
         i = -1
 
         column_ids = ''
@@ -345,30 +355,45 @@ class QtDriver(Driver):
             to_converter = FROM_VARIANT[qtype]
             dbc_name = 'COLID_' + col.upper()
             column_ids += ' ' * 8 + dbc_name + ',\n'
+            column_label = 'QCoreApplication::translate("' + self.db_name + '::' + name + '", "' + coldata['label'] + '")'
+
             if col == 'id':
                 id_column = i
+                if coldata['autoincrement']:
+                    default_constr = default_constr + ' ' * 8 + col_var_name + '(COLID_INVALID),\n'
+                elif qtype == 'QString':
+                    default_constr = default_constr + ' ' * 8 + col_var_name + '(QLatin1String("-1")),\n'
+                else:
+                    default_constr = default_constr + ' ' * 8 + col_var_name + '(),\n'
+            else:
+                default_constr = default_constr + ' ' * 8 + col_var_name + '(),\n'
+                comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
+                column_columns += ' ' * 12 + '":' + col + ',"\n'
+                assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
+
+            assign_constr = assign_constr + ' ' * 8 + col_var_name + ' = other.' + col_var_name + ';\n'
+            copy_constr = copy_constr + ' ' * 8 + col_var_name + ' (other.' + col_var_name + '),\n'
+
             table_data_members += ' ' * 4 + qtype + ' ' + col.lower() + ';\n'
             pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
-            case_columns += ' ' * 4 + 'case ' + str(i) + ': result = QLatin1String("' + col + '"); break;\n'
-            bind_one_column += ' ' * 4 + 'case ' + str(i) + ': query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + '); break;\n'
+            case_label += ' ' * 4 + 'case ' + dbc_name + ': result = ' + column_label + '; break;\n'
+            case_columns += ' ' * 4 + 'case ' + dbc_name + ': result = QLatin1String("' + col + '"); break;\n'
+            model_label += ' ' * 4 + 'model->setHeaderData (' + dbc_name + ', Qt::Horizontal, ' + column_label + ');\n'
+            bind_one_column += ' ' * 4 + 'case ' + dbc_name + ': query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + '); break;\n'
             comma_columns += ' ' * 12 + '"' + col + ',"\n'
             bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + ');\n'
             column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
                               'ColCtor () { return DbColumn("' + \
                               col + '", ' + \
                               dbc_name + ', '+ \
-                              stringChoice(coldata['length'], '-1', coldata['length']) + ', "'  + \
-                              coldata['label'] + '", "'  + \
+                              stringChoice(coldata['length'], '-1', coldata['length']) + \
+                              ', ' + column_label + ', "'  + \
                               coldata['datatype'] + '", ' + \
                               stringChoice('true', 'false', coldata['nulls']) + ', ' + \
                               stringChoice('true', 'false', coldata['autoincrement']) + ', "' + \
                               stringChoice(coldata['defval'], '', not coldata['defval'] is None) + '"); }\n'
-            if col != 'id':
-                comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
-                column_columns += ' ' * 12 + '":' + col + ',"\n'
-                assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
             retreive_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
-                'query.value (' + str(i) + ').' + to_converter + ';\n'
+                'query.value (' + dbc_name + ').' + to_converter + ';\n'
             record_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
                 'rec.value (QLatin1String("' + col + '")).' + to_converter + ';\n'
 
@@ -383,6 +408,9 @@ class QtDriver(Driver):
             get_id_result = 'COLID_INVALID'
             set_id = '// id unavailable in this model'
 
+        default_constr = default_constr[:-2]
+        copy_constr = copy_constr[:-2]
+        assign_constr = assign_constr[:-1]
         pipe_columns = pipe_columns[:-1]
         case_columns = case_columns[:-1]
         bind_columns = bind_columns[:-1]
@@ -395,6 +423,8 @@ class QtDriver(Driver):
         self.data['COLUMN_COUNT'] = str(len(self.columns))
         self.data['PIPE_COLUMNS'] = pipe_columns
         self.data['CASE_COLUMNS'] = case_columns
+        self.data['CASE_LABELS'] = case_label
+        self.data['MODEL_LABELS'] = model_label
         self.data['BIND_COLUMNS'] = bind_columns
         self.data['RETREIVE_COLUMNS'] = retreive_columns
         self.data['RECORD_COLUMNS'] = record_columns
@@ -409,6 +439,9 @@ class QtDriver(Driver):
         self.data['COLUMN_IDS'] = column_ids
         self.data['TableColumnConstr'] = column_getters
         self.data['TableDataMembers'] = table_data_members
+        self.data['CopyConstructor'] = copy_constr
+        self.data['AssignConstructor'] = assign_constr
+        self.data['DefaultConstructor'] = default_constr
 
     def tableEnd(self, name, node):
         """Done processing table `name`"""
@@ -490,6 +523,7 @@ class QtDriver(Driver):
         self.columns = self.tables[name1]['columns']
         self.fillTableData(name1)
 
+        self.data['TableModify'] = name1
 
 
         if name_in is None:
@@ -673,7 +707,12 @@ def cmd_qt (args):
     extract_common(args)
 
     if args.driver == 'qt':
-        driver = QtDriver(args.output, args.templates, args.namespace)
+        driver = QtDriver(
+            out_dir=args.output,
+            template_dir=args.templates,
+            namespace=args.namespace,
+            export_macro=args.exportm,
+            import_header=args.importh)
     else:
         logger.error('Unknown driver: ' + args.driver)
         return -1
@@ -739,7 +778,8 @@ def make_argument_parser():
     parser_a.add_argument ('--templates', type=str, help='directory containing file templates', default='qt-templates')
     parser_a.add_argument ('--schema', type=str, help='schema used for validation', default=DEFAULT_SCHEMA_FILE)
     parser_a.add_argument ('--author', type=str, help='The author of the files', default=username())
-        #os.getenv('USER', os.getenv('USERNAME', '')))
+    parser_a.add_argument ('--exportm', type=str, help='The macro used to export functions and classes', default='')
+    parser_a.add_argument ('--importh', type=str, help='Header file to be imported in every generated header', default='')
     parser_a.set_defaults (func=cmd_qt)
 
     return parser

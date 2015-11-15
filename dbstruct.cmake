@@ -119,6 +119,8 @@ macro    (dbstructModelToQt
           dbstruct__output
           dbstruct__target
           dbstruct__namespace
+          dbstruct__include
+          dbstruct__export
           dbstruct__template)
 
     if (NOT PYTHONINTERP_FOUND)
@@ -139,6 +141,8 @@ macro    (dbstructModelToQt
         "--namespace=${dbstruct__namespace}"
         "--schema=${DBSTRUCT_SOURCE_DIR}/PileSchema.xsd"
         "--templates=${dbstruct__template_used}"
+        "--exportm=${dbstruct__export}"
+        "--importh=${dbstruct__include}"
         "${dbstruct__xml}"
         "${dbstruct__output}")
 

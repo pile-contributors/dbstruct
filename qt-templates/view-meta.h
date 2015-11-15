@@ -24,8 +24,11 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
+%(IMPORTH)s
 #include <dbstruct/dbcolumn.h>
 %(MetaClassInclude)s
+#include <QCoreApplication>
+#include <QSqlTableModel>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -99,6 +102,16 @@ public:
         return columnString (i);
     }
 
+    //! The (translated) label for a column given an index.
+    static QString
+    columnLabel (
+        int i);
+
+    //! Sets all (translated) labels for a model.
+    static void
+    setHeaderData (
+        QSqlTableModel *model);
+
     //! Number of columns in this table.
     virtual int
     columnCount() const {
@@ -141,6 +154,11 @@ public:
         return assignColumnsString ();
     }
 
+    //! Where updates should go.
+    virtual QString
+    modifyTableName() const {
+        return modifyTableString ();
+    }
 
 %(TableColumnConstr)s
 
@@ -204,6 +222,12 @@ public:
     assignColumnsString () {
         return QLatin1String(
 %(ASSIGN_COLUMNS)s);
+    }
+
+    //! Where updates should go.
+    static QString
+    modifyTableString() const {
+        return QLatin1String("%(TableModify)s");
     }
 
     /*  FUNCTIONS    ======================================================= */

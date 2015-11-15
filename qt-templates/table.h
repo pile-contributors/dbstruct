@@ -24,6 +24,7 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
+%(IMPORTH)s
 #include "%(table)s-meta.h"
 #include <dbstruct/dbrecord.h>
 
@@ -78,6 +79,25 @@ public:
     /*  FUNCTIONS    ------------------------------------------------------- */
 
 public:
+
+    //! constructor
+    explicit %(Table)s() : meta::%(Table)s(), %(RecordBaseClass)s(),
+%(DefaultConstructor)s
+    {}
+
+    //! destructor
+    virtual ~%(Table)s () {}
+
+    //! copy constructor
+    %(Table)s (const %(Table)s & other) :
+%(CopyConstructor)s
+    {}
+
+    //! assignment operator
+    %(Table)s& operator= (const %(Table)s& other) {
+%(AssignConstructor)s
+        return *this;
+    }
 
     //! Bind a single value identified by column index in a query.
     virtual void
