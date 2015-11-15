@@ -279,16 +279,16 @@ class QtDriver(Driver):
         self.data['DB_COMPONENTS_NAME_TO_ID'] = db_name_to_id
 
         with open(os.path.join(self.out_dir, self.data['database'] + '.h'), 'w') as f:
-            file.write(f, self.getTemplate ('database.h') % self.data)
+            file.write(f, self.getTemplate ('database.h.template') % self.data)
 
         with open(os.path.join(self.out_dir, self.data['database'] + '.cc'), 'w') as f:
-            file.write(f, self.getTemplate ('database.cc') % self.data)
+            file.write(f, self.getTemplate ('database.cc.template') % self.data)
 
-        with open(os.path.join(self.out_dir, 'all-meta-tables.h'), 'w') as f:
-            file.write(f, self.getTemplate ('all-meta-tables.h') % self.data)
+        with open(os.path.join(self.out_dir, 'all-meta-tables.h.template'), 'w') as f:
+            file.write(f, self.getTemplate ('all-meta-tables.h.template') % self.data)
 
-        with open(os.path.join(self.out_dir, 'all-tables.h'), 'w') as f:
-            file.write(f, self.getTemplate ('all-tables.h') % self.data)
+        with open(os.path.join(self.out_dir, 'all-tables.h.template'), 'w') as f:
+            file.write(f, self.getTemplate ('all-tables.h.template') % self.data)
 
         self.db_name = ''
 
@@ -450,16 +450,16 @@ class QtDriver(Driver):
         self.fillTableData(name)
 
         with open(os.path.join(self.out_dir, self.data['table'] + '.h'), 'w') as f:
-            file.write(f, self.getTemplate ('table.h') % self.data)
+            file.write(f, self.getTemplate ('table.h.template') % self.data)
 
         with open(os.path.join(self.out_dir, self.data['table'] + '-meta.h'), 'w') as f:
-            file.write(f, self.getTemplate ('table-meta.h') % self.data)
+            file.write(f, self.getTemplate ('table-meta.h.template') % self.data)
 
         with open(os.path.join(self.out_dir, self.data['table'] + '.cc'), 'w') as f:
-            file.write(f, self.getTemplate ('table.cc') % self.data)
+            file.write(f, self.getTemplate ('table.cc.template') % self.data)
 
         with open(os.path.join(self.out_dir, self.data['table'] + '-meta.cc'), 'w') as f:
-            file.write(f, self.getTemplate ('table-meta.cc') % self.data)
+            file.write(f, self.getTemplate ('table-meta.cc.template') % self.data)
 
     def column(self, name, label, datatype, nulls, node, dtnode):
         """Processing a column"""
