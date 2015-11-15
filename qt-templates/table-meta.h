@@ -2,8 +2,8 @@
 /* ------------------------------------------------------------------------- */
 /*!
   \file %(table)s-meta.h
-  \date Oct 2015
-  \author TNick
+  \date %(Month)s %(Year)s
+  \author %(Author)s
 
   \brief Auto-generated meta-data class for %(Table)s table.
 
@@ -25,6 +25,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include <dbstruct/dbcolumn.h>
+%(MetaClassInclude)s
 
 /*  INCLUDES    ============================================================ */
 //
@@ -116,19 +117,6 @@ public:
         return idColumnIndex ();
     }
 
-    //! Set the index to given value (if the model has an id column).
-    virtual void
-    setId (
-            long value) {
-        %(SET_ID_RESULT)s;
-    }
-
-    //! Get the index of this instance (if the model has an id column).
-    virtual long
-    getId () const {
-        return %(GET_ID_RESULT)s;
-    }
-
     //! All columns as a comma-separated list.
     virtual QString
     commaColumns () const {
@@ -153,7 +141,7 @@ public:
         return assignColumnsString ();
     }
 
-    
+
 %(TableColumnConstr)s
 
 
@@ -165,7 +153,7 @@ public:
     }
 
     //! The name of a column given an index.
-    static QString 
+    static QString
     columnString (
         int i);
 
@@ -215,7 +203,7 @@ public:
     static QString
     assignColumnsString () {
         return QLatin1String(
-%(ASSIGN_COLUMNS)s;
+%(ASSIGN_COLUMNS)s);
     }
 
     /*  FUNCTIONS    ======================================================= */
@@ -231,7 +219,7 @@ public:
 //
 //
 //
-    
+
 } // namespace meta
 } // namespace %(database)s
 } // namespace %(namespace)s

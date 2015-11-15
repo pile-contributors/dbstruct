@@ -2,8 +2,8 @@
 /* ------------------------------------------------------------------------- */
 /*!
   \file %(database)s.cc
-  \date Oct 2015
-  \author TNick
+  \date %(Month)s %(Year)s
+  \author %(Author)s
 
   \brief Auto-generated model for %(Database)s database.
 

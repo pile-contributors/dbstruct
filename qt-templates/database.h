@@ -2,8 +2,8 @@
 /* ------------------------------------------------------------------------- */
 /*!
   \file %(database)s.h
-  \date Oct 2015
-  \author TNick
+  \date %(Month)s %(Year)s
+  \author %(Author)s
 
   \brief Auto-generated data class for %(Database)s table.
 
@@ -24,7 +24,7 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
-#include "%(table)s-meta.h"
+#include "all-meta-tables.h"
 
 #include <QString>
 #include <QLatin1String>
@@ -101,7 +101,7 @@ public:
 public:
 
     //! The name of this database.
-    static QString name () { return QLatin1String("%(Database)s"); }
+    static QString databaseName () { return QLatin1String("%(Database)s"); }
 
     //! Get the name of the table or view based on its identifier.
     static QString componentName (DbCompId index) {
@@ -109,7 +109,7 @@ public:
 
 %(DB_COMPONENTS_NAME_CASE)s
             default:
-                return QLatin1String();
+                return QString();
         }
     }
 
@@ -150,7 +150,7 @@ public:
 
 %(DB_TABLES_NAME_CASE)s
         default:
-            return QLatin1String();
+            return QString();
         }
     }
 
@@ -161,7 +161,8 @@ public:
     //! Convert between component identifier and view identifier.
     static DbViewId comp2view (DbCompId value) {
         DbViewId result = (DbViewId)(value - DBT_MAX);
-        if (result <= DBV_INVALID) || (result >= DBV_MAX) result = DBV_INVALID;
+        if ((result <= DBV_INVALID) || (result >= DBV_MAX))
+            result = DBV_INVALID;
         return result;
     }
 
@@ -171,7 +172,7 @@ public:
     }
 
     //! Get the id based on a view name.
-    static DbTableId viewIdFromName (const QString & value) {
+    static DbViewId viewIdFromName (const QString & value) {
         return comp2view (idFromName (value));
     }
 
@@ -183,7 +184,7 @@ public:
 
 %(DB_VIEWS_NAME_CASE)s
         default:
-            return QLatin1String();
+            return QString();
         }
     }
 

@@ -30,6 +30,31 @@
 #    define DBSTRUCT_TRACE_EXIT
 #endif
 
+#ifdef _MSC_VER
+#   ifndef __func__
+#       define __func__ __FUNCTION__
+#   endif
+#endif
+
+#ifndef TMP_A
+#   define TMP_A(__s__) __s__.toLatin1 ().constData ()
+#endif
+
+#ifndef STRINGIFY
+#   define STRINGIFY(s) STRINGIFY_HELPER(s)
+#   define STRINGIFY_HELPER(s) #s
+#endif
+
+#ifndef DBG_ASSERT
+#ifdef DBSTRUCT_DEBUG
+#  define DBG_ASSERT(a) if (!(a)) {\
+        printf("\nDBG_ASSERT Failed: " STRINGIFY(a) "\n"); \
+        printf("%s[%d]: %s\n\n",__FILE__, __LINE__, __func__); \
+        }
+#else
+#  define DBG_ASSERT(a)
+#endif
+#endif
 
 static inline void black_hole (...)
 {}

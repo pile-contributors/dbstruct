@@ -39,3 +39,17 @@ DbTable::~DbTable()
     DBSTRUCT_TRACE_EXIT;
 }
 /* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+bool DbTable::hasColumn (const QString &s_name) const
+{
+    return columns().contains (s_name, Qt::CaseInsensitive);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+int DbTable::columnIndex (const QString &s_name) const
+{
+    return columns().indexOf (s_name, Qt::CaseInsensitive);
+}
+/* ========================================================================= */

@@ -2,8 +2,8 @@
 /* ------------------------------------------------------------------------- */
 /*!
   \file %(table)s.h
-  \date Oct 2015
-  \author TNick
+  \date %(Month)s %(Year)s
+  \author %(Author)s
 
   \brief Auto-generated data class for %(Table)s table.
 
@@ -24,7 +24,8 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
-#include "all-meta-tables.h"
+#include "%(table)s-meta.h"
+#include <dbstruct/dbrecord.h>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -46,9 +47,9 @@ class QSqlRecord;
 namespace %(namespace)s {
 namespace %(database)s {
 
-//! Mirrors $TABLE_NAME_U$ database table.
+//! Mirrors %(Table)s database table.
 ///
-class %(EXPORT)s %(Table)s : public meta::%(Table)s {
+class %(EXPORT)s %(Table)s : public meta::%(Table)s, public %(RecordBaseClass)s {
     //
     //
     //
@@ -98,6 +99,19 @@ public:
     virtual bool
     retreive (
         const QSqlRecord & rec);
+
+    //! Set the index to given value (if the model has an id column).
+    virtual void
+    setId (
+            long value) {
+        %(SET_ID_RESULT)s;
+    }
+
+    //! Get the index of this instance (if the model has an id column).
+    virtual long
+    getId () const {
+        return %(GET_ID_RESULT)s;
+    }
 
     /*  FUNCTIONS    ======================================================= */
     //

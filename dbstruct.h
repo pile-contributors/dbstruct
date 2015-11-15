@@ -31,8 +31,6 @@ public:
 protected:
 
 private:
-    std::vector<DbTable> tables_; /**< the list of tables */
-    std::vector<DbView> views_; /**< the list of views */
 };
 
 #endif // GUARD_DBSTRUCT_H_INCLUDE

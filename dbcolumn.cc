@@ -20,7 +20,15 @@
 /**
  * Detailed description for concolumnor.
  */
-DbColumn::DbColumn()
+DbColumn::DbColumn() : DbObject(),
+    col_name_(),
+    col_id_(-1),
+    length_(-1),
+    col_label_(),
+    datatype_(),
+    nulls_(false),
+    autoincrement_(false),
+    default_value_()
 {
     DBSTRUCT_TRACE_ENTRY;
 

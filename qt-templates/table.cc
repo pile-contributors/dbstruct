@@ -2,8 +2,8 @@
 /* ------------------------------------------------------------------------- */
 /*!
   \file %(table)s.cc
-  \date Oct 2015
-  \author TNick
+  \date %(Month)s %(Year)s
+  \author %(Author)s
 
   \brief Auto-generated model for %(Table)s table.
 
@@ -23,6 +23,13 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "%(table)s.h"
+
+#include <QSql>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
+#include <QSqlDatabase>
+#include <QVariant>
 
 /*  INCLUDES    ============================================================ */
 //
@@ -46,7 +53,7 @@ void %(Table)s::bindOne (QSqlQuery & query, int i) const
 {
     switch (i) {
 %(BIND_ONE_COLUMN)s
-    default: // DB_%(TABLE)s_DBG("index out of bounds: %%d", i); break;
+    default: break; // DB_%(TABLE)s_DBG("index out of bounds: %%d", i); break;
     }
 }
 /* ========================================================================= */
@@ -55,7 +62,7 @@ void %(Table)s::bindOne (QSqlQuery & query, int i) const
 
 /* ------------------------------------------------------------------------- */
 void %(Table)s::bind (QSqlQuery & query) const
-{    
+{
 %(BIND_COLUMNS)s
 }
 /* ========================================================================= */

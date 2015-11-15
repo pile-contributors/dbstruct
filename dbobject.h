@@ -12,6 +12,12 @@
 
 #include <dbstruct/dbstruct-config.h>
 
+#include <QString>
+#include <QStringList>
+#include <QDate>
+#include <QTime>
+#include <QDateTime>
+
 //! The objecture of a database.
 class DBSTRUCT_EXPORT DbObject {
 
