@@ -226,7 +226,7 @@ public:
 
     //! Where updates should go.
     static QString
-    modifyTableString() const {
+    modifyTableString() {
         return QLatin1String("%(TableModify)s");
     }
 
