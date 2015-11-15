@@ -524,7 +524,9 @@ class QtDriver(Driver):
         self.fillTableData(name1)
 
         self.data['TableModify'] = name1
-
+        self.data['BaseClass'] = 'DbView'
+        self.data['baseclass'] = 'dbview'
+        self.data['BASECLASS'] = 'DBVIEW'
 
         if name_in is None:
             # only a primary table

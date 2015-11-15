@@ -77,7 +77,7 @@ bool DbRecord::initFromId (DbTable * table, QSqlDatabase & db, long db_id)
     }
     // set the id inside the instance
     long preserve_id = getId();
-    DBG_ASSERT(preserve_id != DbTable::ID_UNAVAILABLE);
+    DBG_ASSERT(preserve_id != DbTaew::ID_UNAVAILABLE);
     setId (db_id);
     // then ask specialized function to retreive the values
     bool bret = initFrom (table, db, id_column_index);

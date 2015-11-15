@@ -11,11 +11,10 @@
 #define GUARD_DBVIEW_H_INCLUDE
 
 #include <dbstruct/dbstruct-config.h>
-#include <dbstruct/dbobject.h>
-#include <dbstruct/dbobject.h>
+#include <dbstruct/dbtaew.h>
 
 //! A view in a database.
-class DBSTRUCT_EXPORT DbView : public DbObject {
+class DBSTRUCT_EXPORT DbView : public DbTaew {
 
 public:
 
@@ -24,6 +23,12 @@ public:
 
     //! Destructor.
     virtual ~DbView();
+
+    //! The type of this object.
+    virtual Type
+    type () const {
+        return DBO_SUBSET;
+    }
 
 protected:
 

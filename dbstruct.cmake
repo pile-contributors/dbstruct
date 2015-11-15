@@ -19,6 +19,7 @@ macro    (dbstructInit
     # compose the list of headers and sources
     set(DBSTRUCT_HEADERS
         "dbobject.h"
+        "dbtaew.h"
         "dbrecord.h"
         "dbview.h"
         "dbcolumn.h"
@@ -26,6 +27,7 @@ macro    (dbstructInit
         "dbstruct.h")
     set(DBSTRUCT_SOURCES
         "dbobject.cc"
+        "dbtaew.cc"
         "dbrecord.cc"
         "dbview.cc"
         "dbcolumn.cc"
@@ -52,9 +54,9 @@ macro    (dbstructInit
 
 
     FILE(GLOB DBSTRUCT_TEMPLATE_H
-         "${DBSTRUCT_SOURCE_DIR}/qt-templates/*.h")
+         "${DBSTRUCT_SOURCE_DIR}/qt-templates/*.h.template")
     FILE(GLOB DBSTRUCT_TEMPLATE_CC
-         "${DBSTRUCT_SOURCE_DIR}/qt-templates/*.cc")
+         "${DBSTRUCT_SOURCE_DIR}/qt-templates/*.cc.template")
 
 endmacro ()
 

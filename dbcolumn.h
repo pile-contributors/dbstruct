@@ -53,9 +53,14 @@ public:
     {
     }
 
-
     //! Destructor.
     virtual ~DbColumn();
+
+    //! The type of this object.
+    virtual Type
+    type () const {
+        return DBO_COLUMN;
+    }
 
 protected:
 

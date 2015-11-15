@@ -28,6 +28,12 @@ public:
     //! Destructor.
     virtual ~DbStruct();
 
+    //! The type of this object.
+    virtual Type
+    type () const {
+        return DBO_STRUCT;
+    }
+
 protected:
 
 private:

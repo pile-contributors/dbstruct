@@ -31,6 +31,12 @@ public:
     //! Destructor.
     virtual ~DbRecord();
 
+    //! The type of this object.
+    virtual DbObject::Type
+    type () const {
+        return DbObject::DBO_RECORD;
+    }
+
     //! Initialize this instance from a given id.
     bool
     initFromId (

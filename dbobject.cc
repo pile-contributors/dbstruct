@@ -10,6 +10,12 @@
 #include "dbobject.h"
 #include "dbstruct-private.h"
 
+#include "dbstruct.h"
+#include "dbcolumn.h"
+#include "dbrecord.h"
+#include "dbtable.h"
+#include "dbview.h"
+
 /**
  * @class DbObject
  *
@@ -39,3 +45,51 @@ DbObject::~DbObject()
     DBSTRUCT_TRACE_EXIT;
 }
 /* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbStruct * DbObject::asStruct ()
+{
+    if (type () != DBO_STRUCT)
+        return NULL;
+    return static_cast<DbStruct*>(this);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbColumn * DbObject::asColumn ()
+{
+    if (type () != DBO_COLUMN)
+        return NULL;
+    return static_cast<DbColumn*>(this);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbRecord * DbObject::asRecord ()
+{
+    if (type () != DBO_RECORD)
+        return NULL;
+    // return static_cast<DbRecord*>(this);
+    return NULL;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbTable * DbObject::asTable ()
+{
+    if (type () != DBO_TABLE)
+        return NULL;
+    return static_cast<DbTable*>(this);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbView * DbObject::asView ()
+{
+    if ((type () == DBO_SUBSET) || (type () == DBO_CPLX_VIEW))
+        return static_cast<DbView*>(this);
+    return NULL;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
