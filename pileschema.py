@@ -499,16 +499,16 @@ class QtDriver(Driver):
         name = name.lower()
 
         with open(os.path.join(self.out_dir, name + '.h'), 'w') as f:
-            file.write(f, self.getTemplate ('view.h') % self.data)
+            file.write(f, self.getTemplate ('view.h.template') % self.data)
 
         with open(os.path.join(self.out_dir, name + '-meta.h'), 'w') as f:
-            file.write(f, self.getTemplate ('view-meta.h') % self.data)
+            file.write(f, self.getTemplate ('view-meta.h.template') % self.data)
 
         with open(os.path.join(self.out_dir, name + '.cc'), 'w') as f:
-            file.write(f, self.getTemplate ('view.cc') % self.data)
+            file.write(f, self.getTemplate ('view.cc.template') % self.data)
 
         with open(os.path.join(self.out_dir, name + '-meta.cc'), 'w') as f:
-            file.write(f, self.getTemplate ('view-meta.cc') % self.data)
+            file.write(f, self.getTemplate ('view-meta.cc.template') % self.data)
 
     def viewSubset(self, node, subset):
         """Process a subset in a view"""
