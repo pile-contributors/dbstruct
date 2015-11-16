@@ -26,6 +26,7 @@
 
 %(IMPORTH)s
 #include <dbstruct/dbcolumn.h>
+#include <dbstruct/dbview.h>
 %(MetaClassInclude)s
 #include <QCoreApplication>
 #include <QSqlTableModel>
@@ -162,8 +163,6 @@ public:
 
 %(TableColumnConstr)s
 
-
-
     //! The name of this table as a string.
     static inline QString
     tableString() {
@@ -229,6 +228,11 @@ public:
     modifyTableString() {
         return QLatin1String("%(TableModify)s");
     }
+
+    //! Create a column class instance given its index.
+    virtual DbColumn
+    columnCtor (
+            int i) const;
 
     /*  FUNCTIONS    ======================================================= */
     //

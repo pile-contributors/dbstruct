@@ -83,7 +83,6 @@ QString %(Table)s::columnLabel (int i)
 }
 /* ========================================================================= */
 
-
 /* ------------------------------------------------------------------------- */
 void %(Table)s::setHeaderData (QSqlTableModel *model)
 {
@@ -108,6 +107,17 @@ long %(Table)s::rowsInTable (QSqlDatabase & db)
         // DB_%(TABLE)s_DBG(TMP_A(query.lastError().text()));
     }
     return rows;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbColumn %(Table)s::columnCtor (int i) const
+{
+    switch (i) {
+
+%(TableColumnsIndexCtor)s
+    default: return DbColumn();
+    }
 }
 /* ========================================================================= */
 

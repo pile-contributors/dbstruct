@@ -340,6 +340,7 @@ class QtDriver(Driver):
         retreive_columns = ''
         record_columns = ''
         column_getters = ''
+        column_index_getters = ''
         table_data_members = ''
         default_constr = ''
         assign_constr = ''
@@ -382,16 +383,19 @@ class QtDriver(Driver):
             bind_one_column += ' ' * 4 + 'case ' + dbc_name + ': query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + '); break;\n'
             comma_columns += ' ' * 12 + '"' + col + ',"\n'
             bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + ');\n'
+            column_create = 'DbColumn("' + \
+                col + '", ' + \
+                dbc_name + ', '+ \
+                stringChoice(coldata['length'], '-1', coldata['length']) + \
+                ', ' + column_label + ', "'  + \
+                coldata['datatype'] + '", ' + \
+                stringChoice('true', 'false', coldata['nulls']) + ', ' + \
+                stringChoice('true', 'false', coldata['autoincrement']) + ', "' + \
+                stringChoice(coldata['defval'], '', not coldata['defval'] is None) + '")'
             column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
-                              'ColCtor () { return DbColumn("' + \
-                              col + '", ' + \
-                              dbc_name + ', '+ \
-                              stringChoice(coldata['length'], '-1', coldata['length']) + \
-                              ', ' + column_label + ', "'  + \
-                              coldata['datatype'] + '", ' + \
-                              stringChoice('true', 'false', coldata['nulls']) + ', ' + \
-                              stringChoice('true', 'false', coldata['autoincrement']) + ', "' + \
-                              stringChoice(coldata['defval'], '', not coldata['defval'] is None) + '"); }\n'
+                'ColCtor () { return ' + column_create + '; }\n'
+            column_index_getters += ' ' * 4 + 'case ' + dbc_name + \
+                ': return ' + column_create + ';\n'
             retreive_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
                 'query.value (' + dbc_name + ').' + to_converter + ';\n'
             record_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
@@ -438,6 +442,7 @@ class QtDriver(Driver):
         self.data['ASSIGN_COLUMNS'] = assign_columns
         self.data['COLUMN_IDS'] = column_ids
         self.data['TableColumnConstr'] = column_getters
+        self.data['TableColumnsIndexCtor'] = column_index_getters
         self.data['TableDataMembers'] = table_data_members
         self.data['CopyConstructor'] = copy_constr
         self.data['AssignConstructor'] = assign_constr

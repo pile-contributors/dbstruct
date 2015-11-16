@@ -67,7 +67,7 @@ DbRecord::~DbRecord()
 
 
 /* ------------------------------------------------------------------------- */
-bool DbRecord::initFromId (DbTable * table, QSqlDatabase & db, long db_id)
+bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
 {
     DBREC_TRACE_ENTRY;
     int id_column_index = table->idColumn ();
@@ -98,7 +98,7 @@ bool DbRecord::initFromId (DbTable * table, QSqlDatabase & db, long db_id)
  * @param column index of the column to use for initialization
  * @return true if the inistance was initialized
  */
-bool DbRecord::initFrom (DbTable * table, QSqlDatabase & db, int column)
+bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
 {
     DBREC_TRACE_ENTRY;
     bool b_ret = false;
@@ -147,7 +147,7 @@ bool DbRecord::initFrom (DbTable * table, QSqlDatabase & db, int column)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool DbRecord::save (DbTable * table, QSqlDatabase & db)
+bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
 {
     bool b_ret = false;
     for (;;) {
@@ -196,7 +196,7 @@ bool DbRecord::save (DbTable * table, QSqlDatabase & db)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool DbRecord::remFromDb (DbTable * table, QSqlDatabase & db, int column)
+bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
 {
     bool b_ret = false;
     for (;;) {

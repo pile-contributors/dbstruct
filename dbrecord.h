@@ -15,10 +15,14 @@
 #include <dbstruct/dbcolumn.h>
 #include <assert.h>
 
+QT_BEGIN_NAMESPACE
 class QSqlDatabase;
 class QSqlQuery;
 class QSqlRecord;
+QT_END_NAMESPACE
+
 class DbTable;
+class DbTaew;
 
 //! A record in a database.
 class DBSTRUCT_EXPORT DbRecord  {
@@ -40,27 +44,27 @@ public:
     //! Initialize this instance from a given id.
     bool
     initFromId (
-            DbTable * table,
+            DbTaew * table,
             QSqlDatabase & db,
             long db_id);
 
     //! Initialize this instance from a given field
     bool
     initFrom (
-            DbTable * table,
+            DbTaew * table,
             QSqlDatabase & db,
             int column);
 
     //! Saves the instance to the database.
     virtual bool
     save (
-            DbTable * table,
+            DbTaew * table,
             QSqlDatabase & db);
 
     //! Remove this entry from the database.
     bool
     remFromDb (
-            DbTable * table,
+            DbTaew * table,
             QSqlDatabase &db,
             int column);
 

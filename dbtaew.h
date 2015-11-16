@@ -51,6 +51,7 @@ public:
     modifyTableName() const {
         return tableName();
     }
+
     //! The name of a column given an index.
     virtual QString
     columnName(
@@ -83,6 +84,11 @@ public:
     //! All columns as a comma-separated list of column=:column.
     virtual QString
     assignColumns () const = 0;
+
+    //! Create a column class instance given its index.
+    virtual DbColumn
+    columnCtor (
+            int i) const = 0;
 
 protected:
 

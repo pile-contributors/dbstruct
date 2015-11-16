@@ -144,10 +144,7 @@ public:
         return assignColumnsString ();
     }
 
-
 %(TableColumnConstr)s
-
-
 
     //! The name of this table as a string.
     static inline QString
@@ -218,6 +215,11 @@ public:
         return QLatin1String(
 %(ASSIGN_COLUMNS)s);
     }
+
+    //! Create a column class instance given its index.
+    virtual DbColumn
+    columnCtor (
+            int i) const;
 
     /*  FUNCTIONS    ======================================================= */
     //
