@@ -18,7 +18,7 @@
 #include <QTime>
 #include <QDateTime>
 
-class DbStruct;
+class DbStructMeta;
 class DbColumn;
 class DbRecord;
 class DbTable;
@@ -57,7 +57,7 @@ public:
     }
 
     //! Get this instance as a DbStruct.
-    DbStruct * asStruct ();
+    DbStructMeta * asStruct ();
 
     //! Get this instance as a DbColumn.
     DbColumn * asColumn ();

@@ -10,6 +10,9 @@
 #include "dbtaew.h"
 #include "dbstruct-private.h"
 
+#include <QObject>
+#include <QSqlTableModel>
+
 /**
  * @class DbTaew
  *
@@ -51,5 +54,22 @@ bool DbTaew::hasColumn (const QString &s_name) const
 int DbTaew::columnIndex (const QString &s_name) const
 {
     return columns().indexOf (s_name, Qt::CaseInsensitive);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QSqlTableModel * DbTaew::sqlModel (
+        QSqlDatabase & database, QObject * parent) const
+{
+    DBSTRUCT_TRACE_ENTRY;
+    QSqlTableModel * model = new QSqlTableModel (
+                parent, database);
+    model->setTable (tableName ());
+
+    /** @todo other constraints ? */
+
+    model->select ();
+
+    return model;
 }
 /* ========================================================================= */

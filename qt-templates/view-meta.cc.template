@@ -101,6 +101,18 @@ DbColumn %(Table)s::columnCtor (int i) const
 }
 /* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
+QString %(Table)s::columnLabelString (int i)
+{
+    QString result;
+    switch (i) {
+%(CASE_LABELS)s
+    default: result = QCoreApplication::translate("%(Namespace)s::%(Table)s", "out_of_bounds");
+    }
+    return result;
+}
+/* ========================================================================= */
+
 /*  CLASS    =============================================================== */
 //
 //

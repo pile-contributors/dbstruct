@@ -25,6 +25,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "all-meta-tables.h"
+#include <dbstruct/dbstruct.h>
 
 #include <QString>
 #include <QLatin1String>
@@ -46,8 +47,7 @@
 namespace %(namespace)s {
 
 //! Describes the structure of the %(Database)s database .
-///
-class %(EXPORT)s %(Database)s : public %(BaseClass)s {
+class %(EXPORT)s %(Database)sMeta : public %(BaseClass)s {
     //
     //
     //
@@ -100,58 +100,77 @@ public:
 
 public:
 
+
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+    /** @name Interface
+    *  This is the list of method that DbStruct requires.
+    */
+    ///@{
+
     //! The name of this database.
-    static QString databaseName () { return QLatin1String("%(Database)s"); }
+    virtual QString
+    databaseName () const {
+        return databaseString();
+    }
 
     //! Get the name of the table or view based on its identifier.
-    static QString componentName (DbCompId index) {
-        switch(index) {
+    virtual QString
+    componentName (
+        int index) const {
 
-%(DB_COMPONENTS_NAME_CASE)s
-            default:
-                return QString();
-        }
+        return componentString ((DbCompId)index);
     }
 
     //! Get the id based on a table or view name.
-    static DbCompId idFromName (const QString & value) {
+    virtual int
+    idFromName (
+        const QString & value) const {
 
-%(DB_COMPONENTS_NAME_TO_ID)s
-        return DBC_INVALID;
+        return idFromString (value);
     }
 
+    //! Create a table or view based on a table or view id.
+    virtual DbTaew *
+    taew (
+        int index) const {
+
+        return taewByIndex ((DbCompId)index);
+    }
 
 
     /*  --  T A B L E S  --  */
 
 
     //! Convert between component identifier and table identifier.
-    static DbTableId comp2table (DbCompId value) {
-        DbTableId result = (DbTableId)(value);
-        if (result >= DBT_MAX) result = DBT_INVALID;
-        return result;
+    virtual int
+    comp2table (
+        int value) const {
+
+        return compToTable ((DbCompId)value);
     }
 
     //! Convert between table identifier and component identifier.
-    static DbCompId table2comp (DbTableId value) {
-        return (DbCompId)value;
+    virtual int
+    table2comp (
+        int value) const {
+
+        return tableToComp((DbTableId)value);
     }
 
     //! Get the id based on a table name.
-    static DbTableId tableIdFromName (const QString & value) {
-        return comp2table (idFromName (value));
+    virtual int
+    tableIdFromName (
+        const QString & value) const {
+
+        return tableIdFromString (value);
     }
 
-%(DB_TABLES_CONSTR)s
-
     //! Get the name of the table based on its identifier.
-    static QString tableName (DbTableId index) {
-        switch(index) {
+    virtual QString
+    tableName (
+        int index) const {
 
-%(DB_TABLES_NAME_CASE)s
-        default:
-            return QString();
-        }
+        return tableString((DbTableId)index);
     }
 
 
@@ -159,7 +178,99 @@ public:
 
 
     //! Convert between component identifier and view identifier.
-    static DbViewId comp2view (DbCompId value) {
+    virtual int
+    comp2view (
+        int value) const {
+
+        return compToView ((DbCompId)value);
+    }
+
+    //! Convert between view identifier and component identifier.
+    virtual int
+    view2comp (
+        int value) const {
+
+        return viewToComp((DbViewId)value);
+    }
+
+    //! Get the id based on a view name.
+    virtual int
+    viewIdFromName (
+        const QString & value) const {
+
+        return viewIdFromString (value);
+    }
+
+    //! Get the name of the view based on its identifier.
+    virtual QString
+    viewName (
+        int index) const {
+
+        return viewString((DbViewId)index);
+    }
+
+    ///@}
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+    /** @name Static methods
+    * Static methods provide some small amount of type
+    * safety.
+    */
+    ///@{
+
+    //! The name of this database.
+    static QString
+    databaseString () {
+        return QLatin1String("%(Database)s"); }
+
+    //! Get the name of the table or view based on its identifier.
+    static QString
+    componentString (
+        DbCompId index);
+
+    //! Get the id based on a table or view name.
+    static DbCompId
+    idFromString (
+        const QString & value);
+
+    //! Create a table or view based on a table or view id.
+    static DbTaew *
+    taewByIndex (
+            DbCompId index);
+
+    /*  --  T A B L E S  --  */
+
+    //! Convert between component identifier and table identifier.
+    static DbTableId compToTable (DbCompId value) {
+        DbTableId result = (DbTableId)(value);
+        if (result >= DBT_MAX) result = DBT_INVALID;
+        return result;
+    }
+
+    //! Convert between table identifier and component identifier.
+    static DbCompId tableToComp (DbTableId value) {
+        return (DbCompId)value;
+    }
+
+    //! Get the id based on a table name.
+    static DbTableId tableIdFromString (const QString & value) {
+        return compToTable (idFromString (value));
+    }
+
+    //! Get the name of the table based on its identifier.
+    static QString
+    tableString (
+        DbTableId index);
+
+%(DB_TABLES_CONSTR)s
+
+
+    /*  --  V I E W S  --  */
+
+    //! Convert between component identifier and view identifier.
+    static DbViewId compToView (DbCompId value) {
         DbViewId result = (DbViewId)(value - DBT_MAX);
         if ((result <= DBV_INVALID) || (result >= DBV_MAX))
             result = DBV_INVALID;
@@ -167,26 +278,24 @@ public:
     }
 
     //! Convert between view identifier and component identifier.
-    static DbCompId view2comp (DbViewId value) {
+    static DbCompId viewToComp (DbViewId value) {
         return (DbCompId)(value + DBT_MAX);
     }
 
     //! Get the id based on a view name.
-    static DbViewId viewIdFromName (const QString & value) {
-        return comp2view (idFromName (value));
+    static DbViewId viewIdFromString (const QString & value) {
+        return compToView (idFromString (value));
     }
+
+    //! Get the name of the view based on its identifier.
+    static QString
+    viewString (
+        DbViewId index);
 
 %(DB_VIEWS_CONSTR)s
 
-    //! Get the name of the view based on its identifier.
-    static QString viewName (DbViewId index) {
-        switch(index) {
-
-%(DB_VIEWS_NAME_CASE)s
-        default:
-            return QString();
-        }
-    }
+    ///@}
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
 
     /*  FUNCTIONS    ======================================================= */
@@ -195,6 +304,14 @@ public:
     //
     //
 
+}; /* class %(Database)sMeta */
+
+//! Describes the structure of and holds an instance of
+//! the %(Database)s database .
+class %(EXPORT)s %(Database)s : public %(Database)sMeta, public DbStruct {
+public:
+    META_DATA_BASE_CTORS(%(Database)s)
+    META_DATA_BASE_GETTER
 }; /* class %(Database)s */
 
 /*  CLASS    =============================================================== */

@@ -13,14 +13,14 @@
 /**
  * @class DbStruct
  *
- * Detailed description.
+ * This structure groups information about the structure of a database.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
  * Detailed description for constructor.
  */
-DbStruct::DbStruct()
+DbStructMeta::DbStructMeta()
 {
     DBSTRUCT_TRACE_ENTRY;
 
@@ -32,7 +32,7 @@ DbStruct::DbStruct()
 /**
  * Detailed description for destructor.
  */
-DbStruct::~DbStruct()
+DbStructMeta::~DbStructMeta()
 {
     DBSTRUCT_TRACE_ENTRY;
 

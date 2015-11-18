@@ -102,6 +102,13 @@ public:
         return columnString (i);
     }
 
+    //! The (translated) label for a column given an index.
+    virtual QString
+    columnLabel (
+        int i) const {
+        return columnLabelString (i);
+    }
+
     //! Number of columns in this table.
     virtual int
     columnCount() const {
@@ -159,7 +166,7 @@ public:
 
     //! The (translated) label for a column given an index.
     static QString
-    columnLabel (
+    columnLabelString (
         int i);
 
     //! Sets all (translated) labels for a model.

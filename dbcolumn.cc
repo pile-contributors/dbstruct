@@ -28,7 +28,10 @@ DbColumn::DbColumn() : DbObject(),
     datatype_(),
     nulls_(false),
     autoincrement_(false),
-    default_value_()
+    default_value_(),
+    foreign_table_(),
+    foreign_key_(),
+    foreign_ref_()
 {
     DBSTRUCT_TRACE_ENTRY;
 

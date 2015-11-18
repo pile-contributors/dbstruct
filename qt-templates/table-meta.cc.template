@@ -72,12 +72,12 @@ QString %(Table)s::columnString (int i)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-QString %(Table)s::columnLabel (int i)
+QString %(Table)s::columnLabelString (int i)
 {
     QString result;
     switch (i) {
 %(CASE_LABELS)s
-    default: result = QLatin1String("out_of_bounds"); break;
+    default: result = QCoreApplication::translate("%(Namespace)s::%(Table)s", "out_of_bounds");
     }
     return result;
 }

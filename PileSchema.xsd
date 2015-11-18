@@ -625,6 +625,21 @@
                 <xs:documentation xml:lang="en">Does this column allows NULL values or not?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="foreignTable" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If this column references a column in another table, this is the name of that table. This is the attribute to check if the column is a foreign key or not.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="foreignColumn" use="optional" type="xs:string" default="id">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If this column references a column in another table, this is the name of that column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="foreignInsert" use="optional" type="xs:string" default="id">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If this column references a column in another table, this attribute decides which column (or columns) get inserted into what is shown to the user in place or the original column. The value may be a comma-separated list of column names.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="columnList">

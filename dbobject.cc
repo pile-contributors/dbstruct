@@ -47,11 +47,11 @@ DbObject::~DbObject()
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-DbStruct * DbObject::asStruct ()
+DbStructMeta * DbObject::asStruct ()
 {
     if (type () != DBO_STRUCT)
         return NULL;
-    return static_cast<DbStruct*>(this);
+    return static_cast<DbStructMeta*>(this);
 }
 /* ========================================================================= */
 

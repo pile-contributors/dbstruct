@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""
+'''
 Script implementing all top level commands.
 
 Basic usage:
@@ -10,7 +10,7 @@ Basic usage:
 
 
 
-"""
+'''
 
 import argparse
 from collections import OrderedDict
@@ -73,62 +73,120 @@ TO_CAST = {
 
 
 class Driver(object):
-    """
+    '''
     Default implementation with regard to the underlying
     Sql variant.
-    """
+    '''
     def __init__(self):
         super(Driver, self).__init__()
 
     def databaseStart(self, name, node):
-        """Starting to process database `name`"""
+        '''Starting to process database `name`'''
         pass
 
     def databaseEnd(self, name, node):
-        """Done processing database `name`"""
+        '''Done processing database `name`'''
         pass
 
     def tableStart(self, name, node):
-        """Starting to process table `name`"""
+        '''Starting to process table `name`'''
         pass
 
     def tableEnd(self, name, node):
-        """Done processing table `name`"""
+        '''Done processing table `name`'''
         pass
 
     def column(self, name, label, datatype, nulls, node, dtnode):
-        """Processing a column"""
+        '''Processing a column'''
         pass
 
     def viewStart(self, name, node):
-        """Starting to process view `name`"""
+        '''Starting to process view `name`'''
         pass
 
     def viewEnd(self, name, node):
-        """Done processing view `name`"""
+        '''Done processing view `name`'''
         pass
 
     def viewSubset(self, node, subset):
-        """Process a subset in a view"""
+        '''Process a subset in a view'''
         pass
+
+    def getForeignKey(self, node):
+        '''
+        Extracts foreign key data from an xml node
+
+        The result is None if no foreign key exists of a list of three elements:
+        the table, the key column and the columns that should replace
+        original key in a presentation to the user.
+        '''
+
+        # Is this column a foreign key into another table?
+        ftable = node.get('foreignTable')
+        fcolumn = node.get('foreignColumn')
+        finsert = node.get('foreignInsert')
+        if finsert:
+            finsert  = finsert.split(',')
+        if ftable is not None:
+            return [ftable, fcolumn, finsert]
+        else:
+            return None
+
+    def checkForeignKeys(self):
+        '''Make sure that all columns referenced in foreign keys actually exist.'''
+        for tbl in self.tables:
+            tbldata = self.tables[tbl]
+            for col in tbldata['columns']:
+                coldata = tbldata['columns'][col]['fkey']
+                if coldata:
+                    # the column is a foreign key
+                    ftable, fcolumn, finsert = coldata
+                    print col, 'has fkey: ', coldata
+                    try:
+                        f_actual = self.tables[ftable]
+                    except KeyError:
+                        logger.warning(
+                            'Column %s of table %s references table '
+                            '%s that does not exist' % (col, tbl, ftable))
+                        raise
+                    try:
+                        f_actual['columns'][fcolumn]
+                    except KeyError:
+                        logger.warning(
+                            'Column %s of table %s references column '
+                            '%s in table %s that does not exist' % (
+                            col, tbl, fcolumn, ftable))
+                        raise
+                    if finsert:
+                        for inscol in finsert:
+                            try:
+                                f_actual['columns'][inscol]
+                            except KeyError:
+                                logger.warning(
+                                    'Column %s of table %s uses column '
+                                    '%s in table %s that does not exist' % (
+                                    col, tbl, inscol, ftable))
+                                raise
 
 # ----------------------------------------------------------------------------
 
 class SqlDriver(Driver):
-    """
+    '''
     Default implementation with regard to the underlying
     Sql variant.
-    """
+    '''
     def __init__(self):
         self.sql_string = ''
+        self.foreignKeys = {}
         super(SqlDriver, self).__init__()
 
     def tableStart(self, name, node):
-        """Starting to process table `name`"""
+        '''Starting to process table `name`'''
         self.sql_string += 'CREATE TABLE IF NOT EXISTS `' + name + '` (\n'
+        self.foreignKeys = {}
 
     def tableEnd(self, name, node):
-        """Done processing table `name`"""
+        '''Done processing table `name`'''
         pkey = node.find(NSPACESTR + 'primaryKey')
         if pkey is not None:
             pkey = pkey.getchildren()[0] # key
@@ -136,14 +194,20 @@ class SqlDriver(Driver):
                 pkey = pkey.getchildren()[0] # column
 
         if pkey is not None:
-            self.sql_string += '  PRIMARY KEY (`' + pkey.get('name') + '`)\n'
-        elif (self.sql_string[-2] == ',') and (self.sql_string[-1] == '\n'):
+            self.sql_string += '  PRIMARY KEY (`' + pkey.get('name') + '`),\n'
+        for fkey in self.foreignKeys:
+            fdata = self.foreignKeys[fkey]
+            self.sql_string += '  FOREIGN KEY(' + fkey + ') REFERENCES ' + \
+                fdata[0] + '(' + fdata[1] + '),\n'
+
+        if (self.sql_string[-2] == ',') and (self.sql_string[-1] == '\n'):
             # get rid of last comma
             self.sql_string = self.sql_string[:-2] + '\n'
+
         self.sql_string += ');\n'
 
     def column(self, name, label, datatype, nulls, node, dtnode):
-        """Processing a column"""
+        '''Processing a column'''
         # first comes the name
         self.sql_string += '  `' + name + '` '
         # then the datatype
@@ -171,16 +235,22 @@ class SqlDriver(Driver):
         # and that's it folks
         self.sql_string += ',\n'
 
+        # Is this column a foreign key into another table?
+        ftable = self.getForeignKey(node)
+        if ftable is not None:
+            self.foreignKeys[name] = ftable
+
+
     def viewStart(self, name, node):
-        """Starting to process view `name`"""
+        '''Starting to process view `name`'''
         self.sql_string += 'CREATE VIEW IF NOT EXISTS `' + name + '` AS\n'
 
     def viewEnd(self, name, node):
-        """Done processing view `name`"""
+        '''Done processing view `name`'''
         self.sql_string += ';\n'
 
     def viewSubset(self, node, subset):
-        """Process a subset in a view"""
+        '''Process a subset in a view'''
         name1 = subset.get('name1')
         col1 = subset.get('col1')
         name_in = subset.get('in')
@@ -191,19 +261,22 @@ class SqlDriver(Driver):
 
         if name_in is None:
             # only a primary table
-            self.sql_string += '  SELECT * FROM ' + name1 + ' WHERE ' + col1 + constraint + value + '\n'
+            self.sql_string += '  SELECT * FROM ' + name1 + ' WHERE ' + \
+                col1 + constraint + value + '\n'
         else:
             # a primary and a secondary
-            self.sql_string += '  SELECT * FROM ' + name1 + ' WHERE ' + col1 + ' IN (\n' + \
-                               '    SELECT ' + incol + ' FROM ' + name_in + ' WHERE ' + where + constraint + value + ')\n'
+            self.sql_string += '  SELECT * FROM ' + name1 + ' WHERE ' + \
+                col1 + ' IN (\n' + \
+                '    SELECT ' + incol + ' FROM ' + name_in + ' WHERE ' + \
+                where + constraint + value + ')\n'
 
 
 # ----------------------------------------------------------------------------
 
 class QtDriver(Driver):
-    """
+    '''
     Build C++ classes with Qt support.
-    """
+    '''
     def __init__(self, out_dir, template_dir,
                  namespace='', export_macro='',
                  import_header='',
@@ -224,11 +297,13 @@ class QtDriver(Driver):
         super(QtDriver, self).__init__()
 
     def databaseStart(self, name, node):
-        """Starting to process database `name`"""
+        '''Starting to process database `name`'''
         self.db_name = name
 
     def databaseEnd(self, name, node):
-        """Done processing database `name`"""
+        '''Done processing database `name.`'''
+
+        self.checkForeignKeys()
 
         all_hdr = ''
         all_meta_hdr = ''
@@ -238,34 +313,54 @@ class QtDriver(Driver):
         db_comp_name_case = ''
         db_table_name_case = ''
         db_name_to_id = ''
+        db_new_components = ''
         nspace_prefix = self.db_name.lower() + '::meta::'
         for tbl in self.tables:
+            with_nspace = nspace_prefix + tbl
             dbc_name = 'DBC_' + tbl.upper()
             dbt_name = 'DBT_' + tbl.upper()
             all_hdr += '#include "' + tbl.lower() + '.h"\n'
             all_meta_hdr += '#include "' + tbl.lower() + '-meta.h"\n'
             db_comp_id += ' ' * 8 + dbc_name + ',\n'
             db_table_id += ' ' * 8 + dbt_name + ',\n'
-            db_tables_constr += '    static ' + nspace_prefix + tbl + ' ' + tbl.lower() + ' () { return ' + nspace_prefix + tbl + '(); }\n'
-            db_comp_name_case += ' ' * 8 + 'case ' + dbc_name + ': return QLatin1String("' + tbl + '");\n'
-            db_table_name_case += ' ' * 8 + 'case ' + dbt_name + ': return QLatin1String("' + tbl + '");\n'
-            db_name_to_id += ' ' * 8 + 'if (!value.compare(QLatin1String("' + tbl + '"), Qt::CaseInsensitive)) return ' + dbc_name + ';\n'
+            db_tables_constr += '    static ' + with_nspace + ' ' + \
+                tbl.lower() + ' () { return ' + with_nspace + '(); }\n'
+            db_comp_name_case += ' ' * 8 + 'case ' + dbc_name + \
+                ': return QLatin1String("' + tbl + '");\n'
+            db_table_name_case += ' ' * 8 + 'case ' + dbt_name + \
+                ': return QLatin1String("' + tbl + '");\n'
+            db_name_to_id += ' ' * 8 + 'if (!value.compare(QLatin1String("' + \
+                tbl + '"), Qt::CaseInsensitive)) return ' + dbc_name + ';\n'
+            db_new_components += ' ' * 8 + 'case ' + dbc_name + \
+                ': return new ' + with_nspace + '();\n'
+
 
         db_view_id = ''
         db_views_constr = ''
         db_view_name_case = ''
         for view in self.views:
+            with_nspace = nspace_prefix + view
             dbc_name = 'DBC_' + view.upper()
             dbv_name = 'DBV_' + view.upper()
             db_comp_id += ' ' * 8 + dbc_name + ',\n'
             db_view_id += ' ' * 8 + dbv_name + ',\n'
-            db_views_constr += '    static ' + nspace_prefix + view + ' ' + view.lower() + ' () { return ' + nspace_prefix + view + '(); }\n'
-            db_comp_name_case += ' ' * 8 + 'case ' + dbc_name + ': return QLatin1String("' + view + '");\n'
-            db_view_name_case += ' ' * 8 + 'case ' + dbv_name + ': return QLatin1String("' + view + '");\n'
-            db_name_to_id += ' ' * 8 + 'if (!value.compare(QLatin1String("' + view + '"), Qt::CaseInsensitive)) return ' + dbc_name + ';\n'
+            db_views_constr += '    static ' + with_nspace + ' ' + \
+                view.lower() + ' () { return ' + with_nspace + \
+                '(); }\n'
+            db_comp_name_case += ' ' * 8 + 'case ' + dbc_name + \
+                ': return QLatin1String("' + view + '");\n'
+            db_view_name_case += ' ' * 8 + 'case ' + dbv_name + \
+                ': return QLatin1String("' + view + '");\n'
+            db_name_to_id += ' ' * 8 + 'if (!value.compare(QLatin1String("' + \
+                view + '"), Qt::CaseInsensitive)) return ' + dbc_name + ';\n'
             all_hdr += '#include "' + view.lower() + '.h"\n'
             all_meta_hdr += '#include "' + view.lower() + '-meta.h"\n'
+            db_new_components += ' ' * 8 + 'case ' + dbc_name + \
+                ': return new ' + with_nspace + '();\n'
 
+        self.data['BaseClass'] = 'DbStructMeta'
+        self.data['baseclass'] = 'dbstructmeta'
+        self.data['BASECLASS'] = 'DBSTRUCTMETA'
         self.data['INCLUDE_ALL_HEADERS'] = all_hdr
         self.data['INCLUDE_ALL_META_HEADERS'] = all_meta_hdr
         self.data['DBC_IDS'] = db_comp_id
@@ -277,6 +372,7 @@ class QtDriver(Driver):
         self.data['DB_TABLES_NAME_CASE'] = db_table_name_case
         self.data['DB_VIEWS_NAME_CASE'] = db_view_name_case
         self.data['DB_COMPONENTS_NAME_TO_ID'] = db_name_to_id
+        self.data['DB_NEW_COMPONENTS'] = db_new_components
 
         with open(os.path.join(self.out_dir, self.data['database'] + '.h'), 'w') as f:
             file.write(f, self.getTemplate ('database.h.template') % self.data)
@@ -293,7 +389,7 @@ class QtDriver(Driver):
         self.db_name = ''
 
     def bootstrapData(self, name):
-        """Add common data in the variable map"""
+        '''Add common data in the variable map'''
         now = datetime.datetime.now()
         self.data = {
             'Database': self.db_name,
@@ -318,13 +414,13 @@ class QtDriver(Driver):
         }
 
     def tableStart(self, name, node):
-        """Starting to process table `name`"""
+        '''Starting to process table `name`'''
         self.tables[name] = {}
         self.columns = OrderedDict()
         self.bootstrapData(name)
 
     def fillTableData(self, name):
-        """Prepare values for variables in the context of this table"""
+        '''Prepare values for variables in the context of this table'''
 
         id_column = -1
         pipe_columns = ''
@@ -356,33 +452,62 @@ class QtDriver(Driver):
             to_converter = FROM_VARIANT[qtype]
             dbc_name = 'COLID_' + col.upper()
             column_ids += ' ' * 8 + dbc_name + ',\n'
-            column_label = 'QCoreApplication::translate("' + self.db_name + '::' + name + '", "' + coldata['label'] + '")'
+            column_label = 'QCoreApplication::translate("' + self.db_name + \
+                '::' + name + '", "' + coldata['label'] + '")'
 
             if col == 'id':
                 id_column = i
                 if coldata['autoincrement']:
-                    default_constr = default_constr + ' ' * 8 + col_var_name + '(COLID_INVALID),\n'
+                    default_constr = default_constr + ' ' * 8 + col_var_name + \
+                        '(COLID_INVALID),\n'
                 elif qtype == 'QString':
-                    default_constr = default_constr + ' ' * 8 + col_var_name + '(QLatin1String("-1")),\n'
+                    default_constr = default_constr + ' ' * 8 + col_var_name + \
+                        '(QLatin1String("-1")),\n'
                 else:
-                    default_constr = default_constr + ' ' * 8 + col_var_name + '(),\n'
+                    default_constr = default_constr + ' ' * 8 + col_var_name + \
+                        '(),\n'
             else:
-                default_constr = default_constr + ' ' * 8 + col_var_name + '(),\n'
+                default_constr = default_constr + ' ' * 8 + \
+                    col_var_name + '(),\n'
                 comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
                 column_columns += ' ' * 12 + '":' + col + ',"\n'
                 assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
 
-            assign_constr = assign_constr + ' ' * 8 + col_var_name + ' = other.' + col_var_name + ';\n'
-            copy_constr = copy_constr + ' ' * 8 + col_var_name + ' (other.' + col_var_name + '),\n'
+            assign_constr = assign_constr + ' ' * 8 + col_var_name + \
+                ' = other.' + col_var_name + ';\n'
+            copy_constr = copy_constr + ' ' * 8 + col_var_name + \
+                ' (other.' + col_var_name + '),\n'
 
             table_data_members += ' ' * 4 + qtype + ' ' + col.lower() + ';\n'
             pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
-            case_label += ' ' * 4 + 'case ' + dbc_name + ': result = ' + column_label + '; break;\n'
-            case_columns += ' ' * 4 + 'case ' + dbc_name + ': result = QLatin1String("' + col + '"); break;\n'
-            model_label += ' ' * 4 + 'model->setHeaderData (' + dbc_name + ', Qt::Horizontal, ' + column_label + ');\n'
-            bind_one_column += ' ' * 4 + 'case ' + dbc_name + ': query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + '); break;\n'
+            case_label += ' ' * 4 + 'case ' + dbc_name + ': result = ' + \
+                column_label + '; break;\n'
+            case_columns += ' ' * 4 + 'case ' + dbc_name + \
+                ': result = QLatin1String("' + col + '"); break;\n'
+            model_label += ' ' * 4 + 'model->setHeaderData (' + dbc_name + \
+                ', Qt::Horizontal, ' + column_label + ');\n'
+            bind_one_column += ' ' * 4 + 'case ' + dbc_name + \
+                ': query.bindValue (QLatin1String(":' + col + '"), ' + \
+                col_var_name + '); break;\n'
             comma_columns += ' ' * 12 + '"' + col + ',"\n'
-            bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + col + '"), ' + col_var_name + ');\n'
+            bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + \
+                col + '"), ' + col_var_name + ');\n'
+
+            # definition related to foreign keys
+            fkey_data = coldata['fkey']
+            if fkey_data:
+                fkey_col = 'QLatin1String("' + fkey_data[0] + \
+                    '"), QLatin1String("' + fkey_data[1] + '"), '
+                if fkey_data[2]:
+                    fkey_col += 'QStringList() '
+                    for inscol in fkey_data[2]:
+                        fkey_col += '<< "' + inscol + '"'
+                else:
+                    fkey_col += 'QStringList()'
+            else:
+                fkey_col = 'QString(), QString(), QStringList()'
+
+            # constructor for column
             column_create = 'DbColumn("' + \
                 col + '", ' + \
                 dbc_name + ', '+ \
@@ -390,8 +515,12 @@ class QtDriver(Driver):
                 ', ' + column_label + ', "'  + \
                 coldata['datatype'] + '", ' + \
                 stringChoice('true', 'false', coldata['nulls']) + ', ' + \
-                stringChoice('true', 'false', coldata['autoincrement']) + ', "' + \
-                stringChoice(coldata['defval'], '', not coldata['defval'] is None) + '")'
+                stringChoice('true', 'false', coldata['autoincrement']) + \
+                ', "' + \
+                stringChoice('', coldata['defval'],
+                             coldata['defval'] is None) + \
+                '", ' + fkey_col + ')'
+
             column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
                 'ColCtor () { return ' + column_create + '; }\n'
             column_index_getters += ' ' * 4 + 'case ' + dbc_name + \
@@ -399,13 +528,15 @@ class QtDriver(Driver):
             retreive_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
                 'query.value (' + dbc_name + ').' + to_converter + ';\n'
             record_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
-                'rec.value (QLatin1String("' + col + '")).' + to_converter + ';\n'
+                'rec.value (QLatin1String("' + col + '")).' + \
+                to_converter + ';\n'
 
+        int_types = ['long', 'int', 'bigint', 'smallint', 'tinyint']
         if id_column == -1:
             id_column = 'COLID_INVALID'
             get_id_result = 'COLID_INVALID'
             set_id = '// id unavailable in this model'
-        elif self.columns['id']['datatype'] in ['long', 'int', 'bigint', 'smallint', 'tinyint']:
+        elif self.columns['id']['datatype'] in int_types:
             get_id_result = 'id'
             set_id = 'id = value'
         else:
@@ -449,7 +580,7 @@ class QtDriver(Driver):
         self.data['DefaultConstructor'] = default_constr
 
     def tableEnd(self, name, node):
-        """Done processing table `name`"""
+        '''Done processing table `name`'''
         self.tables[name]['columns'] = self.columns
 
         self.fillTableData(name)
@@ -467,7 +598,7 @@ class QtDriver(Driver):
             file.write(f, self.getTemplate ('table-meta.cc.template') % self.data)
 
     def column(self, name, label, datatype, nulls, node, dtnode):
-        """Processing a column"""
+        '''Processing a column'''
 
         # then the datatype
         length = dtnode.get('length')
@@ -489,17 +620,18 @@ class QtDriver(Driver):
             'nulls': nulls,
             'defval': defval,
             'autoincrement': not identity is None,
-            'datatype': datatype
+            'datatype': datatype,
+            'fkey': self.getForeignKey(node)
         }
 
     def viewStart(self, name, node):
-        """Starting to process view `name`"""
+        '''Starting to process view `name`'''
         self.views[name] = {}
         self.bootstrapData(name)
         self.columns = OrderedDict()
 
     def viewEnd(self, name, node):
-        """Done processing view `name`"""
+        '''Done processing view `name`'''
 
         name = name.lower()
 
@@ -516,7 +648,7 @@ class QtDriver(Driver):
             file.write(f, self.getTemplate ('view-meta.cc.template') % self.data)
 
     def viewSubset(self, node, subset):
-        """Process a subset in a view"""
+        '''Process a subset in a view'''
         name1 = subset.get('name1')
         col1 = subset.get('col1')
         name_in = subset.get('in')
@@ -541,7 +673,7 @@ class QtDriver(Driver):
             pass
 
     def getTemplate(self, which):
-        """Read the content of a template file"""
+        '''Read the content of a template file'''
         if not which in self.templates:
             with open(os.path.join(self.template_dir, which), 'r') as f:
                 self.templates[which] = f.read()
@@ -550,9 +682,9 @@ class QtDriver(Driver):
 # ----------------------------------------------------------------------------
 
 class SqLiteDriver(SqlDriver):
-    """
+    '''
     SqLite specifics.
-    """
+    '''
     def __init__(self):
         super(SqLiteDriver, self).__init__()
 
@@ -560,18 +692,18 @@ class SqLiteDriver(SqlDriver):
 # ----------------------------------------------------------------------------
 
 def validate(xmlfilename):
-    """
+    '''
     Validates a file and returns the xml tree.
-    """
+    '''
     with open(xmlfilename, 'r') as f:
         return validateString(f.read())
 
 # ----------------------------------------------------------------------------
 
 def validateString(xmlstring):
-    """
+    '''
     Validates a string and returns the xml tree.
-    """
+    '''
     global NSPACESTR
 
     try:
@@ -601,8 +733,8 @@ def stringChoice(s1, s2, choice):
 # ----------------------------------------------------------------------------
 
 def processWithDriver(driver, database):
-    """
-    """
+    '''
+    '''
     driver.databaseStart (database.get('name'), database)
 
     tables = database.find(NSPACESTR + 'tables')
@@ -616,7 +748,9 @@ def processWithDriver(driver, database):
             datatype = column.getchildren()[0]
             datatype_name = datatype.tag.replace(NSPACESTR, '')
             driver.column (column.get('name'),
-                           stringChoice(column.get('label'), column.get('name'), column.get('label')),
+                           stringChoice(column.get('label'),
+                                        column.get('name'),
+                                        column.get('label')),
                            datatype_name,
                            str2bool(column.get('allowNulls')),
                            column, datatype)
@@ -637,9 +771,9 @@ def processWithDriver(driver, database):
 # ----------------------------------------------------------------------------
 
 def extract_common (args):
-    """
+    '''
     Extract common information from arguments and save it at module level.
-    """
+    '''
     global AUTHOR, PARSER, SCHEMA_FILE
 
     if hasattr(args, 'author') and args.author is not None:
@@ -658,10 +792,10 @@ def extract_common (args):
 # ----------------------------------------------------------------------------
 
 def cmd_validate (args):
-    """
+    '''
     Example:
     validate file.xml
-    """
+    '''
     extract_common(args)
     if validate(args.xml):
         logger.info("%s validates" % args.xml)
@@ -673,10 +807,10 @@ def cmd_validate (args):
 # ----------------------------------------------------------------------------
 
 def cmd_sql (args):
-    """
+    '''
     Example:
     sql file.xml
-    """
+    '''
     global NSPACESTR
 
     extract_common(args)
@@ -705,10 +839,10 @@ def cmd_sql (args):
 # ----------------------------------------------------------------------------
 
 def cmd_qt (args):
-    """
+    '''
     Example:
     qt file.xml
-    """
+    '''
     global NSPACESTR
 
     extract_common(args)
@@ -735,10 +869,10 @@ def cmd_qt (args):
 # ----------------------------------------------------------------------------
 
 def make_argument_parser():
-    """
+    '''
     Creates an ArgumentParser to read the options for this script from
     sys.argv
-    """
+    '''
     parser = argparse.ArgumentParser(
         description="Main entry point for pileschema module.",
         epilog='\n'.join(__doc__.strip().split('\n')[1:]).strip(),
@@ -764,29 +898,60 @@ def make_argument_parser():
 
     subparsers = parser.add_subparsers (help='Available sub-commands')
 
-    parser_a = subparsers.add_parser('validate', help='Validate an xml against PileSchema.xsd')
-    parser_a.add_argument ('xml', metavar="XML", type=str, help='input .xml file')
-    parser_a.add_argument ('--schema', type=str, help='schema used for validation', default=DEFAULT_SCHEMA_FILE)
+    parser_a = subparsers.add_parser('validate',
+        help='Validate an xml against PileSchema.xsd')
+    parser_a.add_argument ('xml', metavar="XML", type=str,
+        help='input .xml file')
+    parser_a.add_argument ('--schema', type=str,
+        help='schema used for validation',
+        default=DEFAULT_SCHEMA_FILE)
     parser_a.set_defaults (func=cmd_validate)
 
-    parser_a = subparsers.add_parser ('sql', help='Generate an .sql file from input .xml')
-    parser_a.add_argument ('xml', metavar="XML", type=str, help='input .xml file')
-    parser_a.add_argument ('output', metavar="OUT",  type=str, nargs='?', help='output .sql file')
-    parser_a.add_argument ('--schema', type=str, help='schema used for validation', default=DEFAULT_SCHEMA_FILE)
-    parser_a.add_argument ('--driver', type=str, help='driver used for output', choices=['none', 'sqlite'], default='none')
-    parser_a.add_argument ('--author', type=str, help='The author of the files', default=username())
+    parser_a = subparsers.add_parser ('sql',
+        help='Generate an .sql file from input .xml')
+    parser_a.add_argument ('xml', metavar="XML", type=str,
+        help='input .xml file')
+    parser_a.add_argument ('output', metavar="OUT",  type=str, nargs='?',
+        help='output .sql file')
+    parser_a.add_argument ('--schema', type=str,
+        help='schema used for validation',
+        default=DEFAULT_SCHEMA_FILE)
+    parser_a.add_argument ('--driver', type=str,
+        help='driver used for output',
+        choices=['none', 'sqlite'], default='none')
+    parser_a.add_argument ('--author', type=str,
+        help='The author of the files',
+        default=username())
     parser_a.set_defaults (func=cmd_sql)
 
-    parser_a = subparsers.add_parser ('cpp', help='Generate C++ sources from input .xml')
-    parser_a.add_argument ('xml', metavar="XML", type=str, help='input .xml file')
-    parser_a.add_argument ('output', metavar="OUT",  type=str, nargs='?', help='output directory', default='.')
-    parser_a.add_argument ('--driver', type=str, help='driver used for output', choices=['qt'], default='qt')
-    parser_a.add_argument ('--namespace', type=str, help='top level namespace for generated output', default='')
-    parser_a.add_argument ('--templates', type=str, help='directory containing file templates', default='qt-templates')
-    parser_a.add_argument ('--schema', type=str, help='schema used for validation', default=DEFAULT_SCHEMA_FILE)
-    parser_a.add_argument ('--author', type=str, help='The author of the files', default=username())
-    parser_a.add_argument ('--exportm', type=str, help='The macro used to export functions and classes', default='')
-    parser_a.add_argument ('--importh', type=str, help='Header file to be imported in every generated header', default='')
+    parser_a = subparsers.add_parser ('cpp',
+        help='Generate C++ sources from input .xml')
+    parser_a.add_argument ('xml', metavar="XML", type=str,
+        help='input .xml file')
+    parser_a.add_argument ('output', metavar="OUT",  type=str, nargs='?',
+        help='output directory',
+        default='.')
+    parser_a.add_argument ('--driver', type=str,
+        help='driver used for output',
+        choices=['qt'], default='qt')
+    parser_a.add_argument ('--namespace', type=str,
+        help='top level namespace for generated output',
+        default='')
+    parser_a.add_argument ('--templates', type=str,
+        help='directory containing file templates',
+        default='qt-templates')
+    parser_a.add_argument ('--schema', type=str,
+        help='schema used for validation',
+        default=DEFAULT_SCHEMA_FILE)
+    parser_a.add_argument ('--author', type=str,
+        help='The author of the files',
+        default=username())
+    parser_a.add_argument ('--exportm', type=str,
+        help='The macro used to export functions and classes',
+        default='')
+    parser_a.add_argument ('--importh', type=str,
+        help='Header file to be imported in every generated header',
+        default='')
     parser_a.set_defaults (func=cmd_qt)
 
     return parser
@@ -794,9 +959,9 @@ def make_argument_parser():
 # ----------------------------------------------------------------------------
 
 def setupLogger(args):
-    """
+    '''
     Prepares the logger.
-    """
+    '''
     logging.basicConfig()
     return
     # Set up the root logger with a custom handler that logs stdout for INFO
@@ -827,9 +992,9 @@ def setupLogger(args):
 # ----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    """
+    '''
     See module-level docstring for a description of the script.
-    """
+    '''
     parser = make_argument_parser ()
     args = parser.parse_args ()
     setupLogger (args)

@@ -41,6 +41,62 @@ using namespace %(namespace)s;
 //
 /*  CLASS    --------------------------------------------------------------- */
 
+/* ------------------------------------------------------------------------- */
+DbTaew * %(Database)sMeta::taewByIndex (%(Database)s::DbCompId index)
+{
+    switch(index) {
+
+%(DB_NEW_COMPONENTS)s
+        default:
+            return NULL;
+    }
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QString %(Database)sMeta::viewString (%(Database)s::DbViewId index) {
+    switch(index) {
+
+%(DB_VIEWS_NAME_CASE)s
+        default:
+            return QString();
+    }
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QString %(Database)sMeta::tableString (%(Database)s::DbTableId index) {
+    switch(index) {
+
+%(DB_TABLES_NAME_CASE)s
+        default:
+            return QString();
+    }
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QString %(Database)sMeta::componentString (%(Database)s::DbCompId index)
+{
+    switch(index) {
+
+%(DB_COMPONENTS_NAME_CASE)s
+        default:
+            return QString();
+    }
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+%(Database)sMeta::DbCompId %(Database)sMeta::idFromString (
+        const QString & value) {
+
+%(DB_COMPONENTS_NAME_TO_ID)s
+    return DBC_INVALID;
+}
+/* ========================================================================= */
+
+
 /*  CLASS    =============================================================== */
 //
 //

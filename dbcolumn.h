@@ -28,6 +28,9 @@ public:
     bool nulls_;
     bool autoincrement_;
     QString default_value_;
+    QString foreign_table_; /**< The table that this column references */
+    QString foreign_key_; /**< Name of the column in the referenced table */
+    QStringList foreign_ref_; /**< The columns that should replace this column */
 
     //! Default constructor.
     DbColumn ();
@@ -41,7 +44,10 @@ public:
             const QString & datatype,
             bool nulls,
             bool autoincrement,
-            const QString & default_value) : DbObject(),
+            const QString & default_value,
+            const QString & foreign_table,
+            const QString & foreign_key,
+            const QStringList & foreign_ref) : DbObject(),
         col_name_(col_name),
         col_id_(col_id),
         length_(length),
@@ -49,7 +55,10 @@ public:
         datatype_(datatype),
         nulls_(nulls),
         autoincrement_(autoincrement),
-        default_value_(default_value)
+        default_value_(default_value),
+        foreign_table_(foreign_table),
+        foreign_key_(foreign_key),
+        foreign_ref_(foreign_ref)
     {
     }
 
@@ -60,6 +69,12 @@ public:
     virtual Type
     type () const {
         return DBO_COLUMN;
+    }
+
+    //! Tell if this column has a foreign key.
+    inline bool
+    isForeignKey () const {
+        return !foreign_table_.isEmpty();
     }
 
 protected:

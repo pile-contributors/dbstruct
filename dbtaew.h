@@ -14,6 +14,12 @@
 #include <dbstruct/dbobject.h>
 #include <dbstruct/dbobject.h>
 
+QT_BEGIN_NAMESPACE
+class QObject;
+class QSqlTableModel;
+class QSqlDatabase;
+QT_END_NAMESPACE
+
 //! A table or view in a database.
 class DBSTRUCT_EXPORT DbTaew : public DbObject {
 
@@ -41,6 +47,19 @@ public:
     columnIndex (
             const QString & s_name) const;
 
+    //! Create a Sql model for this table.
+    virtual QSqlTableModel *
+    sqlModel (
+            QSqlDatabase & database,
+            QObject * parent = NULL) const;
+
+
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+    /** @name Interface
+    *  These methods MUST be implemented by subclasses.
+    */
+    ///@{
+
 
     //! The name of this table as a string.
     virtual QString
@@ -55,6 +74,11 @@ public:
     //! The name of a column given an index.
     virtual QString
     columnName(
+        int i) const = 0;
+
+    //! The (translated) label for a column given an index.
+    virtual QString
+    columnLabel (
         int i) const = 0;
 
     //! Number of columns in this table.
@@ -89,6 +113,9 @@ public:
     virtual DbColumn
     columnCtor (
             int i) const = 0;
+
+    ///@}
+    /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
 protected:
 
