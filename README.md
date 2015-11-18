@@ -26,11 +26,20 @@ schema file.
 The script will accept a command and various options:
  - *validate*: check a .xml file against the constraints
  in `PileSchema.xsd`;
- - *sql*: generate a .sql file used to create the database 
+ - *sql*: generate a .sql file used to create the database
  structure;
  - *cpp*: generate C++ source files based on templates and
  input .xml file.
 
+The script depends on `lxml`  that can be installed using `pip`.
+An additional python module (`pile_schema_loader.py`) is generated
+from `PileSchema.xsd` by
+[generateDS](http://www.davekuhlman.org/generateDS.html)
+and contains a Python parser for the file:
+
+    python generateDS.py --no-questions -f -o pile_schema_loader.py PileSchema.xsd
+
+This module is then used by `pileschema.py` to do its chores.
 
 Default Templates
 -----------------
@@ -38,7 +47,7 @@ Default Templates
 A set of default templates are provided in `qt-templates`
 directory. Please note that `lupdate.exe` will crash
 if it encounters a .h or .cc file that has variables in it.
-This is why the template files all have the `.template` 
-extension. The name of the template files are hard-coded into 
+This is why the template files all have the `.template`
+extension. The name of the template files are hard-coded into
 `pileschema.py` but that may change in the future.
 

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="PileSchema" 
-    targetNamespace="http://pile-contributors.github.io/database/PileSchema.xsd" 
-    elementFormDefault="qualified" 
-    xmlns="http://pile-contributors.github.io/database/PileSchema.xsd" 
-    xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd" 
+<xs:schema id="PileSchema"
+    targetNamespace="http://pile-contributors.github.io/database/PileSchema.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://pile-contributors.github.io/database/PileSchema.xsd"
+    xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
@@ -55,7 +55,7 @@
 
 
     <!-- INTEGER Types -->
-    
+
     <xs:complexType name="bit">
         <xs:annotation>
             <xs:documentation xml:lang="en">Boolean column data type.</xs:documentation>
@@ -279,7 +279,7 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    
+
     <xs:simpleType name="smallmoneyDefault">
         <xs:restriction base="xs:decimal">
             <xs:totalDigits value="10"/>
@@ -288,7 +288,7 @@
             <xs:maxInclusive value="214748.3647"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="smallmoney">
         <xs:attributeGroup ref="withDefaultExpression"/>
         <xs:attribute name="default" use="optional" type="smallmoneyDefault">
@@ -565,7 +565,7 @@
             <xs:element name="bigint" type="bigint"/>
             <xs:element name="smallint" type="smallint"/>
             <xs:element name="tinyint" type="tinyint"/>
-            
+
             <xs:element name="numeric" type="decimal"/>
             <xs:element name="decimal" type="decimal"/>
             <xs:element name="numericScale0" type="decimalScale0"/>
@@ -615,6 +615,11 @@
                 <xs:documentation xml:lang="en">Name of this column as it will be known to the database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="readOnly" use="optional" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Should the user be able to edit this column?.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="label" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">User visible string; if not provided `name` is used.</xs:documentation>
@@ -652,7 +657,7 @@
     </xs:complexType>
 
     <!-- Constraints -->
-    
+
     <xs:simpleType name="sortOrder">
         <xs:annotation>
             <xs:documentation xml:lang="en">indicated the direction of the sorting for a column.</xs:documentation>
@@ -687,7 +692,7 @@
         <xs:sequence>
             <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="constraintColumn"/>
         </xs:sequence>
-        
+
         <xs:attribute name="name" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Name of the constraint.</xs:documentation>
@@ -855,7 +860,7 @@
                 <xs:documentation xml:lang="en">Top level table from where we're selecting.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        
+
         <xs:attribute name="col1" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Column in top level table from where we're selecting.</xs:documentation>

@@ -28,6 +28,7 @@ public:
     bool nulls_;
     bool autoincrement_;
     QString default_value_;
+    bool read_only_;
     QString foreign_table_; /**< The table that this column references */
     QString foreign_key_; /**< Name of the column in the referenced table */
     QStringList foreign_ref_; /**< The columns that should replace this column */
@@ -45,6 +46,7 @@ public:
             bool nulls,
             bool autoincrement,
             const QString & default_value,
+            bool read_only,
             const QString & foreign_table,
             const QString & foreign_key,
             const QStringList & foreign_ref) : DbObject(),
@@ -56,6 +58,7 @@ public:
         nulls_(nulls),
         autoincrement_(autoincrement),
         default_value_(default_value),
+        read_only_(read_only),
         foreign_table_(foreign_table),
         foreign_key_(foreign_key),
         foreign_ref_(foreign_ref)

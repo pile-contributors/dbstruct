@@ -8,8 +8,6 @@ Basic usage:
 
     pileschema.py command
 
-
-
 '''
 
 import argparse
@@ -20,6 +18,8 @@ from lxml import etree
 import os
 import platform
 import sys
+
+import pile_schema_api
 
 if platform.system() == 'Windows':
     import win32api
@@ -122,9 +122,9 @@ class Driver(object):
         '''
 
         # Is this column a foreign key into another table?
-        ftable = node.get('foreignTable')
-        fcolumn = node.get('foreignColumn')
-        finsert = node.get('foreignInsert')
+        ftable = node.foreignTable
+        fcolumn = node.foreignColumn
+        finsert = node.foreignInsert
         if finsert:
             finsert  = finsert.split(',')
         if ftable is not None:
@@ -141,7 +141,6 @@ class Driver(object):
                 if coldata:
                     # the column is a foreign key
                     ftable, fcolumn, finsert = coldata
-                    print col, 'has fkey: ', coldata
                     try:
                         f_actual = self.tables[ftable]
                     except KeyError:
@@ -187,14 +186,13 @@ class SqlDriver(Driver):
 
     def tableEnd(self, name, node):
         '''Done processing table `name`'''
-        pkey = node.find(NSPACESTR + 'primaryKey')
-        if pkey is not None:
-            pkey = pkey.getchildren()[0] # key
-            if pkey is not None:
-                pkey = pkey.getchildren()[0] # column
+        try:
+            pkey = node.primaryKey.key.column[0]
+        except AttributeError:
+            pkey = None
 
         if pkey is not None:
-            self.sql_string += '  PRIMARY KEY (`' + pkey.get('name') + '`),\n'
+            self.sql_string += '  PRIMARY KEY (`' + pkey.name + '`),\n'
         for fkey in self.foreignKeys:
             fdata = self.foreignKeys[fkey]
             self.sql_string += '  FOREIGN KEY(' + fkey + ') REFERENCES ' + \
@@ -211,23 +209,30 @@ class SqlDriver(Driver):
         # first comes the name
         self.sql_string += '  `' + name + '` '
         # then the datatype
-        length = dtnode.get('length')
+        try:
+            length = dtnode.length
+        except AttributeError:
+            length = None
         if length:
             self.sql_string += datatype + '(' + length + ') '
         else:
             self.sql_string += datatype + ' '
         # any defaults
-        defval = dtnode.get('default')
-        defexpr = dtnode.get('defaultExpression')
+        defval = dtnode.default
+
+        defexpr = dtnode.defaultExpression
         if defval:
-            self.sql_string += 'DEFAULT ' + defval
+            self.sql_string += 'DEFAULT ' + str(defval)
         elif defexpr:
             self.sql_string += 'DEFAULT ' + defexpr
         # null constraint
         if (not nulls):
             self.sql_string += 'NOT NULL '
         # auto-incrementing
-        identity = dtnode.find(NSPACESTR + 'identity')
+        try:
+            identity = dtnode.identity
+        except AttributeError:
+            identity = None
         if not identity is None:
             self.sql_string += 'AUTO_INCREMENT '
         if self.sql_string[-1] == ' ':
@@ -251,13 +256,13 @@ class SqlDriver(Driver):
 
     def viewSubset(self, node, subset):
         '''Process a subset in a view'''
-        name1 = subset.get('name1')
-        col1 = subset.get('col1')
-        name_in = subset.get('in')
-        incol = subset.get('incol')
-        where = subset.get('where')
-        constraint = subset.get('constraint')
-        value = subset.get('value')
+        name1 = subset.name1
+        col1 = subset.col1
+        name_in = subset.in_
+        incol = subset.incol
+        where = subset.where
+        constraint = subset.constraint
+        value = subset.value
 
         if name_in is None:
             # only a primary table
@@ -518,8 +523,9 @@ class QtDriver(Driver):
                 stringChoice('true', 'false', coldata['autoincrement']) + \
                 ', "' + \
                 stringChoice('', coldata['defval'],
-                             coldata['defval'] is None) + \
-                '", ' + fkey_col + ')'
+                             coldata['defval'] is None) + '", ' + \
+                stringChoice('true', 'false', coldata['ronly']) + \
+                ', ' + fkey_col + ')'
 
             column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
                 'ColCtor () { return ' + column_create + '; }\n'
@@ -601,15 +607,26 @@ class QtDriver(Driver):
         '''Processing a column'''
 
         # then the datatype
-        length = dtnode.get('length')
+        try:
+            length = dtnode.length
+        except AttributeError:
+            length = None
         # any defaults
-        defval = dtnode.get('default')
-        defexpr = dtnode.get('defaultExpression')
+        defval = dtnode.default
+        defexpr = dtnode.defaultExpression
         if not defval:
             defval = defexpr
         # auto-incrementing
-        identity = dtnode.find(NSPACESTR + 'identity')
-        qtype = dtnode.get('qtype')
+        try:
+            identity = dtnode.identity
+        except AttributeError:
+            identity = None
+        try:
+            read_only = node.readOnly
+        except AttributeError:
+            read_only = False
+
+        qtype = dtnode.qtype
         if not qtype:
             qtype = datatype
 
@@ -621,7 +638,8 @@ class QtDriver(Driver):
             'defval': defval,
             'autoincrement': not identity is None,
             'datatype': datatype,
-            'fkey': self.getForeignKey(node)
+            'fkey': self.getForeignKey(node),
+            'ronly': read_only
         }
 
     def viewStart(self, name, node):
@@ -649,13 +667,13 @@ class QtDriver(Driver):
 
     def viewSubset(self, node, subset):
         '''Process a subset in a view'''
-        name1 = subset.get('name1')
-        col1 = subset.get('col1')
-        name_in = subset.get('in')
-        incol = subset.get('incol')
-        where = subset.get('where')
-        constraint = subset.get('constraint')
-        value = subset.get('value')
+        name1 = subset.name1
+        col1 = subset.col1
+        name_in = subset.in_
+        incol = subset.incol
+        where = subset.where
+        constraint = subset.constraint
+        value = subset.value
 
         self.columns = self.tables[name1]['columns']
         self.fillTableData(name1)
@@ -707,14 +725,15 @@ def validateString(xmlstring):
     global NSPACESTR
 
     try:
-        xml_root = etree.fromstring(xmlstring, PARSER)
+        xml_root = pile_schema_api.parseString(xmlstring, silence=True)
+        # xml_root = etree.fromstring(xmlstring, PARSER)
 
-        if NSPACESTR is None:
-            namespace = xml_root.nsmap[None]
-            NSPACESTR = '{' + namespace + '}'
+        #if NSPACESTR is None:
+        #    namespace = xml_root.nsmap[None]
+        #    NSPACESTR = '{' + namespace + '}'
 
         return xml_root
-    except etree.XMLSchemaError as exc:
+    except (etree.XMLSchemaError, etree.XMLSyntaxError) as exc:
         logger.error('Schema validation failed: ' + str(exc))
         return None
 
@@ -723,6 +742,8 @@ def validateString(xmlstring):
 def str2bool(v):
     if v is None:
         return False
+    if type(v) is bool:
+        return v
     return v.lower() in ("yes", "true", "t", "1")
 
 # ----------------------------------------------------------------------------
@@ -735,38 +756,51 @@ def stringChoice(s1, s2, choice):
 def processWithDriver(driver, database):
     '''
     '''
-    driver.databaseStart (database.get('name'), database)
+    driver.databaseStart (database.name, database)
 
-    tables = database.find(NSPACESTR + 'tables')
-    views = database.find(NSPACESTR + 'views')
+    tables = database.tables
+    views = database.views
 
-    for table in tables.iterchildren():
-        driver.tableStart (table.get('name'), table)
+    for table in tables.table:
+        driver.tableStart (table.name, table)
 
-        columns = table.find(NSPACESTR + 'columns')
-        for column in columns.iterchildren():
-            datatype = column.getchildren()[0]
-            datatype_name = datatype.tag.replace(NSPACESTR, '')
-            driver.column (column.get('name'),
-                           stringChoice(column.get('label'),
-                                        column.get('name'),
-                                        column.get('label')),
+        columns = table.columns
+        for column in columns.column:
+
+            datatype_name = ''
+            datatype = None
+            for kkk in dir(column):
+                # This is a hack; it exists because the generated class does no
+                # provide any means to iterate child elements
+                # It relies on the assumption that all elements are custom types
+                if str(type(getattr(column, kkk))).find('class') > 0:
+                    datatype = getattr(column, kkk)
+                    datatype_name = kkk
+                    break
+
+            driver.column (column.name,
+                           stringChoice(column.label,
+                                        column.name,
+                                        column.label),
                            datatype_name,
-                           str2bool(column.get('allowNulls')),
+                           str2bool(column.allowNulls),
                            column, datatype)
-        driver.tableEnd (table.get('name'), table)
 
-    for view in views.iterchildren():
-        driver.viewStart (view.get('name'), view)
-        subset = view.find(NSPACESTR + 'subset')
+
+
+        driver.tableEnd (table.name, table)
+
+    for view in views.view:
+        driver.viewStart (view.name, view)
+        subset = view.subset
         if subset is not None:
             driver.viewSubset(view, subset)
         else:
             logger.error('Unknown view type')
             return -1
-        driver.viewEnd (view.get('name'), view)
+        driver.viewEnd (view.name, view)
 
-    driver.databaseEnd (database.get('name'), database)
+    driver.databaseEnd (database.name, database)
 
 # ----------------------------------------------------------------------------
 

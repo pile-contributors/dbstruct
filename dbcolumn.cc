@@ -29,6 +29,7 @@ DbColumn::DbColumn() : DbObject(),
     nulls_(false),
     autoincrement_(false),
     default_value_(),
+    read_only_(),
     foreign_table_(),
     foreign_key_(),
     foreign_ref_()
