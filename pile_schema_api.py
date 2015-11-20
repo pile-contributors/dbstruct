@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Nov 18 20:37:25 2015 by generateDS.py version 2.17a.
+# Generated Wed Nov 18 22:34:02 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-build-debug-64
+#   cpp-app
 #
 
 import sys

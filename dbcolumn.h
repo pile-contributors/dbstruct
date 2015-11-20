@@ -20,11 +20,52 @@ class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
 public:
 
+    enum DataType {
+        DTY_INVALID = -1, /**< invalid data type */
+
+        DTY_BIGINT,
+        DTY_BINARY,
+        DTY_BIT,
+        DTY_CHAR,
+        DTY_DATE,
+        DTY_DATETIME,
+        DTY_DATETIME2,
+        DTY_DATETIMEOFFSET,
+        DTY_DECIMAL,
+        DTY_DECIMALSCALE,
+        DTY_FLOAT,
+        DTY_HIERARCHYID,
+        DTY_IMAGE,
+        DTY_INTEGER,
+        DTY_MONEY,
+        DTY_NCHAR,
+        DTY_NTEXT,
+        DTY_NUMERIC,
+        DTY_NUMERICSCALE,
+        DTY_NVARCHAR,
+        DTY_REAL,
+        DTY_ROWVERSION,
+        DTY_SMALLDATETIME,
+        DTY_SMALLINT,
+        DTY_SMALLMONEY,
+        DTY_SQL,
+        DTY_TEXT,
+        DTY_TIME,
+        DTY_TINYINT,
+        DTY_UNIQUEIDENTIFIER,
+        DTY_VARBINARY,
+        DTY_VARCHAR,
+        DTY_XML,
+
+        DTY_MAX /**< first invalid value */
+    };
+
+
     QString col_name_;
     int col_id_;
     int length_;
     QString col_label_;
-    QString datatype_;
+    DataType datatype_;
     bool nulls_;
     bool autoincrement_;
     QString default_value_;
@@ -42,7 +83,7 @@ public:
             int col_id,
             int length,
             const QString & col_label,
-            const QString & datatype,
+            DataType datatype,
             bool nulls,
             bool autoincrement,
             const QString & default_value,

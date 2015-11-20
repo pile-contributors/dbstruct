@@ -517,8 +517,8 @@ class QtDriver(Driver):
                 col + '", ' + \
                 dbc_name + ', '+ \
                 stringChoice(coldata['length'], '-1', coldata['length']) + \
-                ', ' + column_label + ', "'  + \
-                coldata['datatype'] + '", ' + \
+                ', ' + column_label + ', '  + \
+                'DbColumn::DTY_' + coldata['datatype'].upper() + ', ' + \
                 stringChoice('true', 'false', coldata['nulls']) + ', ' + \
                 stringChoice('true', 'false', coldata['autoincrement']) + \
                 ', "' + \
@@ -537,7 +537,7 @@ class QtDriver(Driver):
                 'rec.value (QLatin1String("' + col + '")).' + \
                 to_converter + ';\n'
 
-        int_types = ['long', 'int', 'bigint', 'smallint', 'tinyint']
+        int_types = ['long', 'integer', 'bigint', 'smallint', 'tinyint']
         if id_column == -1:
             id_column = 'COLID_INVALID'
             get_id_result = 'COLID_INVALID'
