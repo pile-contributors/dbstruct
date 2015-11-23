@@ -60,6 +60,29 @@ public:
         DTY_MAX /**< first invalid value */
     };
 
+    enum BoolFormat {
+        BF_Y_UPPER,
+        BF_T_UPPER,
+
+        BF_YES_CAMEL,
+        BF_YES_LOWER,
+        BF_YES_UPPER,
+
+        BF_ON_CAMEL,
+        BF_ON_LOWER,
+        BF_ON_UPPER,
+
+        BF_TRUE_CAMEL,
+        BF_TRUE_LOWER,
+        BF_TRUE_UPPER,
+
+        BF_STRING_ON
+    };
+
+    union ColFormat {
+        BoolFormat bit_; /**< for `DTY_BIT` datatype it is one of BoolFormat */
+        int width_; /**< field width if applicable */
+    };
 
     QString col_name_;
     int col_id_;
@@ -74,6 +97,14 @@ public:
     QString foreign_key_; /**< Name of the column in the referenced table */
     QStringList foreign_ref_; /**< The columns that should replace this column */
 
+    QString original_format_; /**< actual format passed to the constructor */
+    // following values are extracted from original_format_ in constructor
+    ColFormat format_; /**< column format (depends on datatype */
+    QChar fill_char_; /**< character used for padding, if any */
+    char nr_format_; /**< number format (e, E, f, g, G) */
+    int precision_; /**< number of significant digits for real numbers, base for integers */
+
+
     //! Default constructor.
     DbColumn ();
 
@@ -87,24 +118,11 @@ public:
             bool nulls,
             bool autoincrement,
             const QString & default_value,
+            const QString & format,
             bool read_only,
             const QString & foreign_table,
             const QString & foreign_key,
-            const QStringList & foreign_ref) : DbObject(),
-        col_name_(col_name),
-        col_id_(col_id),
-        length_(length),
-        col_label_(col_label),
-        datatype_(datatype),
-        nulls_(nulls),
-        autoincrement_(autoincrement),
-        default_value_(default_value),
-        read_only_(read_only),
-        foreign_table_(foreign_table),
-        foreign_key_(foreign_key),
-        foreign_ref_(foreign_ref)
-    {
-    }
+            const QStringList & foreign_ref) ;
 
     //! Destructor.
     virtual ~DbColumn();

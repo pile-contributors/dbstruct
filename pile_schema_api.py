@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Nov 18 22:34:02 2015 by generateDS.py version 2.17a.
+# Generated Sun Nov 22 01:54:27 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-app
+#   cpp-build-debug-64
 #
 
 import sys
@@ -1197,7 +1197,7 @@ class tinyint(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='byte', identity=None):
+    def __init__(self, default=None, defaultExpression=None, qtype='char', identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
@@ -1249,7 +1249,7 @@ class tinyint(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "byte" and 'qtype' not in already_processed:
+        if self.qtype != "char" and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tinyint', fromsubclass_=False, pretty_print=True):
@@ -2777,16 +2777,37 @@ class nchar(GeneratedsSuper):
 
 class column(GeneratedsSuper):
     """A column in a table. Name of this column as it will be known to the
-    database.Should the user be able to edit this column?.User
-    visible string; if not provided `name` is used.Does this column
-    allows NULL values or not?If this column references a column in
-    another table, this is the name of that table. This is the
-    attribute to check if the column is a foreign key or not.If this
-    column references a column in another table, this is the name of
-    that column.If this column references a column in another table,
-    this attribute decides which column (or columns) get inserted
-    into what is shown to the user in place or the original column.
-    The value may be a comma-separated list of column names."""
+    database.User visible string; if not provided `name` is
+    used.Formatting options for when the value is presented to the
+    user. The content depends on the type of value: bit: May be Yes,
+    yes, On, on, True, true or another string; in latter case the
+    string is shown if the value is true (1) and is hidden if the
+    value is false (0) decimal, float, numeric, real, etc:
+    fieldWidth`format`precision`fillChar Four values are used and
+    are delimited by the ` character. fieldWidth is the minimum
+    width of the generated text format can be e (format as
+    [-]9.9e[+|-]999), E (format as [-]9.9E[+|-]999), f (format as
+    [-]9.9), g (use e or f format, whichever is the most concise)
+    and G (use E or f format, whichever is the most concise)
+    precision number of digits after the decimal point or maximum
+    number of significant digits fillChar is the character used to
+    fill the space defined by fieldWidth For example 0`f`2` will
+    present number -1.25687 as -1.26 int, smallint, bigint, tinyint
+    fieldWidth`base`fillChar Three values are used and are delimited
+    by the ` character. fieldWidth is the minimum width of the
+    generated text base numeric base fillChar is the character used
+    to fill the space defined by fieldWidth For example 0`10` will
+    present number 1234 as 1234 text, varchar, etc The value of the
+    format is used as input mask; see inputMask. Should the user be
+    able to edit this column?.Does this column allows NULL values or
+    not?If this column references a column in another table, this is
+    the name of that table. This is the attribute to check if the
+    column is a foreign key or not.If this column references a
+    column in another table, this is the name of that column.If this
+    column references a column in another table, this attribute
+    decides which column (or columns) get inserted into what is
+    shown to the user in place or the original column. The value may
+    be a comma-separated list of column names."""
     member_data_items_ = {
         'foreignInsert': MemberSpec_('foreignInsert', 'xs:string', 0),
         'name': MemberSpec_('name', 'xs:string', 0),
@@ -2795,6 +2816,7 @@ class column(GeneratedsSuper):
         'allowNulls': MemberSpec_('allowNulls', 'xs:boolean', 0),
         'readOnly': MemberSpec_('readOnly', 'xs:boolean', 0),
         'foreignColumn': MemberSpec_('foreignColumn', 'xs:string', 0),
+        'userformat': MemberSpec_('userformat', 'xs:string', 0),
         'bit': MemberSpec_('bit', 'bit', 0),
         'integer': MemberSpec_('integer', 'int', 0),
         'bigint': MemberSpec_('bigint', 'bigint', 0),
@@ -2831,7 +2853,7 @@ class column(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', bit=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None):
+    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
@@ -2840,6 +2862,7 @@ class column(GeneratedsSuper):
         self.allowNulls = _cast(bool, allowNulls)
         self.readOnly = _cast(bool, readOnly)
         self.foreignColumn = _cast(None, foreignColumn)
+        self.userformat = _cast(None, userformat)
         self.bit = bit
         self.integer = integer
         self.bigint = bigint
@@ -2959,6 +2982,8 @@ class column(GeneratedsSuper):
     def set_readOnly(self, readOnly): self.readOnly = readOnly
     def get_foreignColumn(self): return self.foreignColumn
     def set_foreignColumn(self, foreignColumn): self.foreignColumn = foreignColumn
+    def get_userformat(self): return self.userformat
+    def set_userformat(self, userformat): self.userformat = userformat
     def hasContent_(self):
         if (
             self.bit is not None or
@@ -3038,6 +3063,9 @@ class column(GeneratedsSuper):
         if self.foreignColumn != "id" and 'foreignColumn' not in already_processed:
             already_processed.add('foreignColumn')
             outfile.write(' foreignColumn=%s' % (self.gds_format_string(quote_attrib(self.foreignColumn).encode(ExternalEncoding), input_name='foreignColumn'), ))
+        if self.userformat != "" and 'userformat' not in already_processed:
+            already_processed.add('userformat')
+            outfile.write(' userformat=%s' % (self.gds_format_string(quote_attrib(self.userformat).encode(ExternalEncoding), input_name='userformat'), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='column', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -3155,6 +3183,10 @@ class column(GeneratedsSuper):
         if value is not None and 'foreignColumn' not in already_processed:
             already_processed.add('foreignColumn')
             self.foreignColumn = value
+        value = find_attr_value_('userformat', node)
+        if value is not None and 'userformat' not in already_processed:
+            already_processed.add('userformat')
+            self.userformat = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'bit':
             obj_ = bit.factory()

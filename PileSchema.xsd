@@ -152,7 +152,7 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="byte">
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="char">
             <xs:annotation>
                 <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
             </xs:annotation>
@@ -615,14 +615,44 @@
                 <xs:documentation xml:lang="en">Name of this column as it will be known to the database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="readOnly" use="optional" type="xs:boolean" default="false">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Should the user be able to edit this column?.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="label" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">User visible string; if not provided `name` is used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="userformat" use="optional" type="xs:string" default="">
+            <xs:annotation>
+                <xs:documentation xml:lang="en"><p>Formatting options for when the value is presented to the user.</p>
+                <p>The content depends on the type of value:</p>
+                <dl>
+                <dt>bit:</dt>
+                <dd>May be Yes, yes, On, on, True, true or another string; in latter case the string is shown if the value is true (1) and is hidden if the value is false (0)</dd>
+                <dt>decimal, float, numeric, real, etc:</dt>
+                <dd><pre>fieldWidth`format`precision`fillChar</pre>
+                <p>Four values are used and are delimited by the ` character.</p>
+                <p><b>fieldWidth</b> is the minimum width of the generated text</p>
+                <p><b>format</b> can be e (format as [-]9.9e[+|-]999), E (format as [-]9.9E[+|-]999), f (format as [-]9.9), g (use e or f format, whichever is the most concise) and G (use E or f format, whichever is the most concise)</p>
+                <p><b>precision</b> number of digits after the decimal point or  maximum number of significant digits</p>
+                <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
+                <p>For example <code>0`f`2` </code> will present number -1.25687 as <code>-1.26</code> </p>
+                </dd>
+                <dt>int, smallint, bigint, tinyint</dt>
+                <dd><pre>fieldWidth`base`fillChar</pre>
+                <p>Three values are used and are delimited by the ` character.</p>
+                <p><b>fieldWidth</b> is the minimum width of the generated text</p>
+                <p><b>base</b> numeric base</p>
+                <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
+                <p>For example <code>0`10` </code> will present number 1234 as <code>1234</code> </p>
+                </dd>
+                <dt>text, varchar, etc</dt>
+                <dd>The value of the format is used as input mask; see <a href="http://doc.qt.io/qt-5/qlineedit.html#inputMask-prop">inputMask</a>.</dd>
+                </dl>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="readOnly" use="optional" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Should the user be able to edit this column?.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="allowNulls" use="optional" type="xs:boolean" default="true">

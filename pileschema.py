@@ -43,7 +43,7 @@ FROM_VARIANT = {
     'QString': 'toString ()',
     'bool': 'toBool ()',
     'long': 'toLongLong (&b_one); b_ret = b_ret & b_one',
-    'byte': 'toInt (&b_one); b_ret = b_ret & b_one',
+    'char': 'toInt (&b_one); b_ret = b_ret & b_one',
     'short': 'toInt (&b_one); b_ret = b_ret & b_one',
     'int': 'toInt (&b_one); b_ret = b_ret & b_one',
     'double': 'toDouble (&b_one); b_ret = b_ret & b_one',
@@ -57,7 +57,7 @@ TO_CAST = {
     'QString': '',
     'bool': '(bool)',
     'long': '(long)',
-    'byte': '(byte)',
+    'char': '(char)',
     'short': '(short)',
     'int': '(int)',
     'double': '(double)',
@@ -144,10 +144,13 @@ class Driver(object):
                     try:
                         f_actual = self.tables[ftable]
                     except KeyError:
-                        logger.warning(
-                            'Column %s of table %s references table '
-                            '%s that does not exist' % (col, tbl, ftable))
-                        raise
+                        try:
+                            f_actual = self.views[ftable]
+                        except KeyError:
+                            logger.warning(
+                                'Column %s of table %s references table '
+                                '%s that does not exist' % (col, tbl, ftable))
+                            raise
                     try:
                         f_actual['columns'][fcolumn]
                     except KeyError:
@@ -385,10 +388,10 @@ class QtDriver(Driver):
         with open(os.path.join(self.out_dir, self.data['database'] + '.cc'), 'w') as f:
             file.write(f, self.getTemplate ('database.cc.template') % self.data)
 
-        with open(os.path.join(self.out_dir, 'all-meta-tables.h.template'), 'w') as f:
+        with open(os.path.join(self.out_dir, 'all-meta-tables.h'), 'w') as f:
             file.write(f, self.getTemplate ('all-meta-tables.h.template') % self.data)
 
-        with open(os.path.join(self.out_dir, 'all-tables.h.template'), 'w') as f:
+        with open(os.path.join(self.out_dir, 'all-tables.h'), 'w') as f:
             file.write(f, self.getTemplate ('all-tables.h.template') % self.data)
 
         self.db_name = ''
@@ -521,9 +524,10 @@ class QtDriver(Driver):
                 'DbColumn::DTY_' + coldata['datatype'].upper() + ', ' + \
                 stringChoice('true', 'false', coldata['nulls']) + ', ' + \
                 stringChoice('true', 'false', coldata['autoincrement']) + \
-                ', "' + \
-                stringChoice('', coldata['defval'],
-                             coldata['defval'] is None) + '", ' + \
+                ', QLatin1String("' + stringChoice('', coldata['defval'],
+                    coldata['defval'] is None) + '")' + \
+                ', QLatin1String("' + stringChoice('', coldata['format'],
+                    coldata['format'] is None) + '"), ' + \
                 stringChoice('true', 'false', coldata['ronly']) + \
                 ', ' + fkey_col + ')'
 
@@ -625,6 +629,10 @@ class QtDriver(Driver):
             read_only = node.readOnly
         except AttributeError:
             read_only = False
+        try:
+            format_str = node.userformat
+        except AttributeError:
+            format_str = None
 
         qtype = dtnode.qtype
         if not qtype:
@@ -639,6 +647,7 @@ class QtDriver(Driver):
             'autoincrement': not identity is None,
             'datatype': datatype,
             'fkey': self.getForeignKey(node),
+            'format': format_str,
             'ronly': read_only
         }
 
@@ -650,6 +659,8 @@ class QtDriver(Driver):
 
     def viewEnd(self, name, node):
         '''Done processing view `name`'''
+
+        self.views[name]['columns'] = self.columns
 
         name = name.lower()
 
