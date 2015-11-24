@@ -12,7 +12,7 @@
 
 #include <dbstruct/dbstruct-config.h>
 
-#if 0
+#if 1
 #    define DBSTRUCT_DEBUGM printf
 #else
 #    define DBSTRUCT_DEBUGM black_hole
