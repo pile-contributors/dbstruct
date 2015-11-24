@@ -82,7 +82,7 @@ DbColumn::DbColumn (
     case DTY_TINYINT:
     case DTY_INTEGER: {
         QStringList sl = original_format_.split(QChar('`'));
-        if (sl.length() == 0) {
+        if ((sl.length() == 0) || ((sl.length() == 1) && sl.at(0).isEmpty())) {
             format_.width_ = 0;
             precision_ = 10;
             fill_char_ = ' ';
@@ -131,7 +131,7 @@ DbColumn::DbColumn (
     case DTY_DECIMALSCALE:
     case DTY_DECIMAL: {
         QStringList sl = original_format_.split(QChar('`'));
-        if (sl.length() == 0) {
+        if ((sl.length() == 0) || ((sl.length() == 1) && sl.at(0).isEmpty())) {
             format_.width_ = 0;
             precision_ = 8;
             nr_format_ = 'f';
