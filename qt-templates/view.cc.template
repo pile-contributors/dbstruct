@@ -53,7 +53,7 @@ void %(Table)s::bindOne (QSqlQuery & query, int i) const
 {
     switch (i) {
 %(BIND_ONE_COLUMN)s
-    default: break; // DB_%(TABLE)s_DBG("index out of bounds: %%d", i); break;
+    default: break; // DB_%(TABLE)s_DBG("index out of bounds: %%d\n", i); break;
     }
 }
 /* ========================================================================= */

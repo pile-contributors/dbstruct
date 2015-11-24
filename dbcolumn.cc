@@ -82,20 +82,41 @@ DbColumn::DbColumn (
     case DTY_TINYINT:
     case DTY_INTEGER: {
         QStringList sl = original_format_.split(QChar('`'));
-        if (sl.length() != 3) {
-            DBSTRUCT_DEBUGM("instead of 3, the format for integers has %d elements", sl.length());
+        if (sl.length() == 0) {
+            format_.width_ = 0;
+            precision_ = 10;
+            fill_char_ = ' ';
+        } else if (sl.length() != 3) {
+            DBSTRUCT_DEBUGM("instead of 3, the format for integers (%s) "
+                            "in column %s has %d elements\n",
+                            TMP_A(original_format_),
+                            TMP_A(col_name),
+                            sl.length());
+            format_.width_ = 0;
+            precision_ = 10;
+            fill_char_ = ' ';
         } else {
             bool b_ok;
             format_.width_ = sl.at(0).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Format width for integers is not an integer");
+                DBSTRUCT_DEBUGM("Format width for integers (%s) in column %s "
+                                "is not an integer\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             }
             precision_ = sl.at(1).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Base for integers is not an integer");
+                DBSTRUCT_DEBUGM("Base for integers (%s) in column %s "
+                                "is not an integer\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             }
             if (sl.at(2).length() != 1) {
-                DBSTRUCT_DEBUGM("Padding character for integers is not a single character");
+                DBSTRUCT_DEBUGM("Padding character for integers (%s) "
+                                "in column %s "
+                                "is not a single character\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             } else {
                 fill_char_ = sl.at(2).at(0);
             }
@@ -110,25 +131,50 @@ DbColumn::DbColumn (
     case DTY_DECIMALSCALE:
     case DTY_DECIMAL: {
         QStringList sl = original_format_.split(QChar('`'));
-        if (sl.length() != 4) {
-            DBSTRUCT_DEBUGM("instead of 4, the format for real numbers has %d elements", sl.length());
+        if (sl.length() == 0) {
+            format_.width_ = 0;
+            precision_ = 8;
+            nr_format_ = 'f';
+            fill_char_ = ' ';
+        } else if (sl.length() != 4) {
+            DBSTRUCT_DEBUGM("instead of 4, the format for real numbers (%s) "
+                            "in column %s has %d elements\n",
+                            TMP_A(original_format_),
+                            TMP_A(col_name),
+                            sl.length());
+            format_.width_ = 0;
+            precision_ = 8;
+            nr_format_ = 'f';
+            fill_char_ = ' ';
         } else {
             bool b_ok;
             format_.width_ = sl.at(0).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Format width for real numbers is not an integer");
+                DBSTRUCT_DEBUGM("Format width for real numbers "
+                                "in column %s is not an integer\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             }
             if (sl.at(1).length() != 1) {
-                DBSTRUCT_DEBUGM("Format character for real numbers is not a single character");
+                DBSTRUCT_DEBUGM("Format character for real numbers "
+                                "in column %s is not a single character\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             } else {
                 nr_format_ = sl.at(2).at(0).toLatin1();
             }
             precision_ = sl.at(2).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Precision for real numbers is not an integer");
+                DBSTRUCT_DEBUGM("Precision for real numbers "
+                                "in column %s is not an integer\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             }
             if (sl.at(2).length() != 1) {
-                DBSTRUCT_DEBUGM("Padding character for real numbers is not a single character");
+                DBSTRUCT_DEBUGM("Padding character for real numbers "
+                                "in column %s is not a single character\n",
+                                TMP_A(original_format_),
+                                TMP_A(col_name));
             } else {
                 fill_char_ = sl.at(3).at(0);
             }

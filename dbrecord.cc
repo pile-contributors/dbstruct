@@ -72,7 +72,7 @@ bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
     DBREC_TRACE_ENTRY;
     int id_column_index = table->idColumn ();
     if (id_column_index == -1) {
-        DBREC_DBG("The model does not have an id column");
+        DBREC_DBG("The model does not have an id column\n");
         return false;
     }
     // set the id inside the instance
@@ -120,11 +120,11 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
         }
         bindOne (query, column);
         if (!query.exec()) {
-            DBREC_DBG(TMP_A(query.lastError().text()));
+            DBREC_DBG("%s\n", TMP_A(query.lastError().text()));
             break;
         }
         if (!query.next()) {
-            DBREC_DBG("Not found in the database");
+            DBREC_DBG("Not found in the database\n");
             return false;
         }
 
@@ -136,7 +136,7 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
             ++additional_result;
         }
         if (additional_result > 0) {
-            DBREC_DBG("WARNING! %d additional results in set", additional_result);
+            DBREC_DBG("WARNING! %d additional results in set\n", additional_result);
         }
 
         break;
@@ -174,14 +174,14 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
         DBREC_DBG(TMP_A(statement));
 
         if (!query.prepare(statement)) {
-            DBREC_DBG(TMP_A(query.lastError().text()));
+            DBREC_DBG("%s\n", TMP_A(query.lastError().text()));
             DBG_ASSERT(false);
             break;
         }
         bind (query);
 
         if (!query.exec()) {
-            DBREC_DBG(TMP_A(query.lastError().text()));
+            DBREC_DBG("%s\n", TMP_A(query.lastError().text()));
             break;
         }
         if (isNew ()) {
@@ -202,7 +202,7 @@ bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
     for (;;) {
 
         if (isNew ()) {
-            DBREC_DBG("record is new/already deleted");
+            DBREC_DBG("record is new/already deleted\n");
             b_ret = true;
             break;
         }
@@ -216,7 +216,7 @@ bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
                 .arg(s_col_name);
         DBREC_DBG(TMP_A(statement));
         if (!query.prepare(statement)) {
-            DBREC_DBG(TMP_A(query.lastError().text()));
+            DBREC_DBG("%s\n", TMP_A(query.lastError().text()));
             DBG_ASSERT(false);
             break;
         }
