@@ -505,6 +505,15 @@ class QtDriver(Driver):
                 bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + \
                     col + '"), ' + col_var_name + ');\n'
                 comma_columns += ' ' * 12 + '"' + col + ',"\n'
+
+                retreive_columns += \
+                    '    %-26s = %10squery.value (/* %33s */ %4d).%s;\n' % (
+                        col_var_name, to_cast, dbc_name, real_id, to_converter)
+                record_columns += \
+                    '    %-20s = %10srec.value (%40s).%s;\n' % (
+                    col_var_name, to_cast,
+                    'QLatin1String("%s")' % col,
+                    to_converter)
             else:
                 real_column_mapping += '-1,\n'
                 default_constr = default_constr + ' ' * 8 + \
@@ -527,7 +536,8 @@ class QtDriver(Driver):
             # definition related to foreign keys
             fkey_data = coldata['fkey']
             if fkey_data:
-
+                if 'foreignInsert' in coldata:
+                    fkey_data[2] = coldata['foreignInsert']
                 fkey_col = '%40s, %30s, %30s, %15s' % (
                     'QLatin1String("%s")' % fkey_data[0],
                     'QLatin1String("%s")' % fkey_data[1],
@@ -595,20 +605,12 @@ class QtDriver(Driver):
             column_index_getters += \
                 '    case %20s: return %s;\n' % (
                     dbc_name, column_create)
-            retreive_columns += \
-                '    %16s = %10squery.value (%20s).%s;\n' % (
-                    col_var_name, to_cast, dbc_name, to_converter)
-            record_columns += \
-                '    %20s = %10srec.value (%40s).%s;\n' % (
-                col_var_name, to_cast,
-                'QLatin1String("%s")' % col,
-                to_converter)
             rec_to_map += \
                 '    result.insert(%40s, %30s);\n' % (
                 'QLatin1String ("%s")' % col,
                 'QVariant (%s)' % col_var_name)
             rec_from_map += \
-                '        if (!i.key ().compare (%40s)) { %20s = i.value ().%s; }\n' % (
+                '        if (!i.key ().compare (%40s)) { %-20s = i.value ().%s; }\n' % (
                 'QLatin1String ("%s")' % col,
                 col_var_name,
                 to_converter)
@@ -697,7 +699,6 @@ class QtDriver(Driver):
             for okey in coldata:
                 if not okey in vrtdata:
                     vrtdata[okey] = coldata[okey]
-            print vrtdata
 
         self.fillTableData(name)
 
