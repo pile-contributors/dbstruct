@@ -207,6 +207,11 @@ class SqlDriver(Driver):
 
     def column(self, name, label, datatype, nulls, node, dtnode):
         '''Processing a column'''
+
+        # skip virtual columns
+        if datatype == 'vrtcol':
+            return
+
         # first comes the name
         self.sql_string += '  `' + name + '` '
         # then the datatype
