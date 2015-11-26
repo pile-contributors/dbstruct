@@ -124,7 +124,9 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
             break;
         }
         if (!query.next()) {
-            DBREC_DEBUGM("Not found in the database\n");
+            DBREC_DEBUGM("Querry succeded but no entry was found "
+                         "in the database (%s)\n",
+                         TMP_A(query.lastError().text()));
             return false;
         }
 
