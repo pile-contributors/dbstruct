@@ -20,6 +20,11 @@ class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
 public:
 
+    enum ForeignBehaviour {
+        FB_CHOOSE, /**< the user can choose values from the other table */
+        FB_CHOOSE_ADD /**< the user can choose values from or add values to the other table */
+    };
+
     enum DataType {
         DTY_INVALID = -1, /**< invalid data type */
 
@@ -86,6 +91,7 @@ public:
 
     QString col_name_;
     int col_id_;
+    int real_col_id_;
     int length_;
     QString col_label_;
     DataType datatype_;
@@ -93,9 +99,11 @@ public:
     bool autoincrement_;
     QString default_value_;
     bool read_only_;
+    int virtrefcol_;
     QString foreign_table_; /**< The table that this column references */
     QString foreign_key_; /**< Name of the column in the referenced table */
-    QStringList foreign_ref_; /**< The columns that should replace this column */
+    QString foreign_ref_; /**< The columns that should replace this column */
+    ForeignBehaviour foreign_behaviour_; /**< how are we going to interact with foreign table */
 
     QString original_format_; /**< actual format passed to the constructor */
     // following values are extracted from original_format_ in constructor
@@ -112,6 +120,7 @@ public:
     DbColumn (
             const QString & col_name,
             int col_id,
+            int real_col_id,
             int length,
             const QString & col_label,
             DataType datatype,
@@ -120,9 +129,11 @@ public:
             const QString & default_value,
             const QString & format,
             bool read_only,
+            int virtrefcol,
             const QString & foreign_table,
             const QString & foreign_key,
-            const QStringList & foreign_ref) ;
+            const QString & foreign_ref,
+            ForeignBehaviour foreign_behaviour) ;
 
     //! Destructor.
     virtual ~DbColumn();
@@ -137,6 +148,12 @@ public:
     inline bool
     isForeignKey () const {
         return !foreign_table_.isEmpty();
+    }
+
+    //! Tell if this column is a virtual one.
+    inline bool
+    isVirtual () const {
+        return virtrefcol_ != -1;
     }
 
 protected:

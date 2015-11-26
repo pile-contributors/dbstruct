@@ -58,6 +58,16 @@ int DbTaew::columnIndex (const QString &s_name) const
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
+int DbTaew::realColumnIndex (const QString &s_name) const
+{
+    int partial = columnIndex (s_name);
+    if (partial == -1)
+        return partial;
+    return toRealIndex (partial);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
 QSqlTableModel * DbTaew::sqlModel (
         QSqlDatabase & database, QObject * parent) const
 {

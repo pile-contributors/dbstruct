@@ -47,6 +47,11 @@ public:
     columnIndex (
             const QString & s_name) const;
 
+    //! Tell the index of a column in the underlying table.
+    int
+    realColumnIndex (
+            const QString & s_name) const;
+
     //! Create a Sql model for this table.
     virtual QSqlTableModel *
     sqlModel (
@@ -113,6 +118,18 @@ public:
     virtual DbColumn
     columnCtor (
             int i) const = 0;
+
+    //! Creates a record of this type.
+    virtual DbRecord *
+    createDefaultRecord () const = 0;
+
+    //! Convert from virtual indices to real indices (-1 => virtual).
+    virtual int
+    toRealIndex (int) const = 0;
+
+    //! Convert from real indices to virtual indices.
+    virtual int
+    fromRealIndex (int) const = 0;
 
     ///@}
     /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */

@@ -53,16 +53,16 @@ void %(Table)s::bindOne (QSqlQuery & query, int i) const
 {
     switch (i) {
 %(BIND_ONE_COLUMN)s
-    default: break; // DB_%(TABLE)s_DBG("index out of bounds: %%d\n", i); break;
+    default: break; // DB_%(TABLE)s_DEBUGM("index out of bounds: %%d\n", i); break;
     }
 }
 /* ========================================================================= */
 
-
-
 /* ------------------------------------------------------------------------- */
 void %(Table)s::bind (QSqlQuery & query) const
 {
+    %(Table)s * result = (%(Table)s *)this;
+%(SetTableOverrides)s
 %(BIND_COLUMNS)s
 }
 /* ========================================================================= */
@@ -85,6 +85,30 @@ bool %(Table)s::retreive (const QSqlRecord & rec)
     bool b_one = true;
 
 %(RECORD_COLUMNS)s
+    return b_ret;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbRecMap %(Table)s::toMap () const
+{
+    DbRecMap result;
+
+%(RecToMap)s
+    return result;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+bool %(Table)s::retreive (const DbRecMap & map)
+{
+    bool b_ret = true;
+    bool b_one = true;
+    DbRecMap::const_iterator i;
+    for (i = map.begin(); i != map.end(); ++i) {
+
+%(RecFromMap)s
+    }
     return b_ret;
 }
 /* ========================================================================= */

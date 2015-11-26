@@ -23,6 +23,7 @@
 /*  INCLUDES    ------------------------------------------------------------ */
 
 #include "%(table)s-meta.h"
+#include "%(table)s.h"
 
 #include <QSql>
 #include <QSqlQuery>
@@ -30,6 +31,15 @@
 #include <QSqlError>
 #include <QSqlDatabase>
 #include <QVariant>
+
+// This table maps column indices to indices into the actual underlying table
+// (to take into account virtual columns).
+static int real_column_mapping[] = {
+%(RealColumnMapping)s
+};
+static int virtual_column_mapping[] = {
+%(VirtualColumnMapping)s
+};
 
 /*  INCLUDES    ============================================================ */
 //
@@ -39,7 +49,6 @@
 /*  DEFINITIONS    --------------------------------------------------------- */
 
 using namespace %(namespace)s::%(database)s;
-using namespace %(namespace)s::%(database)s::meta;
 
 /*  DEFINITIONS    ========================================================= */
 //
@@ -49,7 +58,7 @@ using namespace %(namespace)s::%(database)s::meta;
 /*  CLASS    --------------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-QStringList %(Table)s::columnsString()
+QStringList %(namespace)s::%(database)s::meta::%(Table)s::columnsString()
 {
     QStringList result;
     result
@@ -60,7 +69,7 @@ QStringList %(Table)s::columnsString()
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-QString %(Table)s::columnString (int i)
+QString %(namespace)s::%(database)s::meta::%(Table)s::columnString (int i)
 {
     QString result;
     switch (i) {
@@ -72,7 +81,7 @@ QString %(Table)s::columnString (int i)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-long %(Table)s::rowsInTable (QSqlDatabase & db)
+long %(namespace)s::%(database)s::meta::%(Table)s::rowsInTable (QSqlDatabase & db)
 {
     int rows = -1;
     QSqlQuery query(QLatin1String("SELECT COUNT(*) FROM %(Table)s;\n"), db);
@@ -83,15 +92,15 @@ long %(Table)s::rowsInTable (QSqlDatabase & db)
             rows = -1;
         }
     } else {
-        // DB_%(TABLE)s_DBG("Failed to retrieve number of rows\n");
-        // DB_%(TABLE)s_DBG("%s\n", TMP_A(query.lastError().text()));
+        // DB_%(TABLE)s_DEBUGM("Failed to retrieve number of rows\n");
+        // DB_%(TABLE)s_DEBUGM("%%s\n", TMP_A(query.lastError().text()));
     }
     return rows;
 }
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-DbColumn %(Table)s::columnCtor (int i) const
+DbColumn %(namespace)s::%(database)s::meta::%(Table)s::columnCtor (int i) const
 {
     switch (i) {
 
@@ -102,7 +111,7 @@ DbColumn %(Table)s::columnCtor (int i) const
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-QString %(Table)s::columnLabelString (int i)
+QString %(namespace)s::%(database)s::meta::%(Table)s::columnLabelString (int i)
 {
     QString result;
     switch (i) {
@@ -112,6 +121,35 @@ QString %(Table)s::columnLabelString (int i)
     return result;
 }
 /* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+DbRecord * %(namespace)s::%(database)s::meta::%(Table)s::createDefaultRecord () const
+{
+    %(namespace)s::%(database)s::%(Table)s * result =
+        new %(namespace)s::%(database)s::%(Table)s ();
+
+%(SetTableDefaults)s
+    return result;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+int %(namespace)s::%(database)s::meta::%(Table)s::toRealIndex (int value) const
+{
+    if ((value < 0) || (value >= COLID_MAX)) return -1;
+    return real_column_mapping[value];
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+int %(namespace)s::%(database)s::meta::%(Table)s::fromRealIndex (int value) const
+{
+    if ((value < 0) || (value >= sizeof(virtual_column_mapping) / sizeof(int)))
+        return -1;
+    return virtual_column_mapping[value];
+}
+/* ========================================================================= */
+
 
 /*  CLASS    =============================================================== */
 //

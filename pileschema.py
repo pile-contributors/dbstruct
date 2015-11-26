@@ -125,10 +125,9 @@ class Driver(object):
         ftable = node.foreignTable
         fcolumn = node.foreignColumn
         finsert = node.foreignInsert
-        if finsert:
-            finsert  = finsert.split(',')
+        fbehaviour = node.foreignBehaviour
         if ftable is not None:
-            return [ftable, fcolumn, finsert]
+            return [ftable, fcolumn, finsert, fbehaviour]
         else:
             return None
 
@@ -140,7 +139,7 @@ class Driver(object):
                 coldata = tbldata['columns'][col]['fkey']
                 if coldata:
                     # the column is a foreign key
-                    ftable, fcolumn, finsert = coldata
+                    ftable, fcolumn, finsert, fbehaviour = coldata
                     try:
                         f_actual = self.tables[ftable]
                     except KeyError:
@@ -160,15 +159,14 @@ class Driver(object):
                             col, tbl, fcolumn, ftable))
                         raise
                     if finsert:
-                        for inscol in finsert:
-                            try:
-                                f_actual['columns'][inscol]
-                            except KeyError:
-                                logger.warning(
-                                    'Column %s of table %s uses column '
-                                    '%s in table %s that does not exist' % (
-                                    col, tbl, inscol, ftable))
-                                raise
+                        try:
+                            f_actual['columns'][finsert]
+                        except KeyError:
+                            logger.warning(
+                                'Column %s of table %s uses column '
+                                '%s in table %s that does not exist' % (
+                                col, tbl, finsert, ftable))
+                            raise
 
 # ----------------------------------------------------------------------------
 
@@ -221,13 +219,18 @@ class SqlDriver(Driver):
         else:
             self.sql_string += datatype + ' '
         # any defaults
-        defval = dtnode.default
-
-        defexpr = dtnode.defaultExpression
+        try:
+            defval = dtnode.default
+        except AttributeError:
+            defval = None
+        try:
+            defexpr = dtnode.defaultExpression
+        except AttributeError:
+            defexpr = defval
         if defval:
-            self.sql_string += 'DEFAULT ' + str(defval)
+            self.sql_string += 'DEFAULT ' + str(defval) + ' '
         elif defexpr:
-            self.sql_string += 'DEFAULT ' + defexpr
+            self.sql_string += 'DEFAULT ' + defexpr + ' '
         # null constraint
         if (not nulls):
             self.sql_string += 'NOT NULL '
@@ -302,6 +305,7 @@ class QtDriver(Driver):
         self.tables = OrderedDict()
         self.views = OrderedDict()
         self.columns = OrderedDict()
+        self.vrtcols = [] # the names of the columns that are virtual
         super(QtDriver, self).__init__()
 
     def databaseStart(self, name, node):
@@ -426,6 +430,7 @@ class QtDriver(Driver):
         self.tables[name] = {}
         self.columns = OrderedDict()
         self.bootstrapData(name)
+        self.vrtcols = []
 
     def fillTableData(self, name):
         '''Prepare values for variables in the context of this table'''
@@ -443,19 +448,26 @@ class QtDriver(Driver):
         comma_columns_no_id = ''
         retreive_columns = ''
         record_columns = ''
+        rec_to_map = ''
+        rec_from_map = ''
         column_getters = ''
         column_index_getters = ''
         table_data_members = ''
         default_constr = ''
         assign_constr = ''
         copy_constr = ''
+        real_column_mapping = ''
+        virtual_column_mapping = ''
+        set_table_defaults = ''
         i = -1
+        real_id = 0
 
         column_ids = ''
         for i, col in enumerate(self.columns):
             coldata = self.columns[col]
             col_var_name = col.lower()
             qtype = coldata['qtype']
+            defval = coldata['defval']
             to_cast = TO_CAST[qtype]
             to_converter = FROM_VARIANT[qtype]
             dbc_name = 'COLID_' + col.upper()
@@ -463,23 +475,40 @@ class QtDriver(Driver):
             column_label = 'QCoreApplication::translate("' + self.db_name + \
                 '::' + name + '", "' + coldata['label'] + '")'
 
-            if col == 'id':
-                id_column = i
-                if coldata['autoincrement']:
-                    default_constr = default_constr + ' ' * 8 + col_var_name + \
-                        '(COLID_INVALID),\n'
-                elif qtype == 'QString':
-                    default_constr = default_constr + ' ' * 8 + col_var_name + \
-                        '(QLatin1String("-1")),\n'
+            col_mapping_nicety = '/* ' + dbc_name + ' -> */ '
+            col_mapping_nicety += ' ' * (64 - len(col_mapping_nicety))
+            real_column_mapping += 4*' ' + col_mapping_nicety
+            if not coldata['virtual']:
+                real_column_mapping += str(real_id) + ',\n'
+                virtual_column_mapping += 4*' ' + col_mapping_nicety + str(i) + ',\n'
+                if col == 'id':
+                    id_column = i
+                    if coldata['autoincrement']:
+                        default_constr = default_constr + ' ' * 8 + col_var_name + \
+                            '(COLID_INVALID),\n'
+                    elif qtype == 'QString':
+                        default_constr = default_constr + ' ' * 8 + col_var_name + \
+                            '(QLatin1String("-1")),\n'
+                    else:
+                        default_constr = default_constr + ' ' * 8 + col_var_name + \
+                            '(),\n'
                 else:
-                    default_constr = default_constr + ' ' * 8 + col_var_name + \
-                        '(),\n'
+                    default_constr = default_constr + ' ' * 8 + \
+                        col_var_name + '(),\n'
+                    comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
+                    column_columns += ' ' * 12 + '":' + col + ',"\n'
+                    assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
+                pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
+                bind_one_column += ' ' * 4 + 'case ' + dbc_name + \
+                    ': query.bindValue (QLatin1String(":' + col + '"), ' + \
+                    col_var_name + '); break;\n'
+                bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + \
+                    col + '"), ' + col_var_name + ');\n'
+                comma_columns += ' ' * 12 + '"' + col + ',"\n'
             else:
+                real_column_mapping += '-1,\n'
                 default_constr = default_constr + ' ' * 8 + \
                     col_var_name + '(),\n'
-                comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
-                column_columns += ' ' * 12 + '":' + col + ',"\n'
-                assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
 
             assign_constr = assign_constr + ' ' * 8 + col_var_name + \
                 ' = other.' + col_var_name + ';\n'
@@ -487,59 +516,120 @@ class QtDriver(Driver):
                 ' (other.' + col_var_name + '),\n'
 
             table_data_members += ' ' * 4 + qtype + ' ' + col.lower() + ';\n'
-            pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
             case_label += ' ' * 4 + 'case ' + dbc_name + ': result = ' + \
                 column_label + '; break;\n'
             case_columns += ' ' * 4 + 'case ' + dbc_name + \
                 ': result = QLatin1String("' + col + '"); break;\n'
             model_label += ' ' * 4 + 'model->setHeaderData (' + dbc_name + \
                 ', Qt::Horizontal, ' + column_label + ');\n'
-            bind_one_column += ' ' * 4 + 'case ' + dbc_name + \
-                ': query.bindValue (QLatin1String(":' + col + '"), ' + \
-                col_var_name + '); break;\n'
-            comma_columns += ' ' * 12 + '"' + col + ',"\n'
-            bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + \
-                col + '"), ' + col_var_name + ');\n'
+
 
             # definition related to foreign keys
             fkey_data = coldata['fkey']
             if fkey_data:
-                fkey_col = 'QLatin1String("' + fkey_data[0] + \
-                    '"), QLatin1String("' + fkey_data[1] + '"), '
-                if fkey_data[2]:
-                    fkey_col += 'QStringList() '
-                    for inscol in fkey_data[2]:
-                        fkey_col += '<< "' + inscol + '"'
-                else:
-                    fkey_col += 'QStringList()'
+
+                fkey_col = '%40s, %30s, %30s, %15s' % (
+                    'QLatin1String("%s")' % fkey_data[0],
+                    'QLatin1String("%s")' % fkey_data[1],
+                    'QLatin1String("%s")' % fkey_data[2] if fkey_data[2] else 'QString()',
+                    'DbColumn::FB_CHOOSE' if fkey_data[3] == '' or fkey_data[3] == 'choose' else 'DbColumn::FB_CHOOSE_ADD')
+
+#                fkey_col = 'QLatin1String("' + fkey_data[0] + \
+#                    '"), QLatin1String("' + fkey_data[1] + '"), '
+#                if fkey_data[2]:
+#                    fkey_col += 'QLatin1String("' + fkey_data[2] + '")'
+#                else:
+#                    fkey_col += 'QString()'
+#                if fkey_data[3] == '' or fkey_data[3] == 'choose':
+#                    fkey_col += ', DbColumn::FB_CHOOSE'
+#                else:
+#                    fkey_col += ', DbColumn::FB_CHOOSE_ADD'
             else:
-                fkey_col = 'QString(), QString(), QStringList()'
+                fkey_col = '%40s, %30s, %30s, %15s' % (
+                    'QString()', 'QString()',
+                    'QString()', 'DbColumn::FB_CHOOSE')
+
+            # the other column for virtual columns
+            try:
+                virt_ref_col = 'COLID_' + coldata['reference'].upper()
+            except KeyError:
+                virt_ref_col = None
 
             # constructor for column
-            column_create = 'DbColumn("' + \
-                col + '", ' + \
-                dbc_name + ', '+ \
-                stringChoice(coldata['length'], '-1', coldata['length']) + \
-                ', ' + column_label + ', '  + \
-                'DbColumn::DTY_' + coldata['datatype'].upper() + ', ' + \
-                stringChoice('true', 'false', coldata['nulls']) + ', ' + \
-                stringChoice('true', 'false', coldata['autoincrement']) + \
-                ', QLatin1String("' + stringChoice('', coldata['defval'],
-                    coldata['defval'] is None) + '")' + \
-                ', QLatin1String("' + stringChoice('', coldata['format'],
-                    coldata['format'] is None) + '"), ' + \
-                stringChoice('true', 'false', coldata['ronly']) + \
-                ', ' + fkey_col + ')'
+            column_create = 'DbColumn (%40s,%25s,%6d,%6d,%80s,%30s,%7s,%7s,%25s,%40s,%7s,%16s,%s)' % (
+                'QLatin1String("%s")' % col,
+                dbc_name,
+                real_id,
+                int(coldata['length']) if coldata['length'] else -1,
+                column_label,
+                'DbColumn::DTY_%s' % coldata['datatype'].upper(),
+                'true' if coldata['nulls'] else 'false',
+                'true' if coldata['autoincrement'] else 'false',
+                'QLatin1String("%s")' % coldata['defexpr'] if coldata['defexpr'] else 'QString()',
+                'QLatin1String("%s")' % coldata['format'] if coldata['format'] else 'QString()',
+                'true' if coldata['ronly'] else 'false',
+                virt_ref_col if coldata['virtual'] else '-1',
+                fkey_col
+            )
+#            column_create = 'DbColumn("' + \
+#                col + '", ' + \
+#                dbc_name + ', '+ \
+#                str(real_id) + ', '+ \
+#                stringChoice(coldata['length'], '-1', coldata['length']) + \
+#                ', ' + column_label + ', '  + \
+#                'DbColumn::DTY_' + coldata['datatype'].upper() + ', ' + \
+#                stringChoice('true', 'false', coldata['nulls']) + ', ' + \
+#                stringChoice('true', 'false', coldata['autoincrement']) + \
+#                ', QLatin1String("' + stringChoice('', coldata['defexpr'],
+#                    coldata['defexpr'] is None) + '")' + \
+#                ', QLatin1String("' + stringChoice('', coldata['format'],
+#                    coldata['format'] is None) + '"), ' + \
+#                stringChoice('true', 'false', coldata['ronly']) + ', ' + \
+#                stringChoice(virt_ref_col, '-1', coldata['virtual']) + \
+#                ', ' + fkey_col + ')'
 
-            column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
-                'ColCtor () { return ' + column_create + '; }\n'
-            column_index_getters += ' ' * 4 + 'case ' + dbc_name + \
-                ': return ' + column_create + ';\n'
-            retreive_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
-                'query.value (' + dbc_name + ').' + to_converter + ';\n'
-            record_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
-                'rec.value (QLatin1String("' + col + '")).' + \
-                to_converter + ';\n'
+
+            column_getters += \
+                '    static DbColumn %10sColCtor () { return %s; }\n' % (
+                    col.lower(), column_create)
+            column_index_getters += \
+                '    case %20s: return %s;\n' % (
+                    dbc_name, column_create)
+            retreive_columns += \
+                '    %16s = %10squery.value (%20s).%s;\n' % (
+                    col_var_name, to_cast, dbc_name, to_converter)
+            record_columns += \
+                '    %20s = %10srec.value (%40s).%s;\n' % (
+                col_var_name, to_cast,
+                'QLatin1String("%s")' % col,
+                to_converter)
+            rec_to_map += \
+                '    result.insert(%40s, %30s);\n' % (
+                'QLatin1String ("%s")' % col,
+                'QVariant (%s)' % col_var_name)
+            rec_from_map += \
+                '        if (!i.key ().compare (%40s)) { %20s = i.value ().%s; }\n' % (
+                'QLatin1String ("%s")' % col,
+                col_var_name,
+                to_converter)
+
+#            column_getters += ' ' * 4 + 'static DbColumn ' + col.lower() + \
+#                'ColCtor () { return ' + column_create + '; }\n'
+#            column_index_getters += ' ' * 4 + 'case ' + dbc_name + \
+#                ': return ' + column_create + ';\n'
+#            retreive_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
+#                'query.value (' + dbc_name + ').' + to_converter + ';\n'
+#            record_columns += ' '*4 + col_var_name + ' = ' + to_cast + \
+#                'rec.value (QLatin1String("' + col + '")).' + \
+#                to_converter + ';\n'
+#            rec_to_map += ' '*4 + 'result.insert(QLatin1String ("' + col + \
+#                '"), QVariant (' + col_var_name + '));\n'
+#            rec_from_map += ' '*8 + 'if (!i.key ().compare (QLatin1String ("' + \
+#                col + '"))) { ' + col_var_name + ' = i.value ().' + to_converter + '; }\n'
+            if defval:
+                set_table_defaults += make_value_setter (col_var_name, defval, qtype)
+
+            real_id = real_id + (not coldata['virtual'])
 
         int_types = ['long', 'integer', 'bigint', 'smallint', 'tinyint']
         if id_column == -1:
@@ -564,6 +654,8 @@ class QtDriver(Driver):
         comma_columns_no_id = comma_columns_no_id[:-3] + '"'
         column_columns = column_columns[:-3] + '"'
         assign_columns = assign_columns[:-3] + '"'
+        real_column_mapping = real_column_mapping[:-2]
+        virtual_column_mapping = virtual_column_mapping[:-2]
 
         self.data['COLUMN_COUNT'] = str(len(self.columns))
         self.data['PIPE_COLUMNS'] = pipe_columns
@@ -588,10 +680,24 @@ class QtDriver(Driver):
         self.data['CopyConstructor'] = copy_constr
         self.data['AssignConstructor'] = assign_constr
         self.data['DefaultConstructor'] = default_constr
+        self.data['RecToMap'] = rec_to_map
+        self.data['RecFromMap'] = rec_from_map
+        self.data['SetTableDefaults'] = set_table_defaults
+        self.data['SetTableOverrides'] = ''
+        self.data['RealColumnMapping'] = real_column_mapping
+        self.data['VirtualColumnMapping'] = virtual_column_mapping
 
     def tableEnd(self, name, node):
         '''Done processing table `name`'''
         self.tables[name]['columns'] = self.columns
+
+        for vrtcol in  self.vrtcols:
+            vrtdata = self.columns[vrtcol]
+            coldata = self.columns[vrtdata['reference']]
+            for okey in coldata:
+                if not okey in vrtdata:
+                    vrtdata[okey] = coldata[okey]
+            print vrtdata
 
         self.fillTableData(name)
 
@@ -610,46 +716,70 @@ class QtDriver(Driver):
     def column(self, name, label, datatype, nulls, node, dtnode):
         '''Processing a column'''
 
-        # then the datatype
-        try:
-            length = dtnode.length
-        except AttributeError:
-            length = None
-        # any defaults
-        defval = dtnode.default
-        defexpr = dtnode.defaultExpression
-        if not defval:
-            defval = defexpr
-        # auto-incrementing
-        try:
-            identity = dtnode.identity
-        except AttributeError:
-            identity = None
-        try:
-            read_only = node.readOnly
-        except AttributeError:
-            read_only = False
-        try:
-            format_str = node.userformat
-        except AttributeError:
-            format_str = None
+        # see if this is one of those virtual columns
+        if datatype == 'vrtcol':
+            # we should not expect the reference column
+            # to be already defined so we defer the processing
+            # for the end of the table
 
-        qtype = dtnode.qtype
-        if not qtype:
-            qtype = datatype
+            self.columns[name] = {
+                'virtual': True,
+                'label': label,
+                'ronly': True,
+                'reference': dtnode.references,
+                'foreignInsert': node.foreignInsert
+            }
+            self.vrtcols.append(name)
 
-        self.columns[name] = {
-            'qtype': qtype,
-            'label': label,
-            'length': length,
-            'nulls': nulls,
-            'defval': defval,
-            'autoincrement': not identity is None,
-            'datatype': datatype,
-            'fkey': self.getForeignKey(node),
-            'format': format_str,
-            'ronly': read_only
-        }
+        else:
+            # the datatype
+            try:
+                length = dtnode.length
+            except AttributeError:
+                length = None
+            # any defaults?
+            try:
+                defval = dtnode.default
+            except AttributeError:
+                defval = None
+            try:
+                defexpr = dtnode.defaultExpression
+            except AttributeError:
+                defexpr = None
+            if defval:
+                defexpr = defval
+            # auto-incrementing
+            try:
+                identity = dtnode.identity
+            except AttributeError:
+                identity = None
+            try:
+                read_only = node.readOnly
+            except AttributeError:
+                read_only = False
+            try:
+                format_str = node.userformat
+            except AttributeError:
+                format_str = None
+
+            qtype = dtnode.qtype
+            if not qtype:
+                qtype = datatype
+
+            self.columns[name] = {
+                'virtual': False,
+                'qtype': qtype,
+                'label': label,
+                'length': length,
+                'nulls': nulls,
+                'defexpr': defexpr,
+                'defval': defval,
+                'autoincrement': not identity is None,
+                'datatype': datatype,
+                'fkey': self.getForeignKey(node),
+                'format': format_str,
+                'ronly': read_only
+            }
 
     def viewStart(self, name, node):
         '''Starting to process view `name`'''
@@ -689,10 +819,44 @@ class QtDriver(Driver):
         self.columns = self.tables[name1]['columns']
         self.fillTableData(name1)
 
+        defaults = {}
+        for col in self.columns:
+            coldata = self.columns[col]
+            defaults[col] = coldata['defval']
+
         self.data['TableModify'] = name1
         self.data['BaseClass'] = 'DbView'
         self.data['baseclass'] = 'dbview'
         self.data['BASECLASS'] = 'DBVIEW'
+
+        force_values = {}
+        if hasattr(node, 'writeback'):
+            self.data['TableModify'] = node.writeback.table
+            if hasattr(node.writeback, 'column'):
+                for column in node.writeback.column:
+                    if hasattr(column, 'value'):
+                        force_values[column.name] = column.value
+                    if hasattr(column, 'default'):
+                        defaults[column.name] = column.default
+
+        set_table_overrides = ''
+        for col in force_values:
+            col_var_name = col.lower()
+            colval = force_values[col]
+            if colval is not None:
+                set_table_overrides += make_value_setter (col_var_name, colval, \
+                    self.columns[col]['qtype'])
+        set_table_defaults = ''
+        for col in defaults:
+            col_var_name = col.lower()
+            colval = defaults[col]
+            if colval is not None:
+                set_table_defaults += make_value_setter (col_var_name, colval, \
+                    self.columns[col]['qtype'])
+
+        self.data['SetTableDefaults'] = set_table_defaults
+        self.data['SetTableOverrides'] = set_table_overrides
+
 
         if name_in is None:
             # only a primary table
@@ -813,6 +977,7 @@ def processWithDriver(driver, database):
 
     driver.databaseEnd (database.name, database)
 
+
 # ----------------------------------------------------------------------------
 
 def extract_common (args):
@@ -833,6 +998,20 @@ def extract_common (args):
             schema_root = etree.XML(f.read())
         schema = etree.XMLSchema(schema_root)
         PARSER = etree.XMLParser(schema=schema, attribute_defaults=True)
+
+# ----------------------------------------------------------------------------
+
+def make_value_setter(var_name, var_value, qtype):
+    result = ''
+    result += ' '*4 + 'result->' + var_name + \
+        ' = '
+    if qtype == 'QString':
+        result += 'QLatin1String ("' + var_value + '");\n'
+    elif qtype == 'bool':
+        result += str(var_value).lower() + ';\n'
+    else:
+        result += str(var_value) + ';\n'
+    return result
 
 # ----------------------------------------------------------------------------
 

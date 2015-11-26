@@ -15,6 +15,10 @@
 #include <dbstruct/dbcolumn.h>
 #include <assert.h>
 
+#include <QMap>
+#include <QString>
+#include <QVariant>
+
 QT_BEGIN_NAMESPACE
 class QSqlDatabase;
 class QSqlQuery;
@@ -23,6 +27,8 @@ QT_END_NAMESPACE
 
 class DbTable;
 class DbTaew;
+
+typedef QMap<QString, QVariant> DbRecMap;
 
 //! A record in a database.
 class DBSTRUCT_EXPORT DbRecord  {
@@ -85,6 +91,10 @@ public:
     bind (
         QSqlQuery & query) const = 0;
 
+    //! Export the content of a record to a map.
+    virtual DbRecMap
+    toMap () const = 0;
+
     //! Get values from a query.
     virtual bool
     retreive (
@@ -94,6 +104,11 @@ public:
     virtual bool
     retreive (
         const QSqlRecord & rec) = 0;
+
+    //! Load values from an associative array.
+    virtual bool
+    retreive (
+        const DbRecMap & map) = 0;
 
     //! Set the index to given value (if the model has an id column).
     virtual void

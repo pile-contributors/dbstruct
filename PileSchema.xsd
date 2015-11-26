@@ -549,6 +549,26 @@
     </xs:complexType>
 
 
+    <xs:complexType name="vrtcol">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                This is a virtual column that presents values from another
+                table. The virtual column uses another, real column
+                to locate the table and the entry in the related model.
+                This element only indicates the source column in that table
+                and the label. The parent column element must provide
+                name, label and foreignInsert attributes.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="references" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The name of the real column
+                that selects into a foreign table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
     <!-- Columns -->
 
     <xs:complexType name="column">
@@ -608,6 +628,8 @@
             <xs:element name="sql_variant" type="parameterlessStringType"/>
             <xs:element name="xml" type="parameterlessStringType"/>
 
+            <xs:element name="vrtcol" type="vrtcol"/>
+
         </xs:choice>
 
         <xs:attribute name="name" use="required" type="xs:string">
@@ -617,7 +639,8 @@
         </xs:attribute>
         <xs:attribute name="label" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">User visible string; if not provided `name` is used.</xs:documentation>
+                <xs:documentation xml:lang="en">User visible string; if not
+                provided `name` is used.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="userformat" use="optional" type="xs:string" default="">
@@ -625,27 +648,27 @@
                 <xs:documentation xml:lang="en"><p>Formatting options for when the value is presented to the user.</p>
                 <p>The content depends on the type of value:</p>
                 <dl>
-                <dt>bit:</dt>
-                <dd>May be Yes, yes, On, on, True, true or another string; in latter case the string is shown if the value is true (1) and is hidden if the value is false (0)</dd>
-                <dt>decimal, float, numeric, real, etc:</dt>
-                <dd><pre>fieldWidth`format`precision`fillChar</pre>
-                <p>Four values are used and are delimited by the ` character.</p>
-                <p><b>fieldWidth</b> is the minimum width of the generated text</p>
-                <p><b>format</b> can be e (format as [-]9.9e[+|-]999), E (format as [-]9.9E[+|-]999), f (format as [-]9.9), g (use e or f format, whichever is the most concise) and G (use E or f format, whichever is the most concise)</p>
-                <p><b>precision</b> number of digits after the decimal point or  maximum number of significant digits</p>
-                <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
-                <p>For example <code>0`f`2` </code> will present number -1.25687 as <code>-1.26</code> </p>
-                </dd>
-                <dt>int, smallint, bigint, tinyint</dt>
-                <dd><pre>fieldWidth`base`fillChar</pre>
-                <p>Three values are used and are delimited by the ` character.</p>
-                <p><b>fieldWidth</b> is the minimum width of the generated text</p>
-                <p><b>base</b> numeric base</p>
-                <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
-                <p>For example <code>0`10` </code> will present number 1234 as <code>1234</code> </p>
-                </dd>
-                <dt>text, varchar, etc</dt>
-                <dd>The value of the format is used as input mask; see <a href="http://doc.qt.io/qt-5/qlineedit.html#inputMask-prop">inputMask</a>.</dd>
+                    <dt>bit:</dt>
+                    <dd>May be Yes, yes, On, on, True, true or another string; in latter case the string is shown if the value is true (1) and is hidden if the value is false (0)</dd>
+                    <dt>decimal, float, numeric, real, etc:</dt>
+                    <dd><pre>fieldWidth`format`precision`fillChar</pre>
+                    <p>Four values are used and are delimited by the ` character.</p>
+                    <p><b>fieldWidth</b> is the minimum width of the generated text</p>
+                    <p><b>format</b> can be e (format as [-]9.9e[+|-]999), E (format as [-]9.9E[+|-]999), f (format as [-]9.9), g (use e or f format, whichever is the most concise) and G (use E or f format, whichever is the most concise)</p>
+                    <p><b>precision</b> number of digits after the decimal point or  maximum number of significant digits</p>
+                    <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
+                    <p>For example <code>0`f`2` </code> will present number -1.25687 as <code>-1.26</code> </p>
+                    </dd>
+                    <dt>int, smallint, bigint, tinyint</dt>
+                    <dd><pre>fieldWidth`base`fillChar</pre>
+                    <p>Three values are used and are delimited by the ` character.</p>
+                    <p><b>fieldWidth</b> is the minimum width of the generated text</p>
+                    <p><b>base</b> numeric base</p>
+                    <p><b>fillChar</b> is the character used to fill the space defined by <b>fieldWidth</b></p>
+                    <p>For example <code>0`10` </code> will present number 1234 as <code>1234</code> </p>
+                    </dd>
+                    <dt>text, varchar, etc</dt>
+                    <dd>The value of the format is used as input mask; see <a href="http://doc.qt.io/qt-5/qlineedit.html#inputMask-prop">inputMask</a>.</dd>
                 </dl>
                 </xs:documentation>
             </xs:annotation>
@@ -662,18 +685,54 @@
         </xs:attribute>
         <xs:attribute name="foreignTable" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">If this column references a column in another table, this is the name of that table. This is the attribute to check if the column is a foreign key or not.</xs:documentation>
+                <xs:documentation xml:lang="en">If this column references a
+                column in another table, this is the name of that table.
+                This is the attribute to check if the column is a
+                foreign key or not.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="foreignColumn" use="optional" type="xs:string" default="id">
             <xs:annotation>
-                <xs:documentation xml:lang="en">If this column references a column in another table, this is the name of that column.</xs:documentation>
+                <xs:documentation xml:lang="en">If this column references
+                a column in another table, this is the name of that
+                column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="foreignInsert" use="optional" type="xs:string" default="id">
             <xs:annotation>
-                <xs:documentation xml:lang="en">If this column references a column in another table, this attribute decides which column (or columns) get inserted into what is shown to the user in place or the original column. The value may be a comma-separated list of column names.</xs:documentation>
+                <xs:documentation xml:lang="en">If this column references a
+                column in another table, this attribute decides which column
+                get inserted into what is shown to the user in
+                place of the original column.</xs:documentation>
             </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="foreignBehaviour" use="optional" default="choose">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">This attribute hints
+                about the way this column interacts with the foreign table.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="choose">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">The user can choose
+                            from a predefined list of options provided by
+                            the foreign table.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="chooseAdd">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">The user may choose
+                            from the predefined list but it may
+                            also add new values that are going to be
+                            inserted in the foreign table.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:enumeration>
+                </xs:restriction>
+            </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
 
@@ -681,9 +740,9 @@
         <xs:annotation>
             <xs:documentation xml:lang="en">The list of columns for a table.</xs:documentation>
         </xs:annotation>
-        <xs:sequence>
+        <xs:choice>
             <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="column"/>
-        </xs:sequence>
+        </xs:choice>
     </xs:complexType>
 
     <!-- Constraints -->
@@ -887,62 +946,124 @@
 
         <xs:attribute name="name1" type="xs:string" use="required">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Top level table from where we're selecting.</xs:documentation>
+                <xs:documentation xml:lang="en">Top level table from where
+                we're selecting.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="col1" type="xs:string" use="required">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Column in top level table from where we're selecting.</xs:documentation>
+                <xs:documentation xml:lang="en">Column in top level table
+                from where we're selecting.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="in" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Second level table used as source (of ids) for primary table.</xs:documentation>
+                <xs:documentation xml:lang="en">Second level table used
+                as source (of ids) for primary table.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="incol" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Column in second level table used as source for primary table.</xs:documentation>
+                <xs:documentation xml:lang="en">Column in second level
+                table used as source for primary table.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="where" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Column in second level table used to filter secondary table.</xs:documentation>
+                <xs:documentation xml:lang="en">Column in second level
+                table used to filter secondary table.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="constraint" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Operator to apply to `value` and either `col1` or `where` depending on the variant that's being used.</xs:documentation>
+                <xs:documentation xml:lang="en">Operator to apply to `value`
+                and either `col1` or `where` depending on the variant
+                that's being used.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="value" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The value to compare using `constraint` against `col1` or `where` depending on the variant that's being used.</xs:documentation>
+                <xs:documentation xml:lang="en">The value to compare using
+                `constraint` against `col1` or `where` depending on the
+                variant that's being used.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
     </xs:complexType>
+
+    <xs:complexType name="viewWriteBackCol">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Represents a column in a
+            write-back element.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The name of the column
+                inside target table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="value" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If specified, that value for
+                this column will always be this when inserting or updating
+                the target table, even if the user
+                specifies a value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="default" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">If the user does not
+                specify a value this value is used instead, thus overriding
+                any defaults set for target table.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="viewWriteBack">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A view may be given a
+            table where it should write the data.</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="column" type="viewWriteBackCol" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+
+        <xs:attribute name="table" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The name of the
+                table (not view) where the view should write back
+                the data.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
 
     <xs:complexType name="view">
         <xs:annotation>
             <xs:documentation xml:lang="en">A view inside another table or tables.</xs:documentation>
         </xs:annotation>
 
-        <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:element name="subset" type="viewSubset"/>
-        </xs:choice>
+        <xs:sequence>
+            <xs:element name="subset" type="viewSubset" minOccurs="0" maxOccurs="1" />
+            <xs:element name="writeback" type="viewWriteBack" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
 
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Name of the view.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
     </xs:complexType>
 
     <xs:complexType name="views">

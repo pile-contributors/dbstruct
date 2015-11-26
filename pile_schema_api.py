@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Mon Nov 23 18:40:31 2015 by generateDS.py version 2.17a.
+# Generated Thu Nov 26 02:09:48 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-app
+#   cpp-build-debug-64
 #
 
 import sys
@@ -2775,6 +2775,76 @@ class nchar(GeneratedsSuper):
 # end class nchar
 
 
+class vrtcol(GeneratedsSuper):
+    """This is a virtual column that presents values from another table.
+    The virtual column uses another, real column to locate the table
+    and the entry in the related model. This element only indicates
+    the source column in that table and the label. The parent column
+    element must provide name, label and foreignInsert attributes.
+    The name of the real column that selects into a foreign table."""
+    member_data_items_ = {
+        'references': MemberSpec_('references', 'xs:string', 0),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, references=None):
+        self.original_tagname_ = None
+        self.references = _cast(None, references)
+    def factory(*args_, **kwargs_):
+        if vrtcol.subclass:
+            return vrtcol.subclass(*args_, **kwargs_)
+        else:
+            return vrtcol(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_references(self): return self.references
+    def set_references(self, references): self.references = references
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='vrtcol', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='vrtcol')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='vrtcol', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='vrtcol'):
+        if self.references is not None and 'references' not in already_processed:
+            already_processed.add('references')
+            outfile.write(' references=%s' % (self.gds_format_string(quote_attrib(self.references).encode(ExternalEncoding), input_name='references'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='vrtcol', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('references', node)
+        if value is not None and 'references' not in already_processed:
+            already_processed.add('references')
+            self.references = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        pass
+# end class vrtcol
+
+
 class column(GeneratedsSuper):
     """A column in a table. Name of this column as it will be known to the
     database.User visible string; if not provided `name` is
@@ -2805,12 +2875,17 @@ class column(GeneratedsSuper):
     column is a foreign key or not.If this column references a
     column in another table, this is the name of that column.If this
     column references a column in another table, this attribute
-    decides which column (or columns) get inserted into what is
-    shown to the user in place or the original column. The value may
-    be a comma-separated list of column names."""
+    decides which column get inserted into what is shown to the user
+    in place of the original column.This attribute hints about the
+    way this column interacts with the foreign table. The user can
+    choose from a predefined list of options provided by the foreign
+    table. The user may choose from the predefined list but it may
+    also add new values that are going to be inserted in the foreign
+    table."""
     member_data_items_ = {
         'foreignInsert': MemberSpec_('foreignInsert', 'xs:string', 0),
         'name': MemberSpec_('name', 'xs:string', 0),
+        'foreignBehaviour': MemberSpec_('foreignBehaviour', 'xs:string', 0),
         'foreignTable': MemberSpec_('foreignTable', 'xs:string', 0),
         'label': MemberSpec_('label', 'xs:string', 0),
         'allowNulls': MemberSpec_('allowNulls', 'xs:boolean', 0),
@@ -2850,13 +2925,15 @@ class column(GeneratedsSuper):
         'uniqueidentifier': MemberSpec_('uniqueidentifier', 'uniqueidentifier', 0),
         'sql_variant': MemberSpec_('sql_variant', 'parameterlessStringType', 0),
         'xml': MemberSpec_('xml', 'parameterlessStringType', 0),
+        'vrtcol': MemberSpec_('vrtcol', 'vrtcol', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None):
+    def __init__(self, foreignInsert='id', name=None, foreignBehaviour='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
+        self.foreignBehaviour = _cast(None, foreignBehaviour)
         self.foreignTable = _cast(None, foreignTable)
         self.label = _cast(None, label)
         self.allowNulls = _cast(bool, allowNulls)
@@ -2896,6 +2973,7 @@ class column(GeneratedsSuper):
         self.uniqueidentifier = uniqueidentifier
         self.sql_variant = sql_variant
         self.xml = xml
+        self.vrtcol = vrtcol
     def factory(*args_, **kwargs_):
         if column.subclass:
             return column.subclass(*args_, **kwargs_)
@@ -2968,10 +3046,14 @@ class column(GeneratedsSuper):
     def set_sql_variant(self, sql_variant): self.sql_variant = sql_variant
     def get_xml(self): return self.xml
     def set_xml(self, xml): self.xml = xml
+    def get_vrtcol(self): return self.vrtcol
+    def set_vrtcol(self, vrtcol): self.vrtcol = vrtcol
     def get_foreignInsert(self): return self.foreignInsert
     def set_foreignInsert(self, foreignInsert): self.foreignInsert = foreignInsert
     def get_name(self): return self.name
     def set_name(self, name): self.name = name
+    def get_foreignBehaviour(self): return self.foreignBehaviour
+    def set_foreignBehaviour(self, foreignBehaviour): self.foreignBehaviour = foreignBehaviour
     def get_foreignTable(self): return self.foreignTable
     def set_foreignTable(self, foreignTable): self.foreignTable = foreignTable
     def get_label(self): return self.label
@@ -3018,7 +3100,8 @@ class column(GeneratedsSuper):
             self.hierarchyid is not None or
             self.uniqueidentifier is not None or
             self.sql_variant is not None or
-            self.xml is not None
+            self.xml is not None or
+            self.vrtcol is not None
         ):
             return True
         else:
@@ -3048,6 +3131,9 @@ class column(GeneratedsSuper):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
             outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+        if self.foreignBehaviour != "choose" and 'foreignBehaviour' not in already_processed:
+            already_processed.add('foreignBehaviour')
+            outfile.write(' foreignBehaviour=%s' % (self.gds_format_string(quote_attrib(self.foreignBehaviour).encode(ExternalEncoding), input_name='foreignBehaviour'), ))
         if self.foreignTable is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
             outfile.write(' foreignTable=%s' % (self.gds_format_string(quote_attrib(self.foreignTable).encode(ExternalEncoding), input_name='foreignTable'), ))
@@ -3137,6 +3223,8 @@ class column(GeneratedsSuper):
             self.sql_variant.export(outfile, level, namespace_, name_='sql_variant', pretty_print=pretty_print)
         if self.xml is not None:
             self.xml.export(outfile, level, namespace_, name_='xml', pretty_print=pretty_print)
+        if self.vrtcol is not None:
+            self.vrtcol.export(outfile, level, namespace_, name_='vrtcol', pretty_print=pretty_print)
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3153,6 +3241,10 @@ class column(GeneratedsSuper):
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+        value = find_attr_value_('foreignBehaviour', node)
+        if value is not None and 'foreignBehaviour' not in already_processed:
+            already_processed.add('foreignBehaviour')
+            self.foreignBehaviour = value
         value = find_attr_value_('foreignTable', node)
         if value is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
@@ -3353,6 +3445,11 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.xml = obj_
             obj_.original_tagname_ = 'xml'
+        elif nodeName_ == 'vrtcol':
+            obj_ = vrtcol.factory()
+            obj_.build(child_)
+            self.vrtcol = obj_
+            obj_.original_tagname_ = 'vrtcol'
 # end class column
 
 
@@ -4706,18 +4803,199 @@ class viewSubset(GeneratedsSuper):
 # end class viewSubset
 
 
+class viewWriteBackCol(GeneratedsSuper):
+    """Represents a column in a write-back element.The name of the column
+    inside target table.If specified, that value for this column
+    will always be this when inserting or updating the target table,
+    even if the user specifies a value.If the user does not specify
+    a value this value is used instead, thus overriding any defaults
+    set for target table."""
+    member_data_items_ = {
+        'default': MemberSpec_('default', 'xs:string', 0),
+        'name': MemberSpec_('name', 'xs:string', 0),
+        'value': MemberSpec_('value', 'xs:string', 0),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, default=None, name=None, value=None):
+        self.original_tagname_ = None
+        self.default = _cast(None, default)
+        self.name = _cast(None, name)
+        self.value = _cast(None, value)
+    def factory(*args_, **kwargs_):
+        if viewWriteBackCol.subclass:
+            return viewWriteBackCol.subclass(*args_, **kwargs_)
+        else:
+            return viewWriteBackCol(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_default(self): return self.default
+    def set_default(self, default): self.default = default
+    def get_name(self): return self.name
+    def set_name(self, name): self.name = name
+    def get_value(self): return self.value
+    def set_value(self, value): self.value = value
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='viewWriteBackCol', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='viewWriteBackCol')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='viewWriteBackCol', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='viewWriteBackCol'):
+        if self.default is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+        if self.value is not None and 'value' not in already_processed:
+            already_processed.add('value')
+            outfile.write(' value=%s' % (self.gds_format_string(quote_attrib(self.value).encode(ExternalEncoding), input_name='value'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='viewWriteBackCol', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('default', node)
+        if value is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            self.default = value
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+        value = find_attr_value_('value', node)
+        if value is not None and 'value' not in already_processed:
+            already_processed.add('value')
+            self.value = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        pass
+# end class viewWriteBackCol
+
+
+class viewWriteBack(GeneratedsSuper):
+    """A view may be given a table where it should write the data.The name
+    of the table (not view) where the view should write back the
+    data."""
+    member_data_items_ = {
+        'table': MemberSpec_('table', 'xs:string', 0),
+        'column': MemberSpec_('column', 'column', 1),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, table=None, column=None):
+        self.original_tagname_ = None
+        self.table = _cast(None, table)
+        if column is None:
+            self.column = []
+        else:
+            self.column = column
+    def factory(*args_, **kwargs_):
+        if viewWriteBack.subclass:
+            return viewWriteBack.subclass(*args_, **kwargs_)
+        else:
+            return viewWriteBack(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_column(self): return self.column
+    def set_column(self, column): self.column = column
+    def add_column(self, value): self.column.append(value)
+    def insert_column_at(self, index, value): self.column.insert(index, value)
+    def replace_column_at(self, index, value): self.column[index] = value
+    def get_table(self): return self.table
+    def set_table(self, table): self.table = table
+    def hasContent_(self):
+        if (
+            self.column
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='viewWriteBack', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='viewWriteBack')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='viewWriteBack', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='viewWriteBack'):
+        if self.table is not None and 'table' not in already_processed:
+            already_processed.add('table')
+            outfile.write(' table=%s' % (self.gds_format_string(quote_attrib(self.table).encode(ExternalEncoding), input_name='table'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='viewWriteBack', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for column_ in self.column:
+            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('table', node)
+        if value is not None and 'table' not in already_processed:
+            already_processed.add('table')
+            self.table = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        if nodeName_ == 'column':
+            obj_ = viewWriteBackCol.factory()
+            obj_.build(child_)
+            self.column.append(obj_)
+            obj_.original_tagname_ = 'column'
+# end class viewWriteBack
+
+
 class view(GeneratedsSuper):
     """A view inside another table or tables.Name of the view."""
     member_data_items_ = {
         'name': MemberSpec_('name', 'xs:string', 0),
         'subset': MemberSpec_('subset', 'viewSubset', 0),
+        'writeback': MemberSpec_('writeback', 'viewWriteBack', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, name=None, subset=None):
+    def __init__(self, name=None, subset=None, writeback=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
         self.subset = subset
+        self.writeback = writeback
     def factory(*args_, **kwargs_):
         if view.subclass:
             return view.subclass(*args_, **kwargs_)
@@ -4726,11 +5004,14 @@ class view(GeneratedsSuper):
     factory = staticmethod(factory)
     def get_subset(self): return self.subset
     def set_subset(self, subset): self.subset = subset
+    def get_writeback(self): return self.writeback
+    def set_writeback(self, writeback): self.writeback = writeback
     def get_name(self): return self.name
     def set_name(self, name): self.name = name
     def hasContent_(self):
         if (
-            self.subset is not None
+            self.subset is not None or
+            self.writeback is not None
         ):
             return True
         else:
@@ -4764,6 +5045,8 @@ class view(GeneratedsSuper):
             eol_ = ''
         if self.subset is not None:
             self.subset.export(outfile, level, namespace_, name_='subset', pretty_print=pretty_print)
+        if self.writeback is not None:
+            self.writeback.export(outfile, level, namespace_, name_='writeback', pretty_print=pretty_print)
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4782,6 +5065,11 @@ class view(GeneratedsSuper):
             obj_.build(child_)
             self.subset = obj_
             obj_.original_tagname_ = 'subset'
+        elif nodeName_ == 'writeback':
+            obj_ = viewWriteBack.factory()
+            obj_.build(child_)
+            self.writeback = obj_
+            obj_.original_tagname_ = 'writeback'
 # end class view
 
 
@@ -5039,13 +5327,14 @@ GDSClassesMapping = {
     'xml': parameterlessStringType,
     'smalldatetime': parameterlessStringType,
     'columns': columnList,
+    'writeback': viewWriteBack,
     'rowversion': parameterlessType,
     'varchar': char,
     'key': constraint,
     'date': dateType,
     'ntext': parameterlessStringType,
     'sql_variant': parameterlessStringType,
-    'column': relationshipColumn,
+    'column': viewWriteBackCol,
     'datetime2': variablePrecisionTime,
     'time': timeType,
     'varbinary': binary,
@@ -5211,5 +5500,8 @@ __all__ = [
     "variablePrecisionTime",
     "view",
     "viewSubset",
-    "views"
+    "viewWriteBack",
+    "viewWriteBackCol",
+    "views",
+    "vrtcol"
 ]

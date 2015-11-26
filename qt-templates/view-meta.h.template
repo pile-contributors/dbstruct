@@ -241,6 +241,18 @@ public:
     columnCtor (
             int i) const;
 
+    //! Creates a record of this type.
+    virtual DbRecord *
+    createDefaultRecord () const;
+
+    //! Convert from virtual indices to real indices (-1 => virtual).
+    virtual int
+    toRealIndex (int) const;
+
+    //! Convert from real indices to virtual indices.
+    virtual int
+    fromRealIndex (int) const;
+
     /*  FUNCTIONS    ======================================================= */
     //
     //

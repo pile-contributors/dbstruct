@@ -110,6 +110,10 @@ public:
     bind (
         QSqlQuery & query) const;
 
+    //! Export the content of a record to a map.
+    virtual DbRecMap
+    toMap () const;
+
     //! Get values from a query.
     virtual bool
     retreive (
@@ -119,6 +123,11 @@ public:
     virtual bool
     retreive (
         const QSqlRecord & rec);
+
+    //! Load values from an associative array.
+    virtual bool
+    retreive (
+        const DbRecMap & map);
 
     //! Set the index to given value (if the model has an id column).
     virtual void
