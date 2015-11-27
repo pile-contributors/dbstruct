@@ -570,6 +570,10 @@ class QtDriver(Driver):
             except KeyError:
                 virt_ref_col = None
 
+            if (col == 'area'):
+                print name, coldata['datatype']
+
+
             # constructor for column
             column_create = 'DbColumn (%40s,%25s,%6d,%6d,%80s,%30s,%7s,%7s,%25s,%40s,%7s,%16s,%s)' % (
                 'QLatin1String("%s")' % col,
@@ -704,6 +708,28 @@ class QtDriver(Driver):
             for okey in coldata:
                 if not okey in vrtdata:
                     vrtdata[okey] = coldata[okey]
+
+        #for vrtcol in  self.vrtcols:
+        #    if (vrtcol == 'area'):
+        #        print ';;;;;', vrtcol, '------------------------------'
+        #    # retreive the dictionary associated with this column
+        #    vrtdata = self.columns[vrtcol]
+        #    # get the column in this table that actually ties to a foreign
+        #    # table and obtain the name of the table and other info in its fkey
+        #    ftable, fcolumn, finsert, fbehaviour = \
+        #        self.columns[vrtdata['reference']]['fkey']
+        #    # get the column from the foreign table that we're going
+        #    # to mirror here
+        #    coldata = self.tables[ftable][vrtdata['foreignInsert']]
+        #    # and import its properties
+        #    for okey in coldata:
+        #        print '***', vrtdata['reference'], okey, coldata[okey]
+        #        if not okey in vrtdata:
+        #            vrtdata[okey] = coldata[okey]
+        #    print ';;;;;', vrtcol
+        #    if (vrtcol == 'area'):
+        #        print ';;;;;', vrtcol, '----', self.columns[vrtcol]['datatype']
+
 
         self.fillTableData(name)
 
