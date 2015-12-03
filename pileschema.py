@@ -68,6 +68,63 @@ TO_CAST = {
 }
 
 
+SQL_DATATYPES = {
+
+    # Exact numerics
+    'bit': 'BOOLEAN',
+    'tristate': 'tinyint',
+    'int': 'INTEGER',
+    'integer': 'INTEGER',
+    'bigint': 'BIGINT',
+    'smallint': 'SMALLINT',
+    'tinyint': 'tinyint',
+
+    'numeric': 'DECIMAL',
+    'decimal': 'DECIMAL',
+    'numericScale0': 'DECIMAL',
+    'decimalScale0': 'DECIMAL',
+
+    'smallmoney': 'DECIMAL',
+    'money': 'DECIMAL',
+
+    # Approximate numerics
+    'float': 'FLOAT',
+    'real': 'FLOAT',
+
+    # Date and time
+    'date': 'DATE',
+    'datetime': 'VARCHAR',
+    'time': 'TIME',
+    'time': 'TIME',
+    'datetimeoffset': 'TIME',
+    'datetime2': 'TIME',
+    'smalldatetime': 'VARCHAR',
+
+    # Character strings
+    'char': 'VARCHAR',
+    'varchar': 'VARCHAR',
+    'text': 'TEXT',
+
+    # Unicode character strings
+    'nchar': 'VARCHAR',
+    'nvarchar': 'VARCHAR',
+    'ntext': 'TEXT',
+
+    # Binary strings
+    'binary': 'BINARY',
+    'varbinary': 'BINARY',
+    'image': 'BINARY',
+
+    # Other data types
+    'rowversion': 'INTEGER',
+    'hierarchyid': 'INTEGER',
+    'sql_variant': 'VARCHAR',
+    'xml': 'VARCHAR',
+    'uniqueidentifier': 'INTEGER',
+
+    '': '',
+    'vrtcol': ''
+}
 
 # ----------------------------------------------------------------------------
 
@@ -220,9 +277,9 @@ class SqlDriver(Driver):
         except AttributeError:
             length = None
         if length:
-            self.sql_string += datatype + '(' + length + ') '
+            self.sql_string += SQL_DATATYPES[datatype] + '(' + length + ') '
         else:
-            self.sql_string += datatype + ' '
+            self.sql_string += SQL_DATATYPES[datatype] + ' '
         # any defaults
         try:
             defval = dtnode.default
@@ -570,9 +627,6 @@ class QtDriver(Driver):
             except KeyError:
                 virt_ref_col = None
 
-            if (col == 'area'):
-                print name, coldata['datatype']
-
 
             # constructor for column
             column_create = 'DbColumn (%40s,%25s,%6d,%6d,%80s,%30s,%7s,%7s,%25s,%40s,%7s,%16s,%s)' % (
@@ -747,7 +801,6 @@ class QtDriver(Driver):
 
     def column(self, name, label, datatype, nulls, node, dtnode):
         '''Processing a column'''
-
         # see if this is one of those virtual columns
         if datatype == 'vrtcol':
             # we should not expect the reference column

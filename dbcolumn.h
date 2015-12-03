@@ -31,6 +31,7 @@ public:
         DTY_BIGINT,
         DTY_BINARY,
         DTY_BIT,
+        DTY_TRISTATE,
         DTY_CHAR,
         DTY_DATE,
         DTY_DATETIME,

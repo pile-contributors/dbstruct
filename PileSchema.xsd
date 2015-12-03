@@ -76,6 +76,34 @@
         </xs:attribute>
     </xs:complexType>
 
+    <xs:simpleType name="tristateValues">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true" />
+            <xs:enumeration value="false" />
+            <xs:enumeration value="undefined" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="tristate">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">True(2), False (0) and Undefined(1).</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression"/>
+
+        <xs:attribute name="default" use="optional" type="tristateValues">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="char">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
     <xs:complexType name="int">
         <xs:annotation>
             <xs:documentation xml:lang="en">Common integer (int) column data type.</xs:documentation>
@@ -581,6 +609,7 @@
         <xs:choice minOccurs="1" maxOccurs="1">
             <!-- Exact numerics -->
             <xs:element name="bit" type="bit"/>
+            <xs:element name="tristate" type="tristate"/>
             <xs:element name="int" type="int"/>
             <xs:element name="bigint" type="bigint"/>
             <xs:element name="smallint" type="smallint"/>

@@ -56,6 +56,7 @@ DbColumn::DbColumn (
     precision_(-1)
 {
     switch (datatype_) {
+    case DTY_TRISTATE:
     case DTY_BIT: {
         if (!original_format_.compare(QLatin1String ("Yes"), Qt::CaseSensitive)) {
             format_.bit_ = BF_YES_CAMEL;

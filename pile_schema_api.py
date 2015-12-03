@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Nov 26 16:14:58 2015 by generateDS.py version 2.17a.
+# Generated Thu Dec 03 21:27:10 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -864,6 +864,107 @@ class bit(GeneratedsSuper):
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class bit
+
+
+class tristate(GeneratedsSuper):
+    """True(2), False (0) and Undefined(1).Default value for the column.The
+    type to use to represent this column in a Qt source file."""
+    member_data_items_ = {
+        'default': MemberSpec_('default', 'tristateValues', 0),
+        'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
+        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, default=None, defaultExpression=None, qtype='char'):
+        self.original_tagname_ = None
+        self.default = _cast(None, default)
+        self.defaultExpression = _cast(None, defaultExpression)
+        self.qtype = _cast(None, qtype)
+    def factory(*args_, **kwargs_):
+        if tristate.subclass:
+            return tristate.subclass(*args_, **kwargs_)
+        else:
+            return tristate(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_default(self): return self.default
+    def set_default(self, default): self.default = default
+    def get_defaultExpression(self): return self.defaultExpression
+    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
+    def validate_tristateValues(self, value):
+        # Validate type tristateValues, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['true', 'false', 'undefined']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on tristateValues' % {"value" : value.encode("utf-8")} )
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='tristate', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='tristate')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='tristate', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='tristate'):
+        if self.default is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            outfile.write(' default=%s' % (quote_attrib(self.default), ))
+        if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+        if self.qtype != "char" and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tristate', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('default', node)
+        if value is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            self.default = value
+            self.validate_tristateValues(self.default)    # validate type tristateValues
+        value = find_attr_value_('defaultExpression', node)
+        if value is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            self.defaultExpression = value
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        pass
+# end class tristate
 
 
 class integer(GeneratedsSuper):
@@ -2893,6 +2994,7 @@ class column(GeneratedsSuper):
         'foreignColumn': MemberSpec_('foreignColumn', 'xs:string', 0),
         'userformat': MemberSpec_('userformat', 'xs:string', 0),
         'bit': MemberSpec_('bit', 'bit', 0),
+        'tristate': MemberSpec_('tristate', 'tristate', 0),
         'integer': MemberSpec_('integer', 'int', 0),
         'bigint': MemberSpec_('bigint', 'bigint', 0),
         'smallint': MemberSpec_('smallint', 'smallint', 0),
@@ -2929,7 +3031,7 @@ class column(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignBehaviour='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
+    def __init__(self, foreignInsert='id', name=None, foreignBehaviour='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
@@ -2941,6 +3043,7 @@ class column(GeneratedsSuper):
         self.foreignColumn = _cast(None, foreignColumn)
         self.userformat = _cast(None, userformat)
         self.bit = bit
+        self.tristate = tristate
         self.integer = integer
         self.bigint = bigint
         self.smallint = smallint
@@ -2982,6 +3085,8 @@ class column(GeneratedsSuper):
     factory = staticmethod(factory)
     def get_bit(self): return self.bit
     def set_bit(self, bit): self.bit = bit
+    def get_tristate(self): return self.tristate
+    def set_tristate(self, tristate): self.tristate = tristate
     def get_integer(self): return self.integer
     def set_integer(self, integer): self.integer = integer
     def get_bigint(self): return self.bigint
@@ -3069,6 +3174,7 @@ class column(GeneratedsSuper):
     def hasContent_(self):
         if (
             self.bit is not None or
+            self.tristate is not None or
             self.integer is not None or
             self.bigint is not None or
             self.smallint is not None or
@@ -3159,6 +3265,8 @@ class column(GeneratedsSuper):
             eol_ = ''
         if self.bit is not None:
             self.bit.export(outfile, level, namespace_, name_='bit', pretty_print=pretty_print)
+        if self.tristate is not None:
+            self.tristate.export(outfile, level, namespace_, name_='tristate', pretty_print=pretty_print)
         if self.integer is not None:
             self.integer.export(outfile, level, namespace_, name_='int', pretty_print=pretty_print)
         if self.bigint is not None:
@@ -3285,6 +3393,11 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.bit = obj_
             obj_.original_tagname_ = 'bit'
+        elif nodeName_ == 'tristate':
+            obj_ = tristate.factory()
+            obj_.build(child_)
+            self.tristate = obj_
+            obj_.original_tagname_ = 'tristate'
         elif nodeName_ == 'int':
             obj_ = integer.factory()
             obj_.build(child_)
@@ -5495,6 +5608,7 @@ __all__ = [
     "tables",
     "timeType",
     "tinyint",
+    "tristate",
     "uniqueConstraints",
     "uniqueidentifier",
     "variablePrecisionTime",
