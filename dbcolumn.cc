@@ -10,6 +10,9 @@
 #include "dbcolumn.h"
 #include "dbstruct-private.h"
 
+#include <QVariant>
+#include <QCoreApplication>
+
 /**
  * @class DbColumn
  *
@@ -233,5 +236,214 @@ DbColumn::~DbColumn()
     DBSTRUCT_TRACE_ENTRY;
 
     DBSTRUCT_TRACE_EXIT;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QString tristateToString (
+        int value, const QString & s_true,
+        const QString & s_false, const QString & s_undef = QString())
+{
+    if (value == Qt::Unchecked) return s_false;
+    else if (value == Qt::Checked) return s_true;
+    else return s_undef;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+QVariant DbColumn::formattedData (const QVariant & original_value) const
+{
+    QVariant result = original_value;
+    switch (datatype_) {
+    case DbColumn::DTY_DATE: {
+        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
+        result = result.toDate().toString(
+                    QCoreApplication::translate("UserTime", "yyyy-MMM-dd"));
+        break; }
+    case DbColumn::DTY_TIME: {
+        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
+        result = result.toTime().toString(
+            QCoreApplication::translate(
+                "UserTime", "h:mm:ss"));
+        break; }
+    case DbColumn::DTY_DATETIME: {
+        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
+        result = result.toDateTime().toString(
+                QCoreApplication::translate(
+                    "UserTime", "yyyy-MMM-dd h:mm:ss"));
+        break; }
+    case DbColumn::DTY_SMALLINT:
+    case DbColumn::DTY_BIGINT:
+    case DbColumn::DTY_TINYINT:
+    case DbColumn::DTY_INTEGER: {
+        if (!original_format_.isEmpty()) {
+            result = QString("%1").arg(
+                        result.toLongLong(),
+                        format_.width_,
+                        precision_,
+                        fill_char_);
+        }
+        break; }
+    case DbColumn::DTY_REAL:
+    case DbColumn::DTY_MONEY:
+    case DbColumn::DTY_SMALLMONEY:
+    case DbColumn::DTY_NUMERIC:
+    case DbColumn::DTY_NUMERICSCALE:
+    case DbColumn::DTY_FLOAT:
+    case DbColumn::DTY_DECIMALSCALE:
+    case DbColumn::DTY_DECIMAL: {
+        if (!original_format_.isEmpty()) {
+            result = QString("%1").arg(
+                        result.toReal(),
+                        format_.width_,
+                        nr_format_,
+                        precision_,
+                        fill_char_);
+        }
+        break;}
+    case DbColumn::DTY_BIT: {
+        switch (format_.bit_) {
+        case DbColumn::BF_YES_CAMEL: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "Yes") :
+                        QCoreApplication::translate("DbModel", "No");
+            break; }
+        case DbColumn::BF_YES_LOWER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "yes") :
+                        QCoreApplication::translate("DbModel", "no");
+            break; }
+        case DbColumn::BF_YES_UPPER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "YES") :
+                        QCoreApplication::translate("DbModel", "NO");
+            break; }
+        case DbColumn::BF_ON_CAMEL: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "On") :
+                        QCoreApplication::translate("DbModel", "Off");
+            break; }
+        case DbColumn::BF_ON_LOWER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "on") :
+                        QCoreApplication::translate("DbModel", "off");
+            break; }
+        case DbColumn::BF_ON_UPPER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "ON") :
+                        QCoreApplication::translate("DbModel", "OFF");
+            break; }
+        case DbColumn::BF_TRUE_CAMEL: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "True") :
+                        QCoreApplication::translate("DbModel", "False");
+            break; }
+        case DbColumn::BF_TRUE_LOWER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "true") :
+                        QCoreApplication::translate("DbModel", "false");
+            break; }
+        case DbColumn::BF_TRUE_UPPER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "TRUE") :
+                        QCoreApplication::translate("DbModel", "FALSE");
+            break; }
+        case DbColumn::BF_Y_UPPER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "Y") :
+                        QCoreApplication::translate("DbModel", "N");
+            break; }
+        case DbColumn::BF_T_UPPER: {
+            result = result.toBool() ?
+                        QCoreApplication::translate("DbModel", "T") :
+                        QCoreApplication::translate("DbModel", "F");
+            break; }
+        default: // DbColumn::BF_STRING_ON
+            result = result.toBool() ?
+                        original_format_ :
+                        QString();
+        }
+
+        break;}
+    case DbColumn::DTY_TRISTATE: {
+        switch (format_.bit_) {
+        case DbColumn::BF_YES_CAMEL: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "Yes"),
+                        QCoreApplication::translate("DbModel", "No"));
+            break; }
+        case DbColumn::BF_YES_LOWER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "yes"),
+                        QCoreApplication::translate("DbModel", "no"));
+            break; }
+        case DbColumn::BF_YES_UPPER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "YES"),
+                        QCoreApplication::translate("DbModel", "NO"));
+            break; }
+        case DbColumn::BF_ON_CAMEL: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "On"),
+                        QCoreApplication::translate("DbModel", "Off"));
+            break; }
+        case DbColumn::BF_ON_LOWER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "on"),
+                        QCoreApplication::translate("DbModel", "off"));
+            break; }
+        case DbColumn::BF_ON_UPPER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "ON"),
+                        QCoreApplication::translate("DbModel", "OFF"));
+            break; }
+        case DbColumn::BF_TRUE_CAMEL: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "True"),
+                        QCoreApplication::translate("DbModel", "False"));
+            break; }
+        case DbColumn::BF_TRUE_LOWER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "true"),
+                        QCoreApplication::translate("DbModel", "false"));
+            break; }
+        case DbColumn::BF_TRUE_UPPER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "TRUE"),
+                        QCoreApplication::translate("DbModel", "FALSE"));
+            break; }
+        case DbColumn::BF_Y_UPPER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "Y"),
+                        QCoreApplication::translate("DbModel", "N"));
+            break; }
+        case DbColumn::BF_T_UPPER: {
+            result = tristateToString (
+                        result.toInt(),
+                        QCoreApplication::translate("DbModel", "T"),
+                        QCoreApplication::translate("DbModel", "F"));
+            break; }
+        default: // DbColumn::BF_STRING_ON
+            result = tristateToString (
+                        result.toInt(),
+                        original_format_,
+                        QString());
+        }
+
+        break;}
+    default: break;
+    };
+
+    return result;
 }
 /* ========================================================================= */

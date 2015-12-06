@@ -93,7 +93,7 @@ SQL_DATATYPES = {
 
     # Date and time
     'date': 'DATE',
-    'datetime': 'VARCHAR',
+    'datetime': 'DATETIME',
     'time': 'TIME',
     'time': 'TIME',
     'datetimeoffset': 'TIME',

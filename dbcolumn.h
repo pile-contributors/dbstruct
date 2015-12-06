@@ -14,6 +14,7 @@
 #include <dbstruct/dbobject.h>
 
 #include <QString>
+#include <QVariant>
 
 //! The columnure of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
@@ -156,6 +157,10 @@ public:
     isVirtual () const {
         return virtrefcol_ != -1;
     }
+
+    QVariant
+    formattedData (
+        const QVariant &original_value) const;
 
 protected:
 
