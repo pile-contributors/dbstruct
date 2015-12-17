@@ -648,7 +648,7 @@
             <!--Binary strings-->
             <xs:element name="binary" type="binary"/>
             <xs:element name="varbinary" type="binary"/>
-            <xs:element name="image" type="parameterlessType"/>
+            <xs:element name="image" type="binary"/>
 
             <!--Other data types-->
             <xs:element name="rowversion" type="parameterlessType"/>

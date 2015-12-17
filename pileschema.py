@@ -50,7 +50,8 @@ FROM_VARIANT = {
     'float': 'toDouble (&b_one); b_ret = b_ret & b_one',
     'QDateTime': 'toDateTime ()',
     'QDate': 'toDate ()',
-    'QTime': 'toTime ()'
+    'QTime': 'toTime ()',
+    'QByteArray': 'toByteArray ()'
 }
 
 TO_CAST = {
@@ -64,7 +65,8 @@ TO_CAST = {
     'float': '(float)',
     'QDateTime': '',
     'QDate': '',
-    'QTime': ''
+    'QTime': '',
+    'QByteArray': ''
 }
 
 

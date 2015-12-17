@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Mon Dec 07 22:27:19 2015 by generateDS.py version 2.17a.
+# Generated Thu Dec 17 15:24:12 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-app
+#   cpp-build-debug-64
 #
 
 import sys
@@ -3021,7 +3021,7 @@ class column(GeneratedsSuper):
         'ntext': MemberSpec_('ntext', 'parameterlessStringType', 0),
         'binary': MemberSpec_('binary', 'binary', 0),
         'varbinary': MemberSpec_('varbinary', 'binary', 0),
-        'image': MemberSpec_('image', 'parameterlessType', 0),
+        'image': MemberSpec_('image', 'binary', 0),
         'rowversion': MemberSpec_('rowversion', 'parameterlessType', 0),
         'hierarchyid': MemberSpec_('hierarchyid', 'parameterlessStringType', 0),
         'uniqueidentifier': MemberSpec_('uniqueidentifier', 'uniqueidentifier', 0),
@@ -3529,7 +3529,7 @@ class column(GeneratedsSuper):
             self.varbinary = obj_
             obj_.original_tagname_ = 'varbinary'
         elif nodeName_ == 'image':
-            obj_ = parameterlessType.factory()
+            obj_ = binary.factory()
             obj_.build(child_)
             self.image = obj_
             obj_.original_tagname_ = 'image'
@@ -5431,7 +5431,7 @@ GDSClassesMapping = {
     'datetimeoffset': variablePrecisionTime,
     'subset': viewSubset,
     'text': parameterlessStringType,
-    'image': parameterlessType,
+    'image': binary,
     'numeric': decimal,
     'datetime': dateTimeType,
     'hierarchyid': parameterlessStringType,
