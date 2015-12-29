@@ -589,12 +589,21 @@
             </xs:documentation>
         </xs:annotation>
 
-        <xs:attribute name="references" use="required" type="xs:string">
+        <xs:attribute name="references" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">The name of the real column
                 that selects into a foreign table.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="dynamic" use="optional" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Tells if the value for the
+                the cell requires a callback or is provided by the
+                database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
     </xs:complexType>
 
     <!-- Columns -->

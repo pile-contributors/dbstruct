@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Thu Dec 17 15:24:12 2015 by generateDS.py version 2.17a.
+# Generated Tue Dec 29 17:28:02 2015 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-build-debug-64
+#   cpp-app
 #
 
 import sys
@@ -2882,14 +2882,18 @@ class vrtcol(GeneratedsSuper):
     and the entry in the related model. This element only indicates
     the source column in that table and the label. The parent column
     element must provide name, label and foreignInsert attributes.
-    The name of the real column that selects into a foreign table."""
+    The name of the real column that selects into a foreign
+    table.Tells if the value for the the cell requires a callback or
+    is provided by the database."""
     member_data_items_ = {
+        'dynamic': MemberSpec_('dynamic', 'xs:boolean', 0),
         'references': MemberSpec_('references', 'xs:string', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, references=None):
+    def __init__(self, dynamic=False, references=None):
         self.original_tagname_ = None
+        self.dynamic = _cast(bool, dynamic)
         self.references = _cast(None, references)
     def factory(*args_, **kwargs_):
         if vrtcol.subclass:
@@ -2897,6 +2901,8 @@ class vrtcol(GeneratedsSuper):
         else:
             return vrtcol(*args_, **kwargs_)
     factory = staticmethod(factory)
+    def get_dynamic(self): return self.dynamic
+    def set_dynamic(self, dynamic): self.dynamic = dynamic
     def get_references(self): return self.references
     def set_references(self, references): self.references = references
     def hasContent_(self):
@@ -2924,6 +2930,9 @@ class vrtcol(GeneratedsSuper):
         else:
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='vrtcol'):
+        if self.dynamic and 'dynamic' not in already_processed:
+            already_processed.add('dynamic')
+            outfile.write(' dynamic="%s"' % self.gds_format_boolean(self.dynamic, input_name='dynamic'))
         if self.references is not None and 'references' not in already_processed:
             already_processed.add('references')
             outfile.write(' references=%s' % (self.gds_format_string(quote_attrib(self.references).encode(ExternalEncoding), input_name='references'), ))
@@ -2937,6 +2946,15 @@ class vrtcol(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('dynamic', node)
+        if value is not None and 'dynamic' not in already_processed:
+            already_processed.add('dynamic')
+            if value in ('true', '1'):
+                self.dynamic = True
+            elif value in ('false', '0'):
+                self.dynamic = False
+            else:
+                raise_parse_error(node, 'Bad boolean attribute')
         value = find_attr_value_('references', node)
         if value is not None and 'references' not in already_processed:
             already_processed.add('references')

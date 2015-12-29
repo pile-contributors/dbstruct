@@ -190,6 +190,9 @@ DbColumn::DbColumn (
             }
         }
         break; }
+    case DTY_CALLBACK: {
+        format_.callback_ = NULL;
+        break; }
     }
 }
 /* ========================================================================= */
@@ -205,7 +208,7 @@ DbColumn::DbColumn() : DbObject(),
     real_col_id_(-1),
     length_(-1),
     col_label_(),
-    datatype_(),
+    datatype_(DTY_INVALID),
     nulls_(false),
     autoincrement_(false),
     default_value_(),
@@ -236,6 +239,25 @@ DbColumn::~DbColumn()
     DBSTRUCT_TRACE_ENTRY;
 
     DBSTRUCT_TRACE_EXIT;
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+/**
+ * If the callback was not set QVariant() is returned.
+ *
+ * @param table The table where this column belongs.
+ * @param rec The record for which data is being requested.
+ * @param role Requested role.
+ * @param user_data Opaque data passed along to the callback.
+ * @return The data for this record and column.
+ */
+QVariant DbColumn::kbData (
+        DbTaew * table, const QSqlRecord & rec, int role, void * user_data)
+{
+    if (format_.callback_ == NULL)
+        return QVariant ();
+    return format_.callback_ (table, this, rec, role, user_data);
 }
 /* ========================================================================= */
 

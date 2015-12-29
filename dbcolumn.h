@@ -16,6 +16,13 @@
 #include <QString>
 #include <QVariant>
 
+QT_BEGIN_NAMESPACE
+class QSqlTableModel;
+class QSqlRecord;
+QT_END_NAMESPACE
+
+class DbTaew;
+
 //! The columnure of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
@@ -64,6 +71,8 @@ public:
         DTY_VARCHAR,
         DTY_XML,
 
+        DTY_CALLBACK, /**< dynamically computed value or retrieved from database */
+
         DTY_MAX /**< first invalid value */
     };
 
@@ -86,9 +95,18 @@ public:
         BF_STRING_ON
     };
 
+    //! Callback used to retreive the value for a DTY_CALLBACK column.
+    typedef QVariant (*Callback) (
+            DbTaew * table,
+            DbColumn * col,
+            const QSqlRecord & rec,
+            int role,
+            void * user_data);
+
     union ColFormat {
         BoolFormat bit_; /**< for `DTY_BIT` datatype it is one of BoolFormat */
         int width_; /**< field width if applicable */
+        Callback callback_; /**< for `DTY_CALLBACK` datatype it a callback */
     };
 
     QString col_name_;
@@ -113,7 +131,6 @@ public:
     QChar fill_char_; /**< character used for padding, if any */
     char nr_format_; /**< number format (e, E, f, g, G) */
     int precision_; /**< number of significant digits for real numbers, base for integers */
-
 
     //! Default constructor.
     DbColumn ();
@@ -157,6 +174,19 @@ public:
     isVirtual () const {
         return virtrefcol_ != -1;
     }
+
+    //! Tell if this column is a virtual one.
+    inline bool
+    isDynamic () const {
+        return datatype_ == DTY_CALLBACK;
+    }
+
+    //! Retreive the data using the callback.
+    QVariant kbData (
+            DbTaew * table,
+            const QSqlRecord & rec,
+            int role = Qt::DisplayRole,
+            void * user_data = NULL);
 
     QVariant
     formattedData (
