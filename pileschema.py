@@ -113,9 +113,9 @@ SQL_DATATYPES = {
     'ntext': 'TEXT',
 
     # Binary strings
-    'binary': 'BINARY',
-    'varbinary': 'BINARY',
-    'image': 'BINARY',
+    'binary': 'BLOB',
+    'varbinary': 'BLOB',
+    'image': 'BLOB',
 
     # Other data types
     'rowversion': 'INTEGER',
