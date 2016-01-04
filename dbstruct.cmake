@@ -33,7 +33,7 @@ macro    (dbstructInit
         "dbcolumn.cc"
         "dbtable.cc"
         "dbstruct.cc")
-    set(DBDELEGATE_QT_MODS
+    set(DBSTRUCT_QT_MODS
         Core Sql)
 
     pileSetSources(
