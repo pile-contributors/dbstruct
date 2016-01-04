@@ -252,12 +252,21 @@ DbColumn::~DbColumn()
  * @param user_data Opaque data passed along to the callback.
  * @return The data for this record and column.
  */
-QVariant DbColumn::kbData (
-        DbTaew * table, const QSqlRecord & rec, int role, void * user_data)
+QVariant DbColumn::kbData (const DbTaew &table, const QSqlRecord & rec, int role, void * user_data) const
 {
-    if (format_.callback_ == NULL)
+    if (!isDynamic()) {
+        DBSTRUCT_DEBUGM ("Column %d is NOT dynamic but callback was used\n",
+                        col_id_);
         return QVariant ();
-    return format_.callback_ (table, this, rec, role, user_data);
+    }
+
+    if (format_.callback_ == NULL) {
+        DBSTRUCT_DEBUGM ("Column %d is dynamic but no callback is installed\n",
+                        col_id_);
+        return QVariant ();
+    }
+
+    return format_.callback_ (table, *this, rec, role, user_data);
 }
 /* ========================================================================= */
 

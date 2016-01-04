@@ -97,8 +97,8 @@ public:
 
     //! Callback used to retreive the value for a DTY_CALLBACK column.
     typedef QVariant (*Callback) (
-            DbTaew * table,
-            DbColumn * col,
+            const DbTaew & table,
+            const DbColumn & colorig,
             const QSqlRecord & rec,
             int role,
             void * user_data);
@@ -183,10 +183,10 @@ public:
 
     //! Retreive the data using the callback.
     QVariant kbData (
-            DbTaew * table,
+            const DbTaew & table,
             const QSqlRecord & rec,
             int role = Qt::DisplayRole,
-            void * user_data = NULL);
+            void * user_data = NULL) const;
 
     QVariant
     formattedData (
