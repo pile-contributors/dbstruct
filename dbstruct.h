@@ -143,7 +143,7 @@ public:
         db_(db)
     {}
 
-    //! Retreive the database.
+    //! Retrieve the database.
     inline QSqlDatabase &
             database () {
         return db_;
