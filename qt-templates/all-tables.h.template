@@ -16,13 +16,13 @@
 */
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
-#ifndef __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_INC__
-#define __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_INC__
+#ifndef %(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_GUARD
+#define %(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_GUARD
 
 %(IMPORTH)s
 
 %(INCLUDE_ALL_HEADERS)s
 
-#endif // __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_INC__
+#endif // %(NAMESPACE)s_DB_%(DATABASE)s_ALL_TABLES_GUARD
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

@@ -23,12 +23,12 @@ import pile_schema_api
 if platform.system() == 'Windows':
     import win32api
     def username():
-        '''Retreives the name oif the current user'''
+        '''Retrieves the name oif the current user'''
         return win32api.GetUserNameEx(3)
 else:
     import pwd
     def username():
-        '''Retreives the name oif the current user'''
+        '''Retrieves the name oif the current user'''
         return pwd.getpwuid(os.getuid())[0]
 
 PARSER = None
@@ -58,12 +58,12 @@ FROM_VARIANT = {
 
 TO_CAST = {
     'QString': '',
-    'bool': '(bool)',
+    'bool': '',
     'long': '(long)',
     'char': '(char)',
     'short': '(short)',
-    'int': '(int)',
-    'double': '(double)',
+    'int': '',
+    'double': '',
     'float': '(float)',
     'QDateTime': '',
     'QDate': '',
@@ -523,7 +523,7 @@ class QtDriver(Driver):
         column_columns = ''
         assign_columns = ''
         comma_columns_no_id = ''
-        retreive_columns = ''
+        retrieve_columns = ''
         record_columns = ''
         rec_to_map = ''
         rec_from_map = ''
@@ -584,7 +584,7 @@ class QtDriver(Driver):
                     col + '"), ' + col_var_name + ');\n'
                 comma_columns += ' ' * 12 + '"' + col + ',"\n'
 
-                retreive_columns += \
+                retrieve_columns += \
                     '    %-26s = %10squery.value (/* %33s */ %4d).%s;\n' % (
                         col_var_name, to_cast, dbc_name, real_id, to_converter)
                 record_columns += \
@@ -740,7 +740,7 @@ class QtDriver(Driver):
         self.data['CASE_LABELS'] = case_label
         self.data['MODEL_LABELS'] = model_label
         self.data['BIND_COLUMNS'] = bind_columns
-        self.data['RETREIVE_COLUMNS'] = retreive_columns
+        self.data['RETREIVE_COLUMNS'] = retrieve_columns
         self.data['RECORD_COLUMNS'] = record_columns
         self.data['BIND_ONE_COLUMN'] = bind_one_column
         self.data['ID_COLUMN'] = str(id_column)
@@ -789,7 +789,7 @@ class QtDriver(Driver):
         #for vrtcol in  self.vrtcols:
         #    if (vrtcol == 'area'):
         #        print ';;;;;', vrtcol, '------------------------------'
-        #    # retreive the dictionary associated with this column
+        #    # retrieve the dictionary associated with this column
         #    vrtdata = self.columns[vrtcol]
         #    # get the column in this table that actually ties to a foreign
         #    # table and obtain the name of the table and other info in its fkey
@@ -809,6 +809,9 @@ class QtDriver(Driver):
 
 
         self.fill_table_data(name)
+
+        if len(self.data['SetTableOverrides']) == 0:
+            self.data['SetTableOverrides'] = '    Q_UNUSED(result);'
 
         fname = os.path.join(self.out_dir, self.data['table'] + '.h')
         with open(fname, 'w') as foutp:
@@ -912,6 +915,9 @@ class QtDriver(Driver):
 
         name = name.lower()
 
+        if len(self.data['SetTableOverrides']) == 0:
+            self.data['SetTableOverrides'] = '    Q_UNUSED(result);'
+
         fname = os.path.join(self.out_dir, name + '.h')
         with open(fname, 'w') as foutp:
             file.write(
@@ -980,6 +986,8 @@ class QtDriver(Driver):
                 set_table_defaults += make_value_setter(col_var_name, colval, \
                     self.columns[col]['qtype'])
 
+        if len(set_table_overrides) == 0:
+            set_table_overrides = '    Q_UNUSED(result);'
         self.data['SetTableDefaults'] = set_table_defaults
         self.data['SetTableOverrides'] = set_table_overrides
 

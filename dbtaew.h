@@ -123,11 +123,11 @@ public:
     virtual DbRecord *
     createDefaultRecord () const = 0;
 
-    //! Convert from virtual indices to real indices (-1 => virtual).
+    //! Convert from virtual indexes to real indexes (-1 => virtual).
     virtual int
     toRealIndex (int) const = 0;
 
-    //! Convert from real indices to virtual indices.
+    //! Convert from real indexes to virtual indexes.
     virtual int
     fromRealIndex (int) const = 0;
 

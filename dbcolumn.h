@@ -95,7 +95,7 @@ public:
         BF_STRING_ON
     };
 
-    //! Callback used to retreive the value for a DTY_CALLBACK column.
+    //! Callback used to retrieve the value for a DTY_CALLBACK column.
     typedef QVariant (*Callback) (
             const DbTaew & table,
             const DbColumn & colorig,
@@ -104,7 +104,9 @@ public:
             void * user_data);
 
     union ColFormat {
+        // cppcheck-suppress unusedStructMember
         BoolFormat bit_; /**< for `DTY_BIT` datatype it is one of BoolFormat */
+        // cppcheck-suppress unusedStructMember
         int width_; /**< field width if applicable */
         Callback callback_; /**< for `DTY_CALLBACK` datatype it a callback */
     };
@@ -181,7 +183,7 @@ public:
         return datatype_ == DTY_CALLBACK;
     }
 
-    //! Retreive the data using the callback.
+    //! Retrieve the data using the callback.
     QVariant kbData (
             const DbTaew & table,
             const QSqlRecord & rec,

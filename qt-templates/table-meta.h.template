@@ -16,8 +16,8 @@
 */
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
-#ifndef __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_INC__
-#define __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_INC__
+#ifndef %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_GUARD
+#define %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_GUARD
 //
 //
 //
@@ -232,11 +232,11 @@ public:
     virtual DbRecord *
     createDefaultRecord () const;
 
-    //! Convert from virtual indices to real indices (-1 => virtual).
+    //! Convert from virtual indexes to real indexes (-1 => virtual).
     virtual int
     toRealIndex (int) const;
 
-    //! Convert from real indices to virtual indices.
+    //! Convert from real indexes to virtual indexes.
     virtual int
     fromRealIndex (int) const;
 
@@ -246,6 +246,7 @@ public:
     //
     //
 
+public: virtual void anchorVtable() const;
 }; /* class %(Table)s */
 
 /*  CLASS    =============================================================== */
@@ -258,6 +259,6 @@ public:
 } // namespace %(database)s
 } // namespace %(namespace)s
 
-#endif // __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_INC__
+#endif // %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_META_GUARD
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

@@ -139,7 +139,7 @@ public:
     {}
 
     //! Constructor that also initializes the database.
-    DbStruct(const QSqlDatabase & db) :
+    explicit DbStruct(const QSqlDatabase & db) :
         db_(db)
     {}
 
@@ -164,7 +164,7 @@ public:
 //! Default constructors for inheritants of DbStruct
 #define META_DATA_BASE_CTORS(__name__) \
     __name__() : __name__ ## Meta(), DbStruct() {} \
-    __name__(const QSqlDatabase & db) : __name__ ## Meta(), DbStruct(db) {}
+    explicit __name__(const QSqlDatabase & db) : __name__ ## Meta(), DbStruct(db) {}
 
 //! Inheritants of DbStruct must implement a `metaDatabase()` method.
 #define META_DATA_BASE_GETTER \

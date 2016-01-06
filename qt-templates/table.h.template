@@ -16,8 +16,8 @@
 */
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
-#ifndef __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_INC__
-#define __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_INC__
+#ifndef %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_GUARD
+#define %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_GUARD
 //
 //
 //
@@ -116,17 +116,17 @@ public:
 
     //! Get values from a query.
     virtual bool
-    retreive (
+    retrieve (
         const QSqlQuery & query);
 
     //! Get values from a record.
     virtual bool
-    retreive (
+    retrieve (
         const QSqlRecord & rec);
 
     //! Load values from an associative array.
     virtual bool
-    retreive (
+    retrieve (
         const DbRecMap & map);
 
     //! Set the index to given value (if the model has an id column).
@@ -148,6 +148,7 @@ public:
     //
     //
 
+public: virtual void anchorVtable() const;
 }; /* class %(Table)s */
 
 /*  CLASS    =============================================================== */
@@ -159,6 +160,6 @@ public:
 } // namespace %(database)s
 } // namespace %(namespace)s
 
-#endif // __%(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_INC__
+#endif // %(NAMESPACE)s_DB_%(DATABASE)s_TABLE_%(TABLE)s_GUARD
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

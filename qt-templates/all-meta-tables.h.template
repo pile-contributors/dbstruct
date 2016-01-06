@@ -16,11 +16,11 @@
 */
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
-#ifndef __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_INC__
-#define __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_INC__
+#ifndef %(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_GUARD
+#define %(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_GUARD
 
 %(INCLUDE_ALL_META_HEADERS)s
 
-#endif // __%(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_INC__
+#endif // %(NAMESPACE)s_DB_%(DATABASE)s_ALL_META_TABLES_GUARD
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

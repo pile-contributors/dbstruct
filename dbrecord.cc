@@ -79,7 +79,7 @@ bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
     long preserve_id = getId();
     DBG_ASSERT(preserve_id != DbTaew::ID_UNAVAILABLE);
     setId (db_id);
-    // then ask specialized function to retreive the values
+    // then ask specialized function to retrieve the values
     bool bret = initFrom (table, db, id_column_index);
     // in case of failure restore the state
     if (!bret) {
@@ -131,7 +131,7 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
         }
 
         // get the values to their variables
-        b_ret = retreive (query);
+        b_ret = retrieve (query);
 
         int additional_result = 0;
         while (query.next()) {

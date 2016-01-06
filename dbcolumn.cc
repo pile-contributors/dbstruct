@@ -16,7 +16,7 @@
 /**
  * @class DbColumn
  *
- * Detailed description.
+ *
  */
 
 /* ------------------------------------------------------------------------- */
@@ -160,30 +160,30 @@ DbColumn::DbColumn (
             bool b_ok;
             format_.width_ = sl.at(0).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Format width for real numbers "
+                DBSTRUCT_DEBUGM("Format width for real numbers (%s) "
                                 "in column %s is not an integer\n",
                                 TMP_A(original_format_),
                                 TMP_A(col_name));
             }
-            if (sl.at(1).length() != 1) {
-                DBSTRUCT_DEBUGM("Format character for real numbers "
+            if (sl.at(2).length() != 1) {
+                DBSTRUCT_DEBUGM("Format character for real numbers (%s) "
                                 "in column %s is not a single character\n",
                                 TMP_A(original_format_),
                                 TMP_A(col_name));
             } else {
                 nr_format_ = sl.at(2).at(0).toLatin1();
             }
-            precision_ = sl.at(2).toInt (&b_ok);
+            precision_ = sl.at(1).toInt (&b_ok);
             if (!b_ok) {
-                DBSTRUCT_DEBUGM("Precision for real numbers "
+                DBSTRUCT_DEBUGM("Precision for real numbers (%s) "
                                 "in column %s is not an integer\n",
-                                TMP_A(original_format_),
+                                TMP_A(sl.at(1)),
                                 TMP_A(col_name));
             }
-            if (sl.at(2).length() != 1) {
-                DBSTRUCT_DEBUGM("Padding character for real numbers "
+            if (sl.at(3).length() != 1) {
+                DBSTRUCT_DEBUGM("Padding character for real numbers (%s) "
                                 "in column %s is not a single character\n",
-                                TMP_A(original_format_),
+                                TMP_A(sl.at(3)),
                                 TMP_A(col_name));
             } else {
                 fill_char_ = sl.at(3).at(0);
@@ -200,7 +200,7 @@ DbColumn::DbColumn (
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for .
+ *
  */
 DbColumn::DbColumn() : DbObject(),
     col_name_(),
@@ -232,7 +232,7 @@ DbColumn::DbColumn() : DbObject(),
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for decolumnor.
+ *
  */
 DbColumn::~DbColumn()
 {

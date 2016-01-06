@@ -16,8 +16,8 @@
 */
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
-#ifndef __%(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_INC__
-#define __%(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_INC__
+#ifndef %(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_GUARD
+#define %(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_GUARD
 //
 //
 //
@@ -304,6 +304,7 @@ public:
     //
     //
 
+public: virtual void anchorVtable() const;
 }; /* class %(Database)sMeta */
 
 //! Describes the structure of and holds an instance of
@@ -312,6 +313,8 @@ class %(EXPORT)s %(Database)s : public %(Database)sMeta, public DbStruct {
 public:
     META_DATA_BASE_CTORS(%(Database)s)
     META_DATA_BASE_GETTER
+                                                                    public: virtual void anchorVtable() const;
+public: virtual void anchorVtable() const;
 }; /* class %(Database)s */
 
 /*  CLASS    =============================================================== */
@@ -322,6 +325,6 @@ public:
 
 } // namespace %(namespace)s
 
-#endif // __%(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_INC__
+#endif // %(NAMESPACE)s_DB_%(DATABASE)s_DATABASE_GUARD
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */
