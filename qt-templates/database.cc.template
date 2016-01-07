@@ -102,6 +102,7 @@ QString %(Database)sMeta::componentString (%(Database)s::DbCompId index)
 //
 //
 //
-void %(Table)s::anchorVtable() const {}
+void %(Database)s::anchorVtable() const {}
+void %(Database)sMeta::anchorVtable() const {}
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

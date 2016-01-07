@@ -156,6 +156,6 @@ int %(namespace)s::%(database)s::meta::%(Table)s::fromRealIndex (int value) cons
 //
 //
 //
-void %(Table)s::anchorVtable() const {}
+void %(namespace)s::%(database)s::meta::%(Table)s::anchorVtable() const {}
 /* ------------------------------------------------------------------------- */
 /* ========================================================================= */

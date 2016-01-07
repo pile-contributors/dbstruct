@@ -188,9 +188,9 @@ class Driver(object):
         ftable = node.foreignTable
         fcolumn = node.foreignColumn
         finsert = node.foreignInsert
-        fbehaviour = node.foreignBehaviour
+        fbehavior = node.foreignBehavior
         if ftable is not None:
-            return [ftable, fcolumn, finsert, fbehaviour]
+            return [ftable, fcolumn, finsert, fbehavior]
         else:
             return None
 
@@ -202,7 +202,7 @@ class Driver(object):
                 coldata = tbldata['columns'][col]['fkey']
                 if coldata:
                     # the column is a foreign key
-                    ftable, fcolumn, finsert, fbehaviour = coldata
+                    ftable, fcolumn, finsert, fbehavior = coldata
                     try:
                         f_actual = self.tables[ftable]
                     except KeyError:
@@ -793,7 +793,7 @@ class QtDriver(Driver):
         #    vrtdata = self.columns[vrtcol]
         #    # get the column in this table that actually ties to a foreign
         #    # table and obtain the name of the table and other info in its fkey
-        #    ftable, fcolumn, finsert, fbehaviour = \
+        #    ftable, fcolumn, finsert, fbehavior = \
         #        self.columns[vrtdata['reference']]['fkey']
         #    # get the column from the foreign table that we're going
         #    # to mirror here

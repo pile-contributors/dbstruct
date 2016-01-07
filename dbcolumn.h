@@ -28,7 +28,7 @@ class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
 public:
 
-    enum ForeignBehaviour {
+    enum ForeignBehavior {
         FB_CHOOSE, /**< the user can choose values from the other table */
         FB_CHOOSE_ADD /**< the user can choose values from or add values to the other table */
     };
@@ -125,7 +125,7 @@ public:
     QString foreign_table_; /**< The table that this column references */
     QString foreign_key_; /**< Name of the column in the referenced table */
     QString foreign_ref_; /**< The columns that should replace this column */
-    ForeignBehaviour foreign_behaviour_; /**< how are we going to interact with foreign table */
+    ForeignBehavior foreign_behavior_; /**< how are we going to interact with foreign table */
 
     QString original_format_; /**< actual format passed to the constructor */
     // following values are extracted from original_format_ in constructor
@@ -154,7 +154,7 @@ public:
             const QString & foreign_table,
             const QString & foreign_key,
             const QString & foreign_ref,
-            ForeignBehaviour foreign_behaviour) ;
+            ForeignBehavior foreign_behavior) ;
 
     //! Destructor.
     virtual ~DbColumn();

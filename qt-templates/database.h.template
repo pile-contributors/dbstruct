@@ -313,7 +313,6 @@ class %(EXPORT)s %(Database)s : public %(Database)sMeta, public DbStruct {
 public:
     META_DATA_BASE_CTORS(%(Database)s)
     META_DATA_BASE_GETTER
-                                                                    public: virtual void anchorVtable() const;
 public: virtual void anchorVtable() const;
 }; /* class %(Database)s */
 

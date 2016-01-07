@@ -3004,7 +3004,7 @@ class column(GeneratedsSuper):
     member_data_items_ = {
         'foreignInsert': MemberSpec_('foreignInsert', 'xs:string', 0),
         'name': MemberSpec_('name', 'xs:string', 0),
-        'foreignBehaviour': MemberSpec_('foreignBehaviour', 'xs:string', 0),
+        'foreignBehavior': MemberSpec_('foreignBehavior', 'xs:string', 0),
         'foreignTable': MemberSpec_('foreignTable', 'xs:string', 0),
         'label': MemberSpec_('label', 'xs:string', 0),
         'allowNulls': MemberSpec_('allowNulls', 'xs:boolean', 0),
@@ -3049,11 +3049,11 @@ class column(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignBehaviour='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
+    def __init__(self, foreignInsert='id', name=None, foreignBehavior='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
-        self.foreignBehaviour = _cast(None, foreignBehaviour)
+        self.foreignBehavior = _cast(None, foreignBehavior)
         self.foreignTable = _cast(None, foreignTable)
         self.label = _cast(None, label)
         self.allowNulls = _cast(bool, allowNulls)
@@ -3175,8 +3175,8 @@ class column(GeneratedsSuper):
     def set_foreignInsert(self, foreignInsert): self.foreignInsert = foreignInsert
     def get_name(self): return self.name
     def set_name(self, name): self.name = name
-    def get_foreignBehaviour(self): return self.foreignBehaviour
-    def set_foreignBehaviour(self, foreignBehaviour): self.foreignBehaviour = foreignBehaviour
+    def get_foreignBehavior(self): return self.foreignBehavior
+    def set_foreignBehavior(self, foreignBehavior): self.foreignBehavior = foreignBehavior
     def get_foreignTable(self): return self.foreignTable
     def set_foreignTable(self, foreignTable): self.foreignTable = foreignTable
     def get_label(self): return self.label
@@ -3255,9 +3255,9 @@ class column(GeneratedsSuper):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
             outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-        if self.foreignBehaviour != "choose" and 'foreignBehaviour' not in already_processed:
-            already_processed.add('foreignBehaviour')
-            outfile.write(' foreignBehaviour=%s' % (self.gds_format_string(quote_attrib(self.foreignBehaviour).encode(ExternalEncoding), input_name='foreignBehaviour'), ))
+        if self.foreignBehavior != "choose" and 'foreignBehavior' not in already_processed:
+            already_processed.add('foreignBehavior')
+            outfile.write(' foreignBehavior=%s' % (self.gds_format_string(quote_attrib(self.foreignBehavior).encode(ExternalEncoding), input_name='foreignBehavior'), ))
         if self.foreignTable is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
             outfile.write(' foreignTable=%s' % (self.gds_format_string(quote_attrib(self.foreignTable).encode(ExternalEncoding), input_name='foreignTable'), ))
@@ -3367,10 +3367,10 @@ class column(GeneratedsSuper):
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
-        value = find_attr_value_('foreignBehaviour', node)
-        if value is not None and 'foreignBehaviour' not in already_processed:
-            already_processed.add('foreignBehaviour')
-            self.foreignBehaviour = value
+        value = find_attr_value_('foreignBehavior', node)
+        if value is not None and 'foreignBehavior' not in already_processed:
+            already_processed.add('foreignBehavior')
+            self.foreignBehavior = value
         value = find_attr_value_('foreignTable', node)
         if value is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')

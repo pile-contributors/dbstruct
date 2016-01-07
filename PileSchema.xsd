@@ -744,7 +744,7 @@
                 place of the original column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="foreignBehaviour" use="optional" default="choose">
+        <xs:attribute name="foreignBehavior" use="optional" default="choose">
             <xs:annotation>
                 <xs:documentation xml:lang="en">This attribute hints
                 about the way this column interacts with the foreign table.
