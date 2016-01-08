@@ -27,8 +27,17 @@ public:
     //! Default constructor.
     DbStructMeta ();
 
+    //! Copy constructor.
+    DbStructMeta (const DbStructMeta & /*other*/)
+    {}
+
     //! Destructor.
-    virtual ~DbStructMeta();
+    virtual ~DbStructMeta ();
+
+    //! Assignment operator
+    DbStructMeta& operator= (const DbStructMeta& /*other*/) {
+        return *this;
+    }
 
     //! The type of this object.
     virtual Type
@@ -138,10 +147,24 @@ public:
         db_()
     {}
 
+    //! Copy constructor.
+    DbStruct (const DbStruct & other) :
+        db_(other.db_)
+    {}
+
     //! Constructor that also initializes the database.
-    explicit DbStruct(const QSqlDatabase & db) :
+    explicit DbStruct (const QSqlDatabase & db) :
         db_(db)
     {}
+
+    //! Destructor.
+    virtual ~DbStruct () {}
+
+    //! assignment operator
+    DbStruct& operator= (const DbStruct& other) {
+        db_ = other.db_;
+        return *this;
+    }
 
     //! Retrieve the database.
     inline QSqlDatabase &
