@@ -165,15 +165,15 @@ DbColumn::DbColumn (
                                 TMP_A(original_format_),
                                 TMP_A(col_name));
             }
-            if (sl.at(2).length() != 1) {
+            if (sl.at(1).length() != 1) {
                 DBSTRUCT_DEBUGM("Format character for real numbers (%s) "
                                 "in column %s is not a single character\n",
                                 TMP_A(original_format_),
                                 TMP_A(col_name));
             } else {
-                nr_format_ = sl.at(2).at(0).toLatin1();
+                nr_format_ = sl.at(1).at(0).toLatin1();
             }
-            precision_ = sl.at(1).toInt (&b_ok);
+            precision_ = sl.at(2).toInt (&b_ok);
             if (!b_ok) {
                 DBSTRUCT_DEBUGM("Precision for real numbers (%s) "
                                 "in column %s is not an integer\n",
