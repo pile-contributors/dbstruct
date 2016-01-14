@@ -9,7 +9,7 @@
 
     <!-- Helper Types -->
 
-    <xs:complexType name="parameterlessType"/>
+    <xs:complexType name="parameterlessType" />
 
     <xs:complexType name="identity">
         <xs:annotation>
@@ -38,7 +38,7 @@
             <xs:documentation xml:lang="en">Elements part of this group may use the `identity` element.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="identity" minOccurs="0" maxOccurs="1" type="identity"/>
+            <xs:element name="identity" minOccurs="0" maxOccurs="1" type="identity" />
         </xs:sequence>
     </xs:group>
 
@@ -61,7 +61,7 @@
             <xs:documentation xml:lang="en">Boolean column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:boolean">
             <xs:annotation>
@@ -89,7 +89,7 @@
             <xs:documentation xml:lang="en">True(2), False (0) and Undefined(1).</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="tristateValues">
             <xs:annotation>
@@ -109,8 +109,8 @@
             <xs:documentation xml:lang="en">Common integer (int) column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:group ref="withIdentity"/>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:group ref="withIdentity" />
+        <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="xs:int">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
@@ -129,8 +129,8 @@
             <xs:documentation xml:lang="en">Large integer (long) column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:group ref="withIdentity"/>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:group ref="withIdentity" />
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:long">
             <xs:annotation>
@@ -150,8 +150,8 @@
             <xs:documentation xml:lang="en">Small integer (short) column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:group ref="withIdentity"/>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:group ref="withIdentity" />
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:short">
             <xs:annotation>
@@ -171,8 +171,8 @@
             <xs:documentation xml:lang="en">Tiny integer (byte) column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:group ref="withIdentity"/>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:group ref="withIdentity" />
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:byte">
             <xs:annotation>
@@ -185,40 +185,103 @@
                 <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
     </xs:complexType>
 
+    <xs:complexType name="choiceItem">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">One item in a predefined list
+            of choices.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="id" use="required" type="xs:int">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Numeric value for this
+                item.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">String value for this
+                item.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="label" use="optional" type="xs:string" default="">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">User-visible string for this
+                item (gets translated). If empty same value as the name
+                is assumed.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+    <xs:complexType name="choice">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">One of a predefined list of
+            choices.</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="item" maxOccurs="unbounded" minOccurs="1" type="choiceItem" />
+        </xs:sequence>
+
+        <xs:attributeGroup ref="withDefaultExpression" />
+
+        <xs:attribute name="default" use="optional" type="xs:int">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Default value for the
+                column.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="int">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to
+                represent this column in a Qt source
+                file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
 
     <!-- DECIMAL Types -->
     <xs:simpleType name="mantissaBits">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Restriction on real numbers to allow defining the float data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Restriction on real
+            numbers to allow defining the float data
+            type.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="1"/>
-            <xs:maxInclusive value="53"/>
+            <xs:minInclusive value="1" />
+            <xs:maxInclusive value="53" />
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="float">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Real number (float) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Real number (float) column
+            data type.</xs:documentation>
         </xs:annotation>
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attribute name="mantissaBits" use="optional" type="mantissaBits"/>
-        <xs:attribute name="default" use="optional" type="xs:decimal"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attribute name="mantissaBits" use="optional" type="mantissaBits" />
+        <xs:attribute name="default" use="optional" type="xs:decimal" />
 
         <xs:attribute name="qtype" use="optional" type="xs:string" default="float">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+                <xs:documentation xml:lang="en">The type to use to
+                represent this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="real">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Real number (double) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Real number (double) column
+            data type.</xs:documentation>
         </xs:annotation>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="xs:decimal">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
@@ -227,21 +290,24 @@
 
         <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+                <xs:documentation xml:lang="en">The type to use to represent
+                this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="decimal">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Real number (float) column data type with precision and scale.</xs:documentation>
+            <xs:documentation xml:lang="en">Real number (float) column data
+            type with precision and scale.</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="precision" use="required" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Number of significant digits after decimal dot.</xs:documentation>
+                <xs:documentation xml:lang="en">Number of significant digits
+                after decimal dot.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="scale" use="required" type="xs:integer">
@@ -251,38 +317,44 @@
         </xs:attribute>
         <xs:attribute name="default" use="optional" type="xs:decimal">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for this column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                this column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+                <xs:documentation xml:lang="en">The type to use to represent
+                this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="decimalScale0">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Real number (float) column data type without a scale TODO: explain scale.</xs:documentation>
+            <xs:documentation xml:lang="en">Real number (float) column data
+            type without a scale TODO: explain scale.</xs:documentation>
         </xs:annotation>
 
-        <xs:group ref="withIdentity"/>
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:group ref="withIdentity" />
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="precision" use="required" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Number of significant digits after decimal dot.</xs:documentation>
+                <xs:documentation xml:lang="en">Number of significant digits
+                after decimal dot.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="default" use="optional" type="xs:decimal">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for this column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                this column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+                <xs:documentation xml:lang="en">The type to use to represent
+                this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -292,36 +364,38 @@
 
     <xs:simpleType name="moneydefault">
         <xs:restriction base="xs:decimal">
-            <xs:totalDigits value="10"/>
-            <xs:fractionDigits value="4"/>
-            <xs:minInclusive value="-922337203685477.5808"/>
-            <xs:maxInclusive value="922337203685477.5807"/>
+            <xs:totalDigits value="10" />
+            <xs:fractionDigits value="4" />
+            <xs:minInclusive value="-922337203685477.5808" />
+            <xs:maxInclusive value="922337203685477.5807" />
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="money">
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="moneydefault">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:simpleType name="smallmoneyDefault">
         <xs:restriction base="xs:decimal">
-            <xs:totalDigits value="10"/>
-            <xs:fractionDigits value="4"/>
-            <xs:minInclusive value="-214748.3648"/>
-            <xs:maxInclusive value="214748.3647"/>
+            <xs:totalDigits value="10" />
+            <xs:fractionDigits value="4" />
+            <xs:minInclusive value="-214748.3648" />
+            <xs:maxInclusive value="214748.3647" />
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="smallmoney">
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="smallmoneyDefault">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -331,11 +405,13 @@
 
     <xs:attributeGroup name="withStringDefault">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Adds an default attribute of type string to the element.</xs:documentation>
+            <xs:documentation xml:lang="en">Adds an default attribute of
+            type string to the element.</xs:documentation>
         </xs:annotation>
         <xs:attribute name="default" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>
@@ -345,8 +421,8 @@
             <xs:documentation xml:lang="en">String column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attributeGroup ref="withStringDefault"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attributeGroup ref="withStringDefault" />
 
         <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
             <xs:annotation>
@@ -360,7 +436,7 @@
             <xs:documentation xml:lang="en">The representation of a GUID with restrictions added to validate input.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}"/>
+            <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -369,8 +445,8 @@
             <xs:documentation xml:lang="en">A unique identifier (GUID).</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attribute name="default" use="optional" type="GUID"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attribute name="default" use="optional" type="GUID" />
 
         <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
             <xs:annotation>
@@ -389,8 +465,8 @@
         </xs:annotation>
 
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="0"/>
-            <xs:maxInclusive value="7"/>
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="7" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -399,8 +475,8 @@
             <xs:documentation xml:lang="en">Date and time column data type.</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attributeGroup ref="withStringDefault"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attributeGroup ref="withStringDefault" />
 
         <xs:attribute name="fractionalSecondsPrecision" use="optional" type="fractionalSecondsPrecision" />
     </xs:complexType>
@@ -410,7 +486,7 @@
             <xs:documentation xml:lang="en">A date (without time component).</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:date">
             <xs:annotation>
@@ -429,7 +505,7 @@
             <xs:documentation xml:lang="en">A time (without date component).</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:time">
             <xs:annotation>
@@ -448,7 +524,7 @@
             <xs:documentation xml:lang="en">A date and a time.</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:time">
             <xs:annotation>
@@ -471,7 +547,7 @@
         </xs:annotation>
 
         <xs:restriction base="xs:string">
-            <xs:enumeration value="max"/>
+            <xs:enumeration value="max" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -481,8 +557,8 @@
         </xs:annotation>
 
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="1"/>
-            <xs:maxInclusive value="8000"/>
+            <xs:minInclusive value="1" />
+            <xs:maxInclusive value="8000" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -491,7 +567,7 @@
             <xs:documentation xml:lang="en">Allowed values are `max` or an integer in 1-8000 range.</xs:documentation>
         </xs:annotation>
 
-        <xs:union memberTypes="charInteger withMax"/>
+        <xs:union memberTypes="charInteger withMax" />
     </xs:simpleType>
 
     <xs:complexType name="char">
@@ -499,8 +575,8 @@
             <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attributeGroup ref="withStringDefault"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attributeGroup ref="withStringDefault" />
         <xs:attribute name="length" use="optional" type="charLength">
             <xs:annotation>
                 <xs:documentation xml:lang="en">The length may be an integer (1-8000) or it may be `max` to use the largest possible value.</xs:documentation>
@@ -538,8 +614,8 @@
         </xs:annotation>
 
         <xs:restriction base="xs:integer">
-            <xs:minInclusive value="1"/>
-            <xs:maxInclusive value="4000"/>
+            <xs:minInclusive value="1" />
+            <xs:maxInclusive value="4000" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -560,8 +636,8 @@
             <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
         </xs:annotation>
 
-        <xs:attributeGroup ref="withDefaultExpression"/>
-        <xs:attributeGroup ref="withStringDefault"/>
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attributeGroup ref="withStringDefault" />
 
         <xs:attribute name="length" use="optional" type="ncharLength">
             <xs:annotation>
@@ -617,56 +693,57 @@
 
         <xs:choice minOccurs="1" maxOccurs="1">
             <!-- Exact numerics -->
-            <xs:element name="bit" type="bit"/>
-            <xs:element name="tristate" type="tristate"/>
-            <xs:element name="int" type="int"/>
-            <xs:element name="bigint" type="bigint"/>
-            <xs:element name="smallint" type="smallint"/>
-            <xs:element name="tinyint" type="tinyint"/>
+            <xs:element name="bit" type="bit" />
+            <xs:element name="tristate" type="tristate" />
+            <xs:element name="int" type="int" />
+            <xs:element name="bigint" type="bigint" />
+            <xs:element name="smallint" type="smallint" />
+            <xs:element name="tinyint" type="tinyint" />
+            <xs:element name="choice" type="choice" />
 
-            <xs:element name="numeric" type="decimal"/>
-            <xs:element name="decimal" type="decimal"/>
-            <xs:element name="numericScale0" type="decimalScale0"/>
-            <xs:element name="decimalScale0" type="decimalScale0"/>
+            <xs:element name="numeric" type="decimal" />
+            <xs:element name="decimal" type="decimal" />
+            <xs:element name="numericScale0" type="decimalScale0" />
+            <xs:element name="decimalScale0" type="decimalScale0" />
 
-            <xs:element name="smallmoney" type="smallmoney"/>
-            <xs:element name="money" type="money"/>
+            <xs:element name="smallmoney" type="smallmoney" />
+            <xs:element name="money" type="money" />
 
             <!-- Approximate numerics -->
-            <xs:element name="float" type="float"/>
-            <xs:element name="real" type="real"/>
+            <xs:element name="float" type="float" />
+            <xs:element name="real" type="real" />
 
             <!-- Date and time -->
-            <xs:element name="date" type="dateType"/>
-            <xs:element name="datetime" type="dateTimeType"/>
-            <xs:element name="time" type="timeType"/>
-            <xs:element name="datetimeoffset" type="variablePrecisionTime"/>
-            <xs:element name="datetime2" type="variablePrecisionTime"/>
-            <xs:element name="smalldatetime" type="parameterlessStringType"/>
+            <xs:element name="date" type="dateType" />
+            <xs:element name="datetime" type="dateTimeType" />
+            <xs:element name="time" type="timeType" />
+            <xs:element name="datetimeoffset" type="variablePrecisionTime" />
+            <xs:element name="datetime2" type="variablePrecisionTime" />
+            <xs:element name="smalldatetime" type="parameterlessStringType" />
 
             <!--Character strings-->
-            <xs:element name="char" type="char"/>
-            <xs:element name="varchar" type="char"/>
-            <xs:element name="text" type="parameterlessStringType"/>
+            <xs:element name="char" type="char" />
+            <xs:element name="varchar" type="char" />
+            <xs:element name="text" type="parameterlessStringType" />
 
             <!--Unicode character strings-->
-            <xs:element name="nchar" type="nchar"/>
-            <xs:element name="nvarchar" type="nchar"/>
-            <xs:element name="ntext" type="parameterlessStringType"/>
+            <xs:element name="nchar" type="nchar" />
+            <xs:element name="nvarchar" type="nchar" />
+            <xs:element name="ntext" type="parameterlessStringType" />
 
             <!--Binary strings-->
-            <xs:element name="binary" type="binary"/>
-            <xs:element name="varbinary" type="binary"/>
-            <xs:element name="image" type="binary"/>
+            <xs:element name="binary" type="binary" />
+            <xs:element name="varbinary" type="binary" />
+            <xs:element name="image" type="binary" />
 
             <!--Other data types-->
-            <xs:element name="rowversion" type="parameterlessType"/>
-            <xs:element name="hierarchyid" type="parameterlessStringType"/>
-            <xs:element name="uniqueidentifier" type="uniqueidentifier"/>
-            <xs:element name="sql_variant" type="parameterlessStringType"/>
-            <xs:element name="xml" type="parameterlessStringType"/>
+            <xs:element name="rowversion" type="parameterlessType" />
+            <xs:element name="hierarchyid" type="parameterlessStringType" />
+            <xs:element name="uniqueidentifier" type="uniqueidentifier" />
+            <xs:element name="sql_variant" type="parameterlessStringType" />
+            <xs:element name="xml" type="parameterlessStringType" />
 
-            <xs:element name="vrtcol" type="vrtcol"/>
+            <xs:element name="vrtcol" type="vrtcol" />
 
         </xs:choice>
 
@@ -779,7 +856,7 @@
             <xs:documentation xml:lang="en">The list of columns for a table.</xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="column"/>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="column" />
         </xs:choice>
     </xs:complexType>
 
@@ -790,8 +867,8 @@
             <xs:documentation xml:lang="en">indicated the direction of the sorting for a column.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Ascending"/>
-            <xs:enumeration value="Descending"/>
+            <xs:enumeration value="Ascending" />
+            <xs:enumeration value="Descending" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -817,7 +894,7 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="constraintColumn"/>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="constraintColumn" />
         </xs:sequence>
 
         <xs:attribute name="name" use="optional" type="xs:string">
@@ -848,7 +925,7 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="key" maxOccurs="1" minOccurs="0" type="constraint"/>
+            <xs:element name="key" maxOccurs="1" minOccurs="0" type="constraint" />
         </xs:sequence>
     </xs:complexType>
 
@@ -857,7 +934,7 @@
             <xs:documentation xml:lang="en">The list of unique constraints associated with a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="constraint" maxOccurs="unbounded" minOccurs="0" type="constraint"/>
+            <xs:element name="constraint" maxOccurs="unbounded" minOccurs="0" type="constraint" />
         </xs:sequence>
     </xs:complexType>
 
@@ -869,7 +946,7 @@
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="constraint">
-                <xs:attribute name="unique" use="optional" type="xs:boolean"/>
+                <xs:attribute name="unique" use="optional" type="xs:boolean" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -879,7 +956,7 @@
             <xs:documentation xml:lang="en">The list of indexes in a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="index" maxOccurs="unbounded" minOccurs="0" type="index"/>
+            <xs:element name="index" maxOccurs="unbounded" minOccurs="0" type="index" />
         </xs:sequence>
     </xs:complexType>
 
@@ -901,7 +978,7 @@
             <xs:documentation xml:lang="en">The list of foreign keys.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn"/>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn" />
         </xs:sequence>
     </xs:complexType>
 
@@ -910,7 +987,7 @@
             <xs:documentation xml:lang="en">TODO: What is this?.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn"/>
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn" />
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
@@ -924,8 +1001,8 @@
             <xs:documentation xml:lang="en">A single relation for a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="foreignKeyColumns" maxOccurs="1" minOccurs="1" type="foreignKeyColumns"/>
-            <xs:element name="primaryKeyTable" maxOccurs="1" minOccurs="1" type="primaryKeyTable"/>
+            <xs:element name="foreignKeyColumns" maxOccurs="1" minOccurs="1" type="foreignKeyColumns" />
+            <xs:element name="primaryKeyTable" maxOccurs="1" minOccurs="1" type="primaryKeyTable" />
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
@@ -950,11 +1027,11 @@
             <xs:documentation xml:lang="en">An actual table (not view).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="columns" maxOccurs="1" minOccurs="1" type="columnList"/>
-            <xs:element name="primaryKey" maxOccurs="1" minOccurs="0" type="primaryKey"/>
-            <xs:element name="uniqueConstraints" maxOccurs="1" minOccurs="0" type="uniqueConstraints"/>
-            <xs:element name="indexes" maxOccurs="1" minOccurs="0" type="indexes"/>
-            <xs:element name="relationships" maxOccurs="1" minOccurs="0" type="relationships"/>
+            <xs:element name="columns" maxOccurs="1" minOccurs="1" type="columnList" />
+            <xs:element name="primaryKey" maxOccurs="1" minOccurs="0" type="primaryKey" />
+            <xs:element name="uniqueConstraints" maxOccurs="1" minOccurs="0" type="uniqueConstraints" />
+            <xs:element name="indexes" maxOccurs="1" minOccurs="0" type="indexes" />
+            <xs:element name="relationships" maxOccurs="1" minOccurs="0" type="relationships" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
@@ -968,7 +1045,7 @@
             <xs:documentation xml:lang="en">A single element inside the database; contains the list of actual tables (not views).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="table" maxOccurs="unbounded" minOccurs="0" type="table"/>
+            <xs:element name="table" maxOccurs="unbounded" minOccurs="0" type="table" />
         </xs:sequence>
     </xs:complexType>
 
@@ -1109,7 +1186,7 @@
             <xs:documentation xml:lang="en">A single element inside the database; contains the list of views.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="view" maxOccurs="unbounded" minOccurs="0" type="view"/>
+            <xs:element name="view" maxOccurs="unbounded" minOccurs="0" type="view" />
         </xs:sequence>
     </xs:complexType>
 
@@ -1118,8 +1195,8 @@
             <xs:documentation xml:lang="en">Describes a database and (optionally) connection details.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="tables" maxOccurs="1" minOccurs="0" type="tables"/>
-            <xs:element name="views" maxOccurs="1" minOccurs="0" type="views"/>
+            <xs:element name="tables" maxOccurs="1" minOccurs="0" type="tables" />
+            <xs:element name="views" maxOccurs="1" minOccurs="0" type="views" />
             <!--xs:element name="procedures" maxOccurs="1" minOccurs="1" /-->
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
@@ -1159,5 +1236,5 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:element name="database" type="database"/>
+    <xs:element name="database" type="database" />
 </xs:schema>

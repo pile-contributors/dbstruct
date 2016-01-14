@@ -41,6 +41,7 @@ public:
         DTY_BIT,
         DTY_TRISTATE,
         DTY_CHAR,
+        DTY_CHOICE,
         DTY_DATE,
         DTY_DATETIME,
         DTY_DATETIME2,

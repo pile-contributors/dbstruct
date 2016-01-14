@@ -83,6 +83,7 @@ SQL_DATATYPES = {
     'bigint': 'BIGINT',
     'smallint': 'SMALLINT',
     'tinyint': 'tinyint',
+    'choice': 'INTEGER',
 
     'numeric': 'DECIMAL',
     'decimal': 'DECIMAL',

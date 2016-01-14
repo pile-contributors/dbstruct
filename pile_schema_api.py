@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Tue Dec 29 17:28:02 2015 by generateDS.py version 2.17a.
+# Generated Tue Jan 12 23:29:38 2016 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-app
+#   cpp-build-debug-64
 #
 
 import sys
@@ -1390,6 +1390,210 @@ class tinyint(GeneratedsSuper):
             self.identity = obj_
             obj_.original_tagname_ = 'identity'
 # end class tinyint
+
+
+class choiceItem(GeneratedsSuper):
+    """One item in a predefined list of choices.Numeric value for this
+    item.String value for this item.User-visible string for this
+    item (gets translated). If empty same value as the name is
+    assumed."""
+    member_data_items_ = {
+        'label': MemberSpec_('label', 'xs:string', 0),
+        'id': MemberSpec_('id', 'xs:int', 0),
+        'name': MemberSpec_('name', 'xs:string', 0),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, label='', id=None, name=None):
+        self.original_tagname_ = None
+        self.label = _cast(None, label)
+        self.id = _cast(int, id)
+        self.name = _cast(None, name)
+    def factory(*args_, **kwargs_):
+        if choiceItem.subclass:
+            return choiceItem.subclass(*args_, **kwargs_)
+        else:
+            return choiceItem(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_label(self): return self.label
+    def set_label(self, label): self.label = label
+    def get_id(self): return self.id
+    def set_id(self, id): self.id = id
+    def get_name(self): return self.name
+    def set_name(self, name): self.name = name
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='choiceItem', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='choiceItem')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='choiceItem', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='choiceItem'):
+        if self.label != "" and 'label' not in already_processed:
+            already_processed.add('label')
+            outfile.write(' label=%s' % (self.gds_format_string(quote_attrib(self.label).encode(ExternalEncoding), input_name='label'), ))
+        if self.id is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            outfile.write(' id="%s"' % self.gds_format_integer(self.id, input_name='id'))
+        if self.name is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='choiceItem', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('label', node)
+        if value is not None and 'label' not in already_processed:
+            already_processed.add('label')
+            self.label = value
+        value = find_attr_value_('id', node)
+        if value is not None and 'id' not in already_processed:
+            already_processed.add('id')
+            try:
+                self.id = int(value)
+            except ValueError as exp:
+                raise_parse_error(node, 'Bad integer attribute: %s' % exp)
+        value = find_attr_value_('name', node)
+        if value is not None and 'name' not in already_processed:
+            already_processed.add('name')
+            self.name = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        pass
+# end class choiceItem
+
+
+class choice(GeneratedsSuper):
+    """One of a predefined list of choices.Default value for the column.The
+    type to use to represent this column in a Qt source file."""
+    member_data_items_ = {
+        'default': MemberSpec_('default', 'xs:int', 0),
+        'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
+        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'item': MemberSpec_('item', 'choiceItem', 1),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, default=None, defaultExpression=None, qtype='int', item=None):
+        self.original_tagname_ = None
+        self.default = _cast(int, default)
+        self.defaultExpression = _cast(None, defaultExpression)
+        self.qtype = _cast(None, qtype)
+        if item is None:
+            self.item = []
+        else:
+            self.item = item
+    def factory(*args_, **kwargs_):
+        if choice.subclass:
+            return choice.subclass(*args_, **kwargs_)
+        else:
+            return choice(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_item(self): return self.item
+    def set_item(self, item): self.item = item
+    def add_item(self, value): self.item.append(value)
+    def insert_item_at(self, index, value): self.item.insert(index, value)
+    def replace_item_at(self, index, value): self.item[index] = value
+    def get_default(self): return self.default
+    def set_default(self, default): self.default = default
+    def get_defaultExpression(self): return self.defaultExpression
+    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
+    def hasContent_(self):
+        if (
+            self.item
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='choice', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='choice')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='choice', pretty_print=pretty_print)
+            showIndent(outfile, level, pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='choice'):
+        if self.default is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+        if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+        if self.qtype != "int" and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='choice', fromsubclass_=False, pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for item_ in self.item:
+            item_.export(outfile, level, namespace_, name_='item', pretty_print=pretty_print)
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('default', node)
+        if value is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            try:
+                self.default = int(value)
+            except ValueError as exp:
+                raise_parse_error(node, 'Bad integer attribute: %s' % exp)
+        value = find_attr_value_('defaultExpression', node)
+        if value is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            self.defaultExpression = value
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        if nodeName_ == 'item':
+            obj_ = choiceItem.factory()
+            obj_.build(child_)
+            self.item.append(obj_)
+            obj_.original_tagname_ = 'item'
+# end class choice
 
 
 class float_(GeneratedsSuper):
@@ -3004,11 +3208,11 @@ class column(GeneratedsSuper):
     member_data_items_ = {
         'foreignInsert': MemberSpec_('foreignInsert', 'xs:string', 0),
         'name': MemberSpec_('name', 'xs:string', 0),
-        'foreignBehavior': MemberSpec_('foreignBehavior', 'xs:string', 0),
         'foreignTable': MemberSpec_('foreignTable', 'xs:string', 0),
         'label': MemberSpec_('label', 'xs:string', 0),
         'allowNulls': MemberSpec_('allowNulls', 'xs:boolean', 0),
         'readOnly': MemberSpec_('readOnly', 'xs:boolean', 0),
+        'foreignBehavior': MemberSpec_('foreignBehavior', 'xs:string', 0),
         'foreignColumn': MemberSpec_('foreignColumn', 'xs:string', 0),
         'userformat': MemberSpec_('userformat', 'xs:string', 0),
         'bit': MemberSpec_('bit', 'bit', 0),
@@ -3017,6 +3221,7 @@ class column(GeneratedsSuper):
         'bigint': MemberSpec_('bigint', 'bigint', 0),
         'smallint': MemberSpec_('smallint', 'smallint', 0),
         'tinyint': MemberSpec_('tinyint', 'tinyint', 0),
+        'choice': MemberSpec_('choice', 'choice', 0),
         'numeric': MemberSpec_('numeric', 'decimal', 0),
         'decimal': MemberSpec_('decimal', 'decimal', 0),
         'numericScale0': MemberSpec_('numericScale0', 'decimalScale0', 0),
@@ -3049,15 +3254,15 @@ class column(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignBehavior='choose', foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
+    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignBehavior='choose', foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, choice=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
-        self.foreignBehavior = _cast(None, foreignBehavior)
         self.foreignTable = _cast(None, foreignTable)
         self.label = _cast(None, label)
         self.allowNulls = _cast(bool, allowNulls)
         self.readOnly = _cast(bool, readOnly)
+        self.foreignBehavior = _cast(None, foreignBehavior)
         self.foreignColumn = _cast(None, foreignColumn)
         self.userformat = _cast(None, userformat)
         self.bit = bit
@@ -3066,6 +3271,7 @@ class column(GeneratedsSuper):
         self.bigint = bigint
         self.smallint = smallint
         self.tinyint = tinyint
+        self.choice = choice
         self.numeric = numeric
         self.decimal = decimal
         self.numericScale0 = numericScale0
@@ -3113,6 +3319,8 @@ class column(GeneratedsSuper):
     def set_smallint(self, smallint): self.smallint = smallint
     def get_tinyint(self): return self.tinyint
     def set_tinyint(self, tinyint): self.tinyint = tinyint
+    def get_choice(self): return self.choice
+    def set_choice(self, choice): self.choice = choice
     def get_numeric(self): return self.numeric
     def set_numeric(self, numeric): self.numeric = numeric
     def get_decimal(self): return self.decimal
@@ -3175,8 +3383,6 @@ class column(GeneratedsSuper):
     def set_foreignInsert(self, foreignInsert): self.foreignInsert = foreignInsert
     def get_name(self): return self.name
     def set_name(self, name): self.name = name
-    def get_foreignBehavior(self): return self.foreignBehavior
-    def set_foreignBehavior(self, foreignBehavior): self.foreignBehavior = foreignBehavior
     def get_foreignTable(self): return self.foreignTable
     def set_foreignTable(self, foreignTable): self.foreignTable = foreignTable
     def get_label(self): return self.label
@@ -3185,6 +3391,8 @@ class column(GeneratedsSuper):
     def set_allowNulls(self, allowNulls): self.allowNulls = allowNulls
     def get_readOnly(self): return self.readOnly
     def set_readOnly(self, readOnly): self.readOnly = readOnly
+    def get_foreignBehavior(self): return self.foreignBehavior
+    def set_foreignBehavior(self, foreignBehavior): self.foreignBehavior = foreignBehavior
     def get_foreignColumn(self): return self.foreignColumn
     def set_foreignColumn(self, foreignColumn): self.foreignColumn = foreignColumn
     def get_userformat(self): return self.userformat
@@ -3197,6 +3405,7 @@ class column(GeneratedsSuper):
             self.bigint is not None or
             self.smallint is not None or
             self.tinyint is not None or
+            self.choice is not None or
             self.numeric is not None or
             self.decimal is not None or
             self.numericScale0 is not None or
@@ -3255,9 +3464,6 @@ class column(GeneratedsSuper):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
             outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-        if self.foreignBehavior != "choose" and 'foreignBehavior' not in already_processed:
-            already_processed.add('foreignBehavior')
-            outfile.write(' foreignBehavior=%s' % (self.gds_format_string(quote_attrib(self.foreignBehavior).encode(ExternalEncoding), input_name='foreignBehavior'), ))
         if self.foreignTable is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
             outfile.write(' foreignTable=%s' % (self.gds_format_string(quote_attrib(self.foreignTable).encode(ExternalEncoding), input_name='foreignTable'), ))
@@ -3270,6 +3476,9 @@ class column(GeneratedsSuper):
         if self.readOnly and 'readOnly' not in already_processed:
             already_processed.add('readOnly')
             outfile.write(' readOnly="%s"' % self.gds_format_boolean(self.readOnly, input_name='readOnly'))
+        if self.foreignBehavior != "choose" and 'foreignBehavior' not in already_processed:
+            already_processed.add('foreignBehavior')
+            outfile.write(' foreignBehavior=%s' % (self.gds_format_string(quote_attrib(self.foreignBehavior).encode(ExternalEncoding), input_name='foreignBehavior'), ))
         if self.foreignColumn != "id" and 'foreignColumn' not in already_processed:
             already_processed.add('foreignColumn')
             outfile.write(' foreignColumn=%s' % (self.gds_format_string(quote_attrib(self.foreignColumn).encode(ExternalEncoding), input_name='foreignColumn'), ))
@@ -3293,6 +3502,8 @@ class column(GeneratedsSuper):
             self.smallint.export(outfile, level, namespace_, name_='smallint', pretty_print=pretty_print)
         if self.tinyint is not None:
             self.tinyint.export(outfile, level, namespace_, name_='tinyint', pretty_print=pretty_print)
+        if self.choice is not None:
+            self.choice.export(outfile, level, namespace_, name_='choice', pretty_print=pretty_print)
         if self.numeric is not None:
             self.numeric.export(outfile, level, namespace_, name_='numeric', pretty_print=pretty_print)
         if self.decimal is not None:
@@ -3367,10 +3578,6 @@ class column(GeneratedsSuper):
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
-        value = find_attr_value_('foreignBehavior', node)
-        if value is not None and 'foreignBehavior' not in already_processed:
-            already_processed.add('foreignBehavior')
-            self.foreignBehavior = value
         value = find_attr_value_('foreignTable', node)
         if value is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
@@ -3397,6 +3604,10 @@ class column(GeneratedsSuper):
                 self.readOnly = False
             else:
                 raise_parse_error(node, 'Bad boolean attribute')
+        value = find_attr_value_('foreignBehavior', node)
+        if value is not None and 'foreignBehavior' not in already_processed:
+            already_processed.add('foreignBehavior')
+            self.foreignBehavior = value
         value = find_attr_value_('foreignColumn', node)
         if value is not None and 'foreignColumn' not in already_processed:
             already_processed.add('foreignColumn')
@@ -3436,6 +3647,11 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.tinyint = obj_
             obj_.original_tagname_ = 'tinyint'
+        elif nodeName_ == 'choice':
+            obj_ = choice.factory()
+            obj_.build(child_)
+            self.choice = obj_
+            obj_.original_tagname_ = 'choice'
         elif nodeName_ == 'numeric':
             obj_ = decimal.factory()
             obj_.build(child_)
@@ -5467,6 +5683,7 @@ GDSClassesMapping = {
     'sql_variant': parameterlessStringType,
     'column': viewWriteBackCol,
     'datetime2': variablePrecisionTime,
+    'item': choiceItem,
     'time': timeType,
     'varbinary': binary,
 }
@@ -5595,6 +5812,8 @@ __all__ = [
     "binary",
     "bit",
     "char",
+    "choice",
+    "choiceItem",
     "column",
     "columnList",
     "constraint",
