@@ -29,14 +29,15 @@ DbColumnData::DbColumnData () :
     real_col_id_(),
     length_(),
     datatype_(),
-    allow_nulls_(true)
+    allow_nulls_(true),
+    readonly_(false)
 {
 }
 
 DbColumnData::DbColumnData (
         const QString &col_name, const QString &col_label,
         int col_id, int real_col_id, int length,
-        DataType datatype, bool allow_nulls) :
+        DbDataType::Dty datatype, bool allow_nulls, bool readonly) :
     QSharedData (),
     col_name_(col_name),
     col_label_(col_label),
@@ -44,7 +45,8 @@ DbColumnData::DbColumnData (
     real_col_id_(real_col_id),
     length_(length),
     datatype_(datatype),
-    allow_nulls_(allow_nulls)
+    allow_nulls_(allow_nulls),
+    readonly_(readonly)
 {
 }
 
@@ -55,8 +57,9 @@ DbColumnData::DbColumnData(const DbColumnData &other) :
     col_id_(other.col_id_),
     real_col_id_(other.real_col_id_),
     length_(other.length_),
-    datatype_(other.datatype_),
-    allow_nulls_(other.allow_nulls_)
+    datatype_(other.columnType ()),
+    allow_nulls_(other.allow_nulls_),
+    readonly_(other.readonly_)
 {
 }
 

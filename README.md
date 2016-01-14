@@ -49,3 +49,10 @@ This is why the template files all have the `.template`
 extension. The name of the template files are hard-coded into
 `pileschema.py` but that may change in the future.
 
+
+Column Types
+------------
+
+Columns may be actual database columns hosted by a table
+(called "real" columns) or they may have a different way
+of retreiving the data (called "virtual" columns).

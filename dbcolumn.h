@@ -38,16 +38,21 @@ public:
 
     DbColumn (
             const QString & col_name,
-            DataType datatype,
+            DbDataType::Dty datatype,
             int col_id,
             const QString & col_label = QString(),
             int real_col_id = -1,
             int length = -1,
-            bool allow_nulls = true);
+            bool allow_nulls = true,
+            bool readonly = false);
 
     DbColumn (const DbColumn &other)
           : d (other.d)
     {}
+
+    //! Tell if this is a virtual column or a real one.
+    bool
+    isVirtual () const;
 
 
     //! Name of the column in the database
@@ -71,12 +76,16 @@ public:
     columnLength () const;
 
     //! The type of data we're representing
-    DataType
+    DbDataType::Dty
     columnType () const;
 
     //! Does this column allows NULL values?
     bool
     allowNulls () const;
+
+    //! Is the user allowed to modify the values in this column?
+    bool
+    readOnly () const;
 
 
 
@@ -105,9 +114,14 @@ public:
     setColumnLength (
             int value);
 
-    //! Tell if this column allows NULL values.
+    //! Column allows NULL values.
     void
     setAllowNulls (
+            bool value);
+
+    //! User allowed to change values
+    void
+    setReadOnly (
             bool value);
 
 
@@ -116,12 +130,13 @@ public:
     static DbColumn
     col (
             const QString & col_name,
-            DataType datatype,
+            DbDataType::Dty datatype,
             int col_id,
             const QString & col_label = QString(),
             int real_col_id = -1,
             int length = -1,
-            bool allow_nulls = true);
+            bool allow_nulls = true,
+            bool readonly = false);
 };
 
 #endif // GUARD_DBCOLUMN_H_INCLUDE

@@ -656,7 +656,7 @@ class QtDriver(Driver):
                     real_id,
                     int(coldata['length']) if coldata['length'] else -1,
                     column_label,
-                    'DbColumn::DTY_%s' % coldata['datatype'].upper(),
+                    'DbDataType::DTY_%s' % coldata['datatype'].upper(),
                     'true' if coldata['nulls'] else 'false',
                     'true' if coldata['autoincrement'] else 'false',
                     'QLatin1String("%s")' % coldata['defexpr']
@@ -673,7 +673,7 @@ class QtDriver(Driver):
 #                str(real_id) + ', '+ \
 #                string_choice(coldata['length'], '-1', coldata['length']) + \
 #                ', ' + column_label + ', '  + \
-#                'DbColumn::DTY_' + coldata['datatype'].upper() + ', ' + \
+#                'DbDataType::DTY_' + coldata['datatype'].upper() + ', ' + \
 #                string_choice('true', 'false', coldata['nulls']) + ', ' + \
 #                string_choice('true', 'false', coldata['autoincrement']) + \
 #                ', QLatin1String("' + string_choice('', coldata['defexpr'],

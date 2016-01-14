@@ -25,9 +25,15 @@
  *
  * Internal DbColumnData is implicitly shared and may take one of
  * a number of forms depending on the data-type.
- *
  * Any DbColumn instance will always have a valid DbColumnData
  * attached to it.
+ *
+ * The library supports virtual columns (see isVirtual())
+ * that have no corespondent in the
+ * database table and, for this reason, the columns have two indexes:
+ * the common one - columnId() - that takes into consideration all columns
+ * (real and virtual) and the "real" index - columnRealId()- that only takes
+ * into consideration actual columns in the underlying database table.
  */
 
 DbColumn::DbColumn () :
@@ -37,17 +43,23 @@ DbColumn::DbColumn () :
 }
 
 DbColumn::DbColumn (
-        const QString &col_name, DataType datatype,
+        const QString &col_name, DbDataType::Dty datatype,
         int col_id, const QString &col_label,
-        int real_col_id, int length, bool allow_nulls):
+        int real_col_id, int length, bool allow_nulls,
+        bool readonly):
     DbObject(),
     d (new DbColumnData (
            col_name,
            col_label.isEmpty() ? col_name : col_label,
            col_id,
            real_col_id == -1 ? col_id : real_col_id,
-           length, datatype, allow_nulls))
+           length, datatype, allow_nulls, readonly))
 {
+}
+
+bool DbColumn::isVirtual() const
+{
+    return d->isVirtual ();
 }
 
 const QString &DbColumn::columnName() const
@@ -75,7 +87,7 @@ int DbColumn::columnLength() const
     return d->length_;
 }
 
-DataType DbColumn::columnType() const
+DbDataType::Dty DbColumn::columnType() const
 {
     return d->datatype_;
 }
@@ -85,20 +97,31 @@ bool DbColumn::allowNulls() const
     return d->allow_nulls_;
 }
 
+bool DbColumn::readOnly() const
+{
+    return d->readonly_;
+}
+
 void DbColumn::setAllowNulls (bool value)
 {
     d->allow_nulls_ = value;
 }
 
+void DbColumn::setReadOnly (bool value)
+{
+    d->readonly_ = value;
+}
+
 DbColumn DbColumn::col (
-        const QString &col_name, DataType datatype,
+        const QString &col_name, DbDataType::Dty datatype,
         int col_id, const QString &col_label,
-        int real_col_id, int length, bool allow_nulls)
+        int real_col_id, int length, bool allow_nulls,
+        bool readonly)
 {
     return DbColumn (
                 col_name, datatype,
                 col_id, col_label,
-                real_col_id, length, allow_nulls);
+                real_col_id, length, allow_nulls, readonly);
 }
 
 
