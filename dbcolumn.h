@@ -23,7 +23,7 @@ QT_END_NAMESPACE
 
 class DbTaew;
 
-//! The colum of a database.
+//! The column of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
 public:
@@ -106,10 +106,10 @@ public:
 
     union ColFormat {
         // cppcheck-suppress unusedStructMember
-        BoolFormat bit_; /**< for `DTY_BIT` datatype it is one of BoolFormat */
+        BoolFormat bit_; /**< for `DTY_BIT` data-type it is one of BoolFormat */
         // cppcheck-suppress unusedStructMember
         int width_; /**< field width if applicable */
-        Callback callback_; /**< for `DTY_CALLBACK` datatype it a callback */
+        Callback callback_; /**< for `DTY_CALLBACK` data-type it a callback */
     };
 
     QString col_name_;
@@ -130,7 +130,7 @@ public:
 
     QString original_format_; /**< actual format passed to the constructor */
     // following values are extracted from original_format_ in constructor
-    ColFormat format_; /**< column format (depends on datatype */
+    ColFormat format_; /**< column format (depends on data-type */
     QChar fill_char_; /**< character used for padding, if any */
     char nr_format_; /**< number format (e, E, f, g, G) */
     int precision_; /**< number of significant digits for real numbers, base for integers */
