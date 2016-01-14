@@ -23,7 +23,7 @@ QT_END_NAMESPACE
 
 class DbTaew;
 
-//! The columnure of a database.
+//! The colum of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
 public:
