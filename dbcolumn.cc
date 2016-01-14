@@ -13,468 +13,92 @@
 #include <QVariant>
 #include <QCoreApplication>
 
+#include "columns/dbcolumndata.h"
 /**
  * @class DbColumn
  *
+ * The class is implemented using
+ * <a href="http://doc.qt.io/qt-5/qshareddatapointer.html">QSharedDataPointer</a>
+ * and <a href="http://doc.qt.io/qt-5/qshareddata.html">QSharedData</a> which
+ * combines the speed and memory efficiency of pointers with the ease of use
+ * of classes.
  *
+ * Internal DbColumnData is implicitly shared and may take one of
+ * a number of forms depending on the data-type.
+ *
+ * Any DbColumn instance will always have a valid DbColumnData
+ * attached to it.
  */
 
-/* ------------------------------------------------------------------------- */
+DbColumn::DbColumn () :
+    DbObject(),
+    d (new DbColumnData ())
+{
+}
+
 DbColumn::DbColumn (
-        const QString & col_name,
-        int col_id,
-        int real_col_id,
-        int length,
-        const QString & col_label,
-        DataType datatype,
-        bool nulls,
-        bool autoincrement,
-        const QString & default_value,
-        const QString & format,
-        bool read_only,
-        int virtrefcol,
-        const QString & foreign_table,
-        const QString & foreign_key,
-        const QString & foreign_ref,
-        ForeignBehavior foreign_behavior) : DbObject(),
-    col_name_(col_name),
-    col_id_(col_id),
-    real_col_id_(real_col_id),
-    length_(length),
-    col_label_(col_label),
-    datatype_(datatype),
-    nulls_(nulls),
-    autoincrement_(autoincrement),
-    default_value_(default_value),
-    read_only_(read_only),
-    virtrefcol_(virtrefcol),
-    foreign_table_(foreign_table),
-    foreign_key_(foreign_key),
-    foreign_ref_(foreign_ref),
-    foreign_behavior_(foreign_behavior),
-    original_format_(format),
-    format_(),
-    fill_char_(),
-    nr_format_('f'),
-    precision_(-1)
+        const QString &col_name, DataType datatype,
+        int col_id, const QString &col_label,
+        int real_col_id, int length, bool allow_nulls):
+    DbObject(),
+    d (new DbColumnData (
+           col_name,
+           col_label.isEmpty() ? col_name : col_label,
+           col_id,
+           real_col_id == -1 ? col_id : real_col_id,
+           length, datatype, allow_nulls))
 {
-    switch (datatype_) {
-    case DTY_TRISTATE:
-    case DTY_BIT: {
-        if (!original_format_.compare(QLatin1String ("Yes"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_YES_CAMEL;
-        } else if (!original_format_.compare(QLatin1String ("yes"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_YES_LOWER;
-        } else if (!original_format_.compare(QLatin1String ("YES"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_YES_UPPER;
-        } else if (!original_format_.compare(QLatin1String ("On"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_ON_CAMEL;
-        } else if (!original_format_.compare(QLatin1String ("on"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_ON_LOWER;
-        } else if (!original_format_.compare(QLatin1String ("ON"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_ON_UPPER;
-        } else if (!original_format_.compare(QLatin1String ("True"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_TRUE_CAMEL;
-        } else if (!original_format_.compare(QLatin1String ("true"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_TRUE_LOWER;
-        } else if (!original_format_.compare(QLatin1String ("TRUE"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_TRUE_UPPER;
-        } else if (!original_format_.compare(QLatin1String ("Y"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_Y_UPPER;
-        } else if (!original_format_.compare(QLatin1String ("T"), Qt::CaseSensitive)) {
-            format_.bit_ = BF_T_UPPER;
-        } else {
-            format_.bit_ = BF_STRING_ON;
-        }
-        break; }
-    case DTY_SMALLINT:
-    case DTY_BIGINT:
-    case DTY_TINYINT:
-    case DTY_INTEGER: {
-        QStringList sl = original_format_.split(QChar('`'));
-        if ((sl.length() == 0) || ((sl.length() == 1) && sl.at(0).isEmpty())) {
-            format_.width_ = 0;
-            precision_ = 10;
-            fill_char_ = ' ';
-        } else if (sl.length() != 3) {
-            DBSTRUCT_DEBUGM("instead of 3, the format for integers (%s) "
-                            "in column %s has %d elements\n",
-                            TMP_A(original_format_),
-                            TMP_A(col_name),
-                            sl.length());
-            format_.width_ = 0;
-            precision_ = 10;
-            fill_char_ = ' ';
-        } else {
-            bool b_ok;
-            format_.width_ = sl.at(0).toInt (&b_ok);
-            if (!b_ok) {
-                DBSTRUCT_DEBUGM("Format width for integers (%s) in column %s "
-                                "is not an integer\n",
-                                TMP_A(original_format_),
-                                TMP_A(col_name));
-            }
-            precision_ = sl.at(1).toInt (&b_ok);
-            if (!b_ok) {
-                DBSTRUCT_DEBUGM("Base for integers (%s) in column %s "
-                                "is not an integer\n",
-                                TMP_A(original_format_),
-                                TMP_A(col_name));
-            }
-            if (sl.at(2).length() != 1) {
-                DBSTRUCT_DEBUGM("Padding character for integers (%s) "
-                                "in column %s "
-                                "is not a single character\n",
-                                TMP_A(original_format_),
-                                TMP_A(col_name));
-            } else {
-                fill_char_ = sl.at(2).at(0);
-            }
-        }
-        break; }
-    case DTY_REAL:
-    case DTY_MONEY:
-    case DTY_SMALLMONEY:
-    case DTY_NUMERIC:
-    case DTY_NUMERICSCALE:
-    case DTY_FLOAT:
-    case DTY_DECIMALSCALE:
-    case DTY_DECIMAL: {
-        QStringList sl = original_format_.split(QChar('`'));
-        if ((sl.length() == 0) || ((sl.length() == 1) && sl.at(0).isEmpty())) {
-            format_.width_ = 0;
-            precision_ = 8;
-            nr_format_ = 'f';
-            fill_char_ = ' ';
-        } else if (sl.length() != 4) {
-            DBSTRUCT_DEBUGM("instead of 4, the format for real numbers (%s) "
-                            "in column %s has %d elements\n",
-                            TMP_A(original_format_),
-                            TMP_A(col_name),
-                            sl.length());
-            format_.width_ = 0;
-            precision_ = 8;
-            nr_format_ = 'f';
-            fill_char_ = ' ';
-        } else {
-            bool b_ok;
-            format_.width_ = sl.at(0).toInt (&b_ok);
-            if (!b_ok) {
-                DBSTRUCT_DEBUGM("Format width for real numbers (%s) "
-                                "in column %s is not an integer\n",
-                                TMP_A(original_format_),
-                                TMP_A(col_name));
-            }
-            if (sl.at(1).length() != 1) {
-                DBSTRUCT_DEBUGM("Format character for real numbers (%s) "
-                                "in column %s is not a single character\n",
-                                TMP_A(original_format_),
-                                TMP_A(col_name));
-            } else {
-                nr_format_ = sl.at(1).at(0).toLatin1();
-            }
-            precision_ = sl.at(2).toInt (&b_ok);
-            if (!b_ok) {
-                DBSTRUCT_DEBUGM("Precision for real numbers (%s) "
-                                "in column %s is not an integer\n",
-                                TMP_A(sl.at(1)),
-                                TMP_A(col_name));
-            }
-            if (sl.at(3).length() != 1) {
-                DBSTRUCT_DEBUGM("Padding character for real numbers (%s) "
-                                "in column %s is not a single character\n",
-                                TMP_A(sl.at(3)),
-                                TMP_A(col_name));
-            } else {
-                fill_char_ = sl.at(3).at(0);
-            }
-        }
-        break; }
-    case DTY_CALLBACK: {
-        format_.callback_ = NULL;
-        break; }
-    }
 }
-/* ========================================================================= */
 
-
-/* ------------------------------------------------------------------------- */
-/**
- *
- */
-DbColumn::DbColumn() : DbObject(),
-    col_name_(),
-    col_id_(-1),
-    real_col_id_(-1),
-    length_(-1),
-    col_label_(),
-    datatype_(DTY_INVALID),
-    nulls_(false),
-    autoincrement_(false),
-    default_value_(),
-    read_only_(false),
-    virtrefcol_(-1),
-    foreign_table_(),
-    foreign_key_(),
-    foreign_ref_(),
-    foreign_behavior_(FB_CHOOSE),
-    original_format_(),
-    format_(),
-    fill_char_(),
-    nr_format_('f'),
-    precision_(-1)
+const QString &DbColumn::columnName() const
 {
-    DBSTRUCT_TRACE_ENTRY;
-
-    DBSTRUCT_TRACE_EXIT;
+    return d->col_name_;
 }
-/* ========================================================================= */
 
-/* ------------------------------------------------------------------------- */
-/**
- *
- */
-DbColumn::~DbColumn()
+const QString &DbColumn::columnLabel() const
 {
-    DBSTRUCT_TRACE_ENTRY;
-
-    DBSTRUCT_TRACE_EXIT;
+    return d->col_label_;
 }
-/* ========================================================================= */
 
-/* ------------------------------------------------------------------------- */
-/**
- * If the callback was not set QVariant() is returned.
- *
- * @param table The table where this column belongs.
- * @param rec The record for which data is being requested.
- * @param role Requested role.
- * @param user_data Opaque data passed along to the callback.
- * @return The data for this record and column.
- */
-QVariant DbColumn::kbData (const DbTaew &table, const QSqlRecord & rec, int role, void * user_data) const
+int DbColumn::columnId() const
 {
-    if (!isDynamic()) {
-        DBSTRUCT_DEBUGM ("Column %d is NOT dynamic but callback was used\n",
-                        col_id_);
-        return QVariant ();
-    }
-
-    if (format_.callback_ == NULL) {
-        DBSTRUCT_DEBUGM ("Column %d is dynamic but no callback is installed\n",
-                        col_id_);
-        return QVariant ();
-    }
-
-    return format_.callback_ (table, *this, rec, role, user_data);
+    return d->col_id_;
 }
-/* ========================================================================= */
 
-/* ------------------------------------------------------------------------- */
-QString tristateToString (
-        int value, const QString & s_true,
-        const QString & s_false, const QString & s_undef = QString())
+int DbColumn::columnRealId() const
 {
-    if (value == Qt::Unchecked) return s_false;
-    else if (value == Qt::Checked) return s_true;
-    else return s_undef;
+    return d->real_col_id_;
 }
-/* ========================================================================= */
 
-/* ------------------------------------------------------------------------- */
-QVariant DbColumn::formattedData (const QVariant & original_value) const
+int DbColumn::columnLength() const
 {
-    QVariant result = original_value;
-    switch (datatype_) {
-    case DbColumn::DTY_DATE: {
-        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
-        result = result.toDate().toString(
-                    QCoreApplication::translate("UserTime", "yyyy-MMM-dd"));
-        break; }
-    case DbColumn::DTY_TIME: {
-        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
-        result = result.toTime().toString(
-            QCoreApplication::translate(
-                "UserTime", "h:mm:ss"));
-        break; }
-    case DbColumn::DTY_DATETIME: {
-        // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
-        result = result.toDateTime().toString(
-                QCoreApplication::translate(
-                    "UserTime", "yyyy-MMM-dd h:mm:ss"));
-        break; }
-    case DbColumn::DTY_SMALLINT:
-    case DbColumn::DTY_BIGINT:
-    case DbColumn::DTY_TINYINT:
-    case DbColumn::DTY_INTEGER: {
-        if (!original_format_.isEmpty()) {
-            result = QString("%1").arg(
-                        result.toLongLong(),
-                        format_.width_,
-                        precision_,
-                        fill_char_);
-        }
-        break; }
-    case DbColumn::DTY_REAL:
-    case DbColumn::DTY_MONEY:
-    case DbColumn::DTY_SMALLMONEY:
-    case DbColumn::DTY_NUMERIC:
-    case DbColumn::DTY_NUMERICSCALE:
-    case DbColumn::DTY_FLOAT:
-    case DbColumn::DTY_DECIMALSCALE:
-    case DbColumn::DTY_DECIMAL: {
-        if (!original_format_.isEmpty()) {
-            result = QString("%1").arg(
-                        result.toReal(),
-                        format_.width_,
-                        nr_format_,
-                        precision_,
-                        fill_char_);
-        }
-        break;}
-    case DbColumn::DTY_BIT: {
-        switch (format_.bit_) {
-        case DbColumn::BF_YES_CAMEL: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "Yes") :
-                        QCoreApplication::translate("DbModel", "No");
-            break; }
-        case DbColumn::BF_YES_LOWER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "yes") :
-                        QCoreApplication::translate("DbModel", "no");
-            break; }
-        case DbColumn::BF_YES_UPPER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "YES") :
-                        QCoreApplication::translate("DbModel", "NO");
-            break; }
-        case DbColumn::BF_ON_CAMEL: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "On") :
-                        QCoreApplication::translate("DbModel", "Off");
-            break; }
-        case DbColumn::BF_ON_LOWER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "on") :
-                        QCoreApplication::translate("DbModel", "off");
-            break; }
-        case DbColumn::BF_ON_UPPER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "ON") :
-                        QCoreApplication::translate("DbModel", "OFF");
-            break; }
-        case DbColumn::BF_TRUE_CAMEL: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "True") :
-                        QCoreApplication::translate("DbModel", "False");
-            break; }
-        case DbColumn::BF_TRUE_LOWER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "true") :
-                        QCoreApplication::translate("DbModel", "false");
-            break; }
-        case DbColumn::BF_TRUE_UPPER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "TRUE") :
-                        QCoreApplication::translate("DbModel", "FALSE");
-            break; }
-        case DbColumn::BF_Y_UPPER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "Y") :
-                        QCoreApplication::translate("DbModel", "N");
-            break; }
-        case DbColumn::BF_T_UPPER: {
-            result = result.toBool() ?
-                        QCoreApplication::translate("DbModel", "T") :
-                        QCoreApplication::translate("DbModel", "F");
-            break; }
-        default: // DbColumn::BF_STRING_ON
-            result = result.toBool() ?
-                        original_format_ :
-                        QString();
-        }
-
-        break;}
-    case DbColumn::DTY_TRISTATE: {
-        switch (format_.bit_) {
-        case DbColumn::BF_YES_CAMEL: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "Yes"),
-                        QCoreApplication::translate("DbModel", "No"));
-            break; }
-        case DbColumn::BF_YES_LOWER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "yes"),
-                        QCoreApplication::translate("DbModel", "no"));
-            break; }
-        case DbColumn::BF_YES_UPPER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "YES"),
-                        QCoreApplication::translate("DbModel", "NO"));
-            break; }
-        case DbColumn::BF_ON_CAMEL: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "On"),
-                        QCoreApplication::translate("DbModel", "Off"));
-            break; }
-        case DbColumn::BF_ON_LOWER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "on"),
-                        QCoreApplication::translate("DbModel", "off"));
-            break; }
-        case DbColumn::BF_ON_UPPER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "ON"),
-                        QCoreApplication::translate("DbModel", "OFF"));
-            break; }
-        case DbColumn::BF_TRUE_CAMEL: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "True"),
-                        QCoreApplication::translate("DbModel", "False"));
-            break; }
-        case DbColumn::BF_TRUE_LOWER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "true"),
-                        QCoreApplication::translate("DbModel", "false"));
-            break; }
-        case DbColumn::BF_TRUE_UPPER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "TRUE"),
-                        QCoreApplication::translate("DbModel", "FALSE"));
-            break; }
-        case DbColumn::BF_Y_UPPER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "Y"),
-                        QCoreApplication::translate("DbModel", "N"));
-            break; }
-        case DbColumn::BF_T_UPPER: {
-            result = tristateToString (
-                        result.toInt(),
-                        QCoreApplication::translate("DbModel", "T"),
-                        QCoreApplication::translate("DbModel", "F"));
-            break; }
-        default: // DbColumn::BF_STRING_ON
-            result = tristateToString (
-                        result.toInt(),
-                        original_format_,
-                        QString());
-        }
-
-        break;}
-    default: break;
-    };
-
-    return result;
+    return d->length_;
 }
-/* ========================================================================= */
+
+DataType DbColumn::columnType() const
+{
+    return d->datatype_;
+}
+
+bool DbColumn::allowNulls() const
+{
+    return d->allow_nulls_;
+}
+
+void DbColumn::setAllowNulls (bool value)
+{
+    d->allow_nulls_ = value;
+}
+
+DbColumn DbColumn::col (
+        const QString &col_name, DataType datatype,
+        int col_id, const QString &col_label,
+        int real_col_id, int length, bool allow_nulls)
+{
+    return DbColumn (
+                col_name, datatype,
+                col_id, col_label,
+                real_col_id, length, allow_nulls);
+}
+
+

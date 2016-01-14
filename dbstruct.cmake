@@ -22,7 +22,9 @@ macro    (dbstructInit
         "dbtaew.h"
         "dbrecord.h"
         "dbview.h"
+        "dbdatatype.h"
         "dbcolumn.h"
+        "columns/dbcolumndata.h"
         "dbtable.h"
         "dbstruct.h")
     set(DBSTRUCT_SOURCES
@@ -31,6 +33,7 @@ macro    (dbstructInit
         "dbrecord.cc"
         "dbview.cc"
         "dbcolumn.cc"
+        "columns/dbcolumndata.cc"
         "dbtable.cc"
         "dbstruct.cc")
     set(DBSTRUCT_QT_MODS
