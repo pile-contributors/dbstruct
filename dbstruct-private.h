@@ -11,6 +11,7 @@
 #define GUARD_DBSTRUCT_PRIVATE_H_INCLUDE
 
 #include <dbstruct/dbstruct-config.h>
+#include "dbdatatype.h"
 
 #if 1
 #    define DBSTRUCT_DEBUGM printf

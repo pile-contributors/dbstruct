@@ -16,6 +16,7 @@
 
 #include <QString>
 #include <QVariant>
+#include <QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 class QSqlTableModel;
@@ -28,32 +29,34 @@ class DbColumnData;
 //! The column of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
-private:
-
-    QSharedDataPointer<DbColumnData> d; /**< actual internal data */
-
 public:
 
+    //! Default constructor.
     DbColumn ();
 
-    DbColumn (
+    //! Constructor.
+    explicit DbColumn (
             const QString & col_name,
             DbDataType::Dty datatype,
             int col_id,
             const QString & col_label = QString(),
-            int real_col_id = -1,
-            int length = -1,
+            int real_col_id = dbstruct::DEFAULT,
+            int length = dbstruct::UNDEFINED,
             bool allow_nulls = true,
             bool readonly = false);
 
-    DbColumn (const DbColumn &other)
-          : d (other.d)
-    {}
+    //! Copy constructor.
+    DbColumn (const DbColumn &other);
+
+    //! Assignment operator.
+    DbColumn &operator= (const DbColumn & other);
+
+    //! Destructor.
+    virtual ~DbColumn ();
 
     //! Tell if this is a virtual column or a real one.
     bool
     isVirtual () const;
-
 
     //! Name of the column in the database
     const QString &
@@ -133,10 +136,15 @@ public:
             DbDataType::Dty datatype,
             int col_id,
             const QString & col_label = QString(),
-            int real_col_id = -1,
-            int length = -1,
+            int real_col_id = dbstruct::DEFAULT,
+            int length = dbstruct::UNDEFINED,
             bool allow_nulls = true,
             bool readonly = false);
+
+
+private:
+
+    QSharedDataPointer<DbColumnData> d; /**< actual internal data */
 };
 
 #endif // GUARD_DBCOLUMN_H_INCLUDE

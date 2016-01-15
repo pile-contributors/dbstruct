@@ -39,7 +39,7 @@ public:
     virtual ~DbColumnData () {}
 
     //! Override this to mark the column as being virtual.
-    virtual bool isVirtual () { return false; }
+    virtual bool isVirtual () const { return false; }
 
     QString col_name_; /**< name of the column in the database */
     QString col_label_; /**< User-visible name for the column */

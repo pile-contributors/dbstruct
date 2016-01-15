@@ -71,7 +71,7 @@ bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
 {
     DBREC_TRACE_ENTRY;
     int id_column_index = table->idColumn ();
-    if (id_column_index == -1) {
+    if (id_column_index == dbstruct::UNDEFINED) {
         DBREC_DEBUGM("The model does not have an id column\n");
         return false;
     }

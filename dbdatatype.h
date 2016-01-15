@@ -67,6 +67,14 @@ enum Dty {
 };
 }
 
+namespace dbstruct {
+
+    enum {
+        UNDEFINED = -1,
+        DEFAULT = -2
+    };
+}
+
 //! Callback used to retrieve the value for a DTY_CALLBACK column.
 typedef QVariant (*DbColKb) (
         const DbTaew & table,
