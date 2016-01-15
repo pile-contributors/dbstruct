@@ -122,7 +122,7 @@ public:
     setAllowNulls (
             bool value);
 
-    //! User allowed to change values
+    //! User allowed to change values.
     void
     setReadOnly (
             bool value);

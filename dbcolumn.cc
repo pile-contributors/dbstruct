@@ -154,11 +154,92 @@ bool DbColumn::readOnly() const
     return d->readonly_;
 }
 
+/**
+ * The name of a column is the name used to identify that column
+ * in an actual database table, for example, but its use is not
+ * limited to that. It provides a textual name for the column
+ * that transcedes language changes in user interface, for example.
+ * The label, on the other hand, is expected to change based on
+ * the language choosen by the user.
+ *
+ * The label is set by this method to the same value if it is empty.
+ *
+ * @param value New name for the column
+ * @see setColumnLabel(), columnLabel(), columnName()
+ */
+void DbColumn::setColumnName(const QString &value)
+{
+    d->col_name_ = value;
+    if (d->col_label_.isEmpty()) {
+        d->col_label_= value;
+    }
+}
+
+/**
+ * Setting a label does not change the name of the column in any case.
+ *
+ * @param value New label for the column
+ * @see setColumnName(), columnLabel(), columnName()
+ */
+void DbColumn::setColumnLabel (const QString &value)
+{
+    d->col_label_= value;
+}
+
+/**
+ * We distinguish between indexes in the "general", "complete" table
+ * and indexes in "real" table inside the database because our tables may
+ * contain virtual columns that draw their values in some other way than
+ * requesting them from the database.
+ *
+ * This method seths the index of this column inside "complete"
+ * table while setColumnRealId() sets the index inside the database table.
+ * Setting one does not change the other in any case.
+ *
+ * @param value New value for column id in general table
+ * @see setColumnRealId(), columnId(), columnRealId()
+ */
+void DbColumn::setColumnId (int value)
+{
+    d->col_id_= value;
+}
+
+/**
+ * We distinguish between indexes in the "general", "complete" table
+ * and indexes in "real" table inside the database because our tables may
+ * contain virtual columns that draw their values in some other way than
+ * requesting them from the database.
+ *
+ * This method seths the index of this column inside the database table
+ * table while setColumnId() sets the index inside "complete" table.
+ * Setting one does not change the other in any case.
+ *
+ * @param value New value for column id in "real" table
+ * @see setColumnId(), columnId(), columnRealId()
+ */
+void DbColumn::setColumnRealId(int value)
+{
+    d->real_col_id_= value;
+}
+
+/**
+ * This tells if the underlying column in a real table allows
+ * NULL (or ommiting the value for this column).
+ * @param value true or false
+ * @see allowNulls()
+ */
 void DbColumn::setAllowNulls (bool value)
 {
     d->allow_nulls_ = value;
 }
 
+/**
+ * One example use case is an id column that is auto-incremented by
+ * the database.
+ *
+ * @param value true (column is read-only) or false (column is read-write)
+ * @see readOnly()
+ */
 void DbColumn::setReadOnly (bool value)
 {
     d->readonly_ = value;
