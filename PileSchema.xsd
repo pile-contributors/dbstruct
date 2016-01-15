@@ -53,6 +53,63 @@
         </xs:attribute>
     </xs:attributeGroup>
 
+    <xs:simpleType name="sqlType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The type to use to represent this column in a (generic) sql database schema.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="VARCHAR" />
+          <xs:enumeration value="CHARACTER" />
+          <xs:enumeration value="BINARY" />
+          <xs:enumeration value="BOOLEAN" />
+          <xs:enumeration value="VARBINARY" />
+          <xs:enumeration value="INTEGER" />
+          <xs:enumeration value="SMALLINT" />
+          <xs:enumeration value="BIGINT" />
+          <xs:enumeration value="DECIMAL" />
+          <xs:enumeration value="NUMERIC" />
+          <xs:enumeration value="FLOAT" />
+          <xs:enumeration value="REAL" />
+          <xs:enumeration value="DOUBLE" />
+          <xs:enumeration value="DATE" />
+          <xs:enumeration value="TIME" />
+          <xs:enumeration value="TIMESTAMP" />
+          <xs:enumeration value="INTERVAL" />
+          <xs:enumeration value="ARRAY" />
+          <xs:enumeration value="MULTISET" />
+          <xs:enumeration value="XML" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="qtType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The type to use to represent 
+            this column in a Qt source file.</xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="bool" />
+          <xs:enumeration value="char" />
+          <xs:enumeration value="int" />
+          <xs:enumeration value="long" />
+          <xs:enumeration value="short" />
+          <xs:enumeration value="float" />
+          <xs:enumeration value="double" />
+          <xs:enumeration value="QByteArray" />
+          <xs:enumeration value="QString" />
+          <xs:enumeration value="QDate" />
+          <xs:enumeration value="QTime" />
+          <xs:enumeration value="QDateTime" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="tristateValues">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true" />
+            <xs:enumeration value="false" />
+            <xs:enumeration value="undefined" />
+        </xs:restriction>
+    </xs:simpleType>
 
     <!-- INTEGER Types -->
 
@@ -69,20 +126,9 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="bool">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="bool" />
+        <xs:attribute name="sqltype" type="sqlType" default="BOOLEAN" />
     </xs:complexType>
-
-    <xs:simpleType name="tristateValues">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="true" />
-            <xs:enumeration value="false" />
-            <xs:enumeration value="undefined" />
-        </xs:restriction>
-    </xs:simpleType>
 
     <xs:complexType name="tristate">
         <xs:annotation>
@@ -97,11 +143,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="char">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="char" />
+        <xs:attribute name="sqltype" type="sqlType" default="SMALLINT" />
     </xs:complexType>
 
     <xs:complexType name="int">
@@ -117,11 +160,9 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="int">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="int" />
+        <xs:attribute name="sqltype" type="sqlType" default="INTEGER" />
     </xs:complexType>
 
     <xs:complexType name="bigint">
@@ -138,11 +179,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="long">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="long" />
+        <xs:attribute name="sqltype" type="sqlType" default="BIGINT" />
     </xs:complexType>
 
     <xs:complexType name="smallint">
@@ -159,11 +197,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="short">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="short" />
+        <xs:attribute name="sqltype" type="sqlType" default="SMALLINT" />
     </xs:complexType>
 
     <xs:complexType name="tinyint">
@@ -180,12 +215,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="char">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-
+        <xs:attribute name="qtype" type="qtType" default="char" />
+        <xs:attribute name="sqltype" type="sqlType" default="SMALLINT" />
     </xs:complexType>
 
     <xs:complexType name="choiceItem">
@@ -215,7 +246,6 @@
                 is assumed.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-
     </xs:complexType>
 
     <xs:complexType name="choice">
@@ -237,13 +267,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="int">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to
-                represent this column in a Qt source
-                file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="int" />
+        <xs:attribute name="sqltype" type="sqlType" default="INTEGER" />
     </xs:complexType>
 
     <!-- DECIMAL Types -->
@@ -268,12 +293,8 @@
         <xs:attribute name="mantissaBits" use="optional" type="mantissaBits" />
         <xs:attribute name="default" use="optional" type="xs:decimal" />
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="float">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to
-                represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="float" />
+        <xs:attribute name="sqltype" type="sqlType" default="FLOAT" />
     </xs:complexType>
 
     <xs:complexType name="real">
@@ -288,12 +309,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent
-                this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="double" />
+        <xs:attribute name="sqltype" type="sqlType" default="REAL" />
     </xs:complexType>
 
     <xs:complexType name="decimal">
@@ -321,12 +338,9 @@
                 this column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent
-                this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="double" />
+        <xs:attribute name="sqltype" type="sqlType" default="DECIMAL" />
     </xs:complexType>
 
     <xs:complexType name="decimalScale0">
@@ -351,12 +365,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="double">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent
-                this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="double" />
+        <xs:attribute name="sqltype" type="sqlType" default="DECIMAL" />
     </xs:complexType>
 
 
@@ -379,27 +389,10 @@
                 the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="double" />
+        <xs:attribute name="sqltype" type="sqlType" default="DECIMAL" />
     </xs:complexType>
-
-    <xs:simpleType name="smallmoneyDefault">
-        <xs:restriction base="xs:decimal">
-            <xs:totalDigits value="10" />
-            <xs:fractionDigits value="4" />
-            <xs:minInclusive value="-214748.3648" />
-            <xs:maxInclusive value="214748.3647" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="smallmoney">
-        <xs:attributeGroup ref="withDefaultExpression" />
-        <xs:attribute name="default" use="optional" type="smallmoneyDefault">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for
-                the column.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-    </xs:complexType>
-
 
     <!-- STRING Types -->
 
@@ -424,11 +417,8 @@
         <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attributeGroup ref="withStringDefault" />
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="QString" />
+        <xs:attribute name="sqltype" type="sqlType" default="VARCHAR" />
     </xs:complexType>
 
     <xs:simpleType name="GUID">
@@ -448,38 +438,12 @@
         <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="GUID" />
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-
+        <xs:attribute name="qtype" type="qtType" default="QString" />
+        <xs:attribute name="sqltype" type="sqlType" default="VARCHAR" />
     </xs:complexType>
 
 
     <!-- DATE & TIME Types -->
-
-    <xs:simpleType name="fractionalSecondsPrecision">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Type to represent fractional seconds.</xs:documentation>
-        </xs:annotation>
-
-        <xs:restriction base="xs:integer">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="7" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="variablePrecisionTime">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Date and time column data type.</xs:documentation>
-        </xs:annotation>
-
-        <xs:attributeGroup ref="withDefaultExpression" />
-        <xs:attributeGroup ref="withStringDefault" />
-
-        <xs:attribute name="fractionalSecondsPrecision" use="optional" type="fractionalSecondsPrecision" />
-    </xs:complexType>
 
     <xs:complexType name="dateType">
         <xs:annotation>
@@ -493,11 +457,9 @@
                 <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QDate">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="QDate" />
+        <xs:attribute name="sqltype" type="sqlType" default="DATE" />
     </xs:complexType>
 
     <xs:complexType name="timeType">
@@ -512,11 +474,9 @@
                 <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QTime">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="QTime" />
+        <xs:attribute name="sqltype" type="sqlType" default="TIME" />
     </xs:complexType>
 
     <xs:complexType name="dateTimeType">
@@ -531,11 +491,9 @@
                 <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QDateTime">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
+        <xs:attribute name="qtype" type="qtType" default="QDateTime" />
+        <xs:attribute name="sqltype" type="sqlType" default="VARCHAR" />
     </xs:complexType>
 
 
@@ -583,11 +541,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="QString" />
+        <xs:attribute name="sqltype" type="sqlType" default="CHARACTER" />
     </xs:complexType>
 
     <xs:complexType name="binary">
@@ -601,11 +556,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="QByteArray" />
+        <xs:attribute name="sqltype" type="sqlType" default="VARBINARY" />
     </xs:complexType>
 
     <xs:simpleType name="ncharInteger">
@@ -645,11 +597,8 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="qtype" type="qtType" default="QByteArray" />
+        <xs:attribute name="sqltype" type="sqlType" default="VARCHAR" />
     </xs:complexType>
 
 
@@ -706,7 +655,6 @@
             <xs:element name="numericScale0" type="decimalScale0" />
             <xs:element name="decimalScale0" type="decimalScale0" />
 
-            <xs:element name="smallmoney" type="smallmoney" />
             <xs:element name="money" type="money" />
 
             <!-- Approximate numerics -->
@@ -717,9 +665,6 @@
             <xs:element name="date" type="dateType" />
             <xs:element name="datetime" type="dateTimeType" />
             <xs:element name="time" type="timeType" />
-            <xs:element name="datetimeoffset" type="variablePrecisionTime" />
-            <xs:element name="datetime2" type="variablePrecisionTime" />
-            <xs:element name="smalldatetime" type="parameterlessStringType" />
 
             <!--Character strings-->
             <xs:element name="char" type="char" />
@@ -737,10 +682,6 @@
             <xs:element name="image" type="binary" />
 
             <!--Other data types-->
-            <xs:element name="rowversion" type="parameterlessType" />
-            <xs:element name="hierarchyid" type="parameterlessStringType" />
-            <xs:element name="uniqueidentifier" type="uniqueidentifier" />
-            <xs:element name="sql_variant" type="parameterlessStringType" />
             <xs:element name="xml" type="parameterlessStringType" />
 
             <xs:element name="vrtcol" type="vrtcol" />

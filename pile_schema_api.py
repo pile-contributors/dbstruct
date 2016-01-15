@@ -2,23 +2,23 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Tue Jan 12 23:29:38 2016 by generateDS.py version 2.17a.
+# Generated Fri Jan 15 22:35:20 2016 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
 #   ('--member-specs', 'dict')
 #   ('--no-questions', '')
 #   ('-f', '')
-#   ('-o', 'H:\\prog\\agreece\\cpp-app\\lib_agreece\\support\\dbstruct\\pile_schema_api.py')
+#   ('-o', 'H:\\prog\\piles\\dbstruct\\src\\dbstruct\\pile_schema_api.py')
 #
 # Command line arguments:
-#   H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
+#   H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Command line:
-#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
+#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_api.py" H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-build-debug-64
+#   dbstruct
 #
 
 import sys
@@ -774,19 +774,20 @@ class identity(GeneratedsSuper):
 
 
 class bit(GeneratedsSuper):
-    """Boolean column data type.Default value for the column.The type to
-    use to represent this column in a Qt source file."""
+    """Boolean column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:boolean', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='bool'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='BOOLEAN', qtype='bool'):
         self.original_tagname_ = None
         self.default = _cast(bool, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if bit.subclass:
@@ -798,8 +799,34 @@ class bit(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -831,9 +858,12 @@ class bit(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "bool" and 'qtype' not in already_processed:
+        if self.sqltype != BOOLEAN and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != bool and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='bit', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -857,29 +887,36 @@ class bit(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class bit
 
 
 class tristate(GeneratedsSuper):
-    """True(2), False (0) and Undefined(1).Default value for the column.The
-    type to use to represent this column in a Qt source file."""
+    """True(2), False (0) and Undefined(1).Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'tristateValues', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='char'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='char'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if tristate.subclass:
@@ -891,6 +928,8 @@ class tristate(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def validate_tristateValues(self, value):
@@ -905,6 +944,30 @@ class tristate(GeneratedsSuper):
                     break
             if not enumeration_respectee:
                 warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on tristateValues' % {"value" : value.encode("utf-8")} )
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -936,9 +999,12 @@ class tristate(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "char" and 'qtype' not in already_processed:
+        if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != char and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tristate', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -958,31 +1024,37 @@ class tristate(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class tristate
 
 
 class integer(GeneratedsSuper):
-    """Common integer (int) column data type.Default value for the
-    column.The type to use to represent this column in a Qt source
-    file."""
+    """Common integer (int) column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:int', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'identity': MemberSpec_('identity', 'identity', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='int', identity=None, valueOf_=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='INTEGER', qtype='int', identity=None, valueOf_=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
         self.valueOf_ = valueOf_
@@ -998,8 +1070,34 @@ class integer(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1032,9 +1130,12 @@ class integer(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "int" and 'qtype' not in already_processed:
+        if self.sqltype != INTEGER and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != int and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='int', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1061,10 +1162,16 @@ class integer(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1075,21 +1182,21 @@ class integer(GeneratedsSuper):
 
 
 class bigint(GeneratedsSuper):
-    """Large integer (long) column data type.Default value for the
-    column.The type to use to represent this column in a Qt source
-    file."""
+    """Large integer (long) column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:long', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'identity': MemberSpec_('identity', 'identity', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='long', identity=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='BIGINT', qtype='long', identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
     def factory(*args_, **kwargs_):
@@ -1104,8 +1211,34 @@ class bigint(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1138,9 +1271,12 @@ class bigint(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "long" and 'qtype' not in already_processed:
+        if self.sqltype != BIGINT and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != long and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='bigint', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1167,10 +1303,16 @@ class bigint(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1181,21 +1323,21 @@ class bigint(GeneratedsSuper):
 
 
 class smallint(GeneratedsSuper):
-    """Small integer (short) column data type.Default value for the
-    column.The type to use to represent this column in a Qt source
-    file."""
+    """Small integer (short) column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:short', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'identity': MemberSpec_('identity', 'identity', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='short', identity=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='short', identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
     def factory(*args_, **kwargs_):
@@ -1210,8 +1352,34 @@ class smallint(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1244,9 +1412,12 @@ class smallint(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "short" and 'qtype' not in already_processed:
+        if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != short and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='smallint', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1273,10 +1444,16 @@ class smallint(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1287,21 +1464,21 @@ class smallint(GeneratedsSuper):
 
 
 class tinyint(GeneratedsSuper):
-    """Tiny integer (byte) column data type.Default value for the
-    column.The type to use to represent this column in a Qt source
-    file."""
+    """Tiny integer (byte) column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:byte', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'identity': MemberSpec_('identity', 'identity', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='char', identity=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='char', identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
     def factory(*args_, **kwargs_):
@@ -1316,8 +1493,34 @@ class tinyint(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1350,9 +1553,12 @@ class tinyint(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "char" and 'qtype' not in already_processed:
+        if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != char and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tinyint', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1379,10 +1585,16 @@ class tinyint(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1486,20 +1698,21 @@ class choiceItem(GeneratedsSuper):
 
 
 class choice(GeneratedsSuper):
-    """One of a predefined list of choices.Default value for the column.The
-    type to use to represent this column in a Qt source file."""
+    """One of a predefined list of choices.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:int', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'item': MemberSpec_('item', 'choiceItem', 1),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='int', item=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='INTEGER', qtype='int', item=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         if item is None:
             self.item = []
@@ -1520,8 +1733,34 @@ class choice(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.item
@@ -1554,9 +1793,12 @@ class choice(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "int" and 'qtype' not in already_processed:
+        if self.sqltype != INTEGER and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != int and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='choice', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1583,10 +1825,16 @@ class choice(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'item':
             obj_ = choiceItem.factory()
@@ -1597,20 +1845,21 @@ class choice(GeneratedsSuper):
 
 
 class float_(GeneratedsSuper):
-    """Real number (float) column data type.The type to use to represent
-    this column in a Qt source file."""
+    """Real number (float) column data type."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:decimal', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
         'mantissaBits': MemberSpec_('mantissaBits', 'mantissaBits', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, qtype='float', mantissaBits=None, defaultExpression=None, valueOf_=None):
+    def __init__(self, default=None, qtype='float', sqltype='FLOAT', mantissaBits=None, defaultExpression=None, valueOf_=None):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.qtype = _cast(None, qtype)
+        self.sqltype = _cast(None, sqltype)
         self.mantissaBits = _cast(None, mantissaBits)
         self.defaultExpression = _cast(None, defaultExpression)
         self.valueOf_ = valueOf_
@@ -1624,10 +1873,36 @@ class float_(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_mantissaBits(self): return self.mantissaBits
     def set_mantissaBits(self, mantissaBits): self.mantissaBits = mantissaBits
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
     def validate_mantissaBits(self, value):
         # Validate type mantissaBits, a restriction on xs:integer.
         if value is not None and Validate_simpletypes_:
@@ -1663,9 +1938,12 @@ class float_(GeneratedsSuper):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
             outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
-        if self.qtype != "float" and 'qtype' not in already_processed:
+        if self.qtype != float and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
+        if self.sqltype != FLOAT and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.mantissaBits is not None and 'mantissaBits' not in already_processed:
             already_processed.add('mantissaBits')
             outfile.write(' mantissaBits=%s' % (quote_attrib(self.mantissaBits), ))
@@ -1693,6 +1971,12 @@ class float_(GeneratedsSuper):
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('mantissaBits', node)
         if value is not None and 'mantissaBits' not in already_processed:
             already_processed.add('mantissaBits')
@@ -1711,20 +1995,20 @@ class float_(GeneratedsSuper):
 
 
 class real(GeneratedsSuper):
-    """Real number (double) column data type.Default value for the
-    column.The type to use to represent this column in a Qt source
-    file."""
+    """Real number (double) column data type.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:decimal', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='double'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='REAL', qtype='double'):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if real.subclass:
@@ -1736,8 +2020,34 @@ class real(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -1769,9 +2079,12 @@ class real(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "double" and 'qtype' not in already_processed:
+        if self.sqltype != REAL and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != double and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='real', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -1793,10 +2106,16 @@ class real(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class real
@@ -1805,24 +2124,25 @@ class real(GeneratedsSuper):
 class decimal(GeneratedsSuper):
     """Real number (float) column data type with precision and scale.Number
     of significant digits after decimal dot.TODO: What is
-    this?Default value for this column.The type to use to represent
-    this column in a Qt source file."""
+    this?Default value for this column."""
     member_data_items_ = {
-        'default': MemberSpec_('default', 'xs:decimal', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
         'scale': MemberSpec_('scale', 'xs:integer', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'default': MemberSpec_('default', 'xs:decimal', 0),
         'precision': MemberSpec_('precision', 'xs:integer', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, scale=None, qtype='double', precision=None, valueOf_=None):
+    def __init__(self, defaultExpression=None, scale=None, default=None, precision=None, sqltype='DECIMAL', qtype='double', valueOf_=None):
         self.original_tagname_ = None
-        self.default = _cast(float, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.scale = _cast(int, scale)
-        self.qtype = _cast(None, qtype)
+        self.default = _cast(float, default)
         self.precision = _cast(int, precision)
+        self.sqltype = _cast(None, sqltype)
+        self.qtype = _cast(None, qtype)
         self.valueOf_ = valueOf_
     def factory(*args_, **kwargs_):
         if decimal.subclass:
@@ -1830,16 +2150,42 @@ class decimal(GeneratedsSuper):
         else:
             return decimal(*args_, **kwargs_)
     factory = staticmethod(factory)
-    def get_default(self): return self.default
-    def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
     def get_scale(self): return self.scale
     def set_scale(self, scale): self.scale = scale
-    def get_qtype(self): return self.qtype
-    def set_qtype(self, qtype): self.qtype = qtype
+    def get_default(self): return self.default
+    def set_default(self, default): self.default = default
     def get_precision(self): return self.precision
     def set_precision(self, precision): self.precision = precision
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -1865,21 +2211,24 @@ class decimal(GeneratedsSuper):
         else:
             outfile.write('/>%s' % (eol_, ))
     def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='decimal'):
-        if self.default is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
         if self.scale is not None and 'scale' not in already_processed:
             already_processed.add('scale')
             outfile.write(' scale="%s"' % self.gds_format_integer(self.scale, input_name='scale'))
-        if self.qtype != "double" and 'qtype' not in already_processed:
-            already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+        if self.default is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
         if self.precision is not None and 'precision' not in already_processed:
             already_processed.add('precision')
             outfile.write(' precision="%s"' % self.gds_format_integer(self.precision, input_name='precision'))
+        if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != double and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='decimal', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -1890,13 +2239,6 @@ class decimal(GeneratedsSuper):
             self.buildChildren(child, node, nodeName_)
         return self
     def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('default', node)
-        if value is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            try:
-                self.default = float(value)
-            except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
@@ -1908,10 +2250,13 @@ class decimal(GeneratedsSuper):
                 self.scale = int(value)
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
-        value = find_attr_value_('qtype', node)
-        if value is not None and 'qtype' not in already_processed:
-            already_processed.add('qtype')
-            self.qtype = value
+        value = find_attr_value_('default', node)
+        if value is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            try:
+                self.default = float(value)
+            except ValueError as exp:
+                raise ValueError('Bad float/double attribute (default): %s' % exp)
         value = find_attr_value_('precision', node)
         if value is not None and 'precision' not in already_processed:
             already_processed.add('precision')
@@ -1919,6 +2264,16 @@ class decimal(GeneratedsSuper):
                 self.precision = int(value)
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class decimal
@@ -1927,21 +2282,22 @@ class decimal(GeneratedsSuper):
 class decimalScale0(GeneratedsSuper):
     """Real number (float) column data type without a scale TODO: explain
     scale.Number of significant digits after decimal dot.Default
-    value for this column.The type to use to represent this column
-    in a Qt source file."""
+    value for this column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:decimal', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
         'precision': MemberSpec_('precision', 'xs:integer', 0),
         'identity': MemberSpec_('identity', 'identity', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='double', precision=None, identity=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='DECIMAL', qtype='double', precision=None, identity=None):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.precision = _cast(int, precision)
         self.identity = identity
@@ -1957,10 +2313,36 @@ class decimalScale0(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def get_precision(self): return self.precision
     def set_precision(self, precision): self.precision = precision
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1993,9 +2375,12 @@ class decimalScale0(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "double" and 'qtype' not in already_processed:
+        if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != double and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
         if self.precision is not None and 'precision' not in already_processed:
             already_processed.add('precision')
             outfile.write(' precision="%s"' % self.gds_format_integer(self.precision, input_name='precision'))
@@ -2025,10 +2410,16 @@ class decimalScale0(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
         value = find_attr_value_('precision', node)
         if value is not None and 'precision' not in already_processed:
             already_processed.add('precision')
@@ -2050,13 +2441,17 @@ class money(GeneratedsSuper):
     member_data_items_ = {
         'default': MemberSpec_('default', 'moneydefault', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None):
+    def __init__(self, default=None, defaultExpression=None, sqltype='DECIMAL', qtype='double'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
+        self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if money.subclass:
             return money.subclass(*args_, **kwargs_)
@@ -2067,6 +2462,10 @@ class money(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
     def validate_moneydefault(self, value):
         # Validate type moneydefault, a restriction on xs:decimal.
         if value is not None and Validate_simpletypes_:
@@ -2076,6 +2475,30 @@ class money(GeneratedsSuper):
                 warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {"value" : value} )
             if len(str(value)) >= 10:
                 warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {"value" : value} )
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2107,6 +2530,12 @@ class money(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+        if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != double and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='money', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2129,114 +2558,36 @@ class money(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class money
 
 
-class smallmoney(GeneratedsSuper):
-    """Default value for the column."""
-    member_data_items_ = {
-        'default': MemberSpec_('default', 'smallmoneyDefault', 0),
-        'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-    }
-    subclass = None
-    superclass = None
-    def __init__(self, default=None, defaultExpression=None):
-        self.original_tagname_ = None
-        self.default = _cast(None, default)
-        self.defaultExpression = _cast(None, defaultExpression)
-    def factory(*args_, **kwargs_):
-        if smallmoney.subclass:
-            return smallmoney.subclass(*args_, **kwargs_)
-        else:
-            return smallmoney(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_default(self): return self.default
-    def set_default(self, default): self.default = default
-    def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
-    def validate_smallmoneyDefault(self, value):
-        # Validate type smallmoneyDefault, a restriction on xs:decimal.
-        if value is not None and Validate_simpletypes_:
-            if value < -214748.3648:
-                warnings_.warn('Value "%(value)s" does not match xsd minInclusive restriction on smallmoneyDefault' % {"value" : value} )
-            if value > 214748.3647:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on smallmoneyDefault' % {"value" : value} )
-            if len(str(value)) >= 10:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on smallmoneyDefault' % {"value" : value} )
-    def hasContent_(self):
-        if (
-
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='smallmoney', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None:
-            name_ = self.original_tagname_
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='smallmoney')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='smallmoney', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='smallmoney'):
-        if self.default is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            outfile.write(' default=%s' % (quote_attrib(self.default), ))
-        if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
-            already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='smallmoney', fromsubclass_=False, pretty_print=True):
-        pass
-    def build(self, node):
-        already_processed = set()
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('default', node)
-        if value is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            try:
-                self.default = float(value)
-            except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
-            self.validate_smallmoneyDefault(self.default)    # validate type smallmoneyDefault
-        value = find_attr_value_('defaultExpression', node)
-        if value is not None and 'defaultExpression' not in already_processed:
-            already_processed.add('defaultExpression')
-            self.defaultExpression = value
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
-        pass
-# end class smallmoney
-
-
 class parameterlessStringType(GeneratedsSuper):
-    """String column data type.The type to use to represent this column in
-    a Qt source file."""
+    """String column data type."""
     member_data_items_ = {
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
         'default': MemberSpec_('default', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, qtype='QString'):
+    def __init__(self, defaultExpression=None, default=None, sqltype='VARCHAR', qtype='QString'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if parameterlessStringType.subclass:
@@ -2248,8 +2599,34 @@ class parameterlessStringType(GeneratedsSuper):
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
     def get_default(self): return self.default
     def set_default(self, default): self.default = default
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2281,9 +2658,12 @@ class parameterlessStringType(GeneratedsSuper):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
             outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
-        if self.qtype != "QString" and 'qtype' not in already_processed:
+        if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='parameterlessStringType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2302,29 +2682,36 @@ class parameterlessStringType(GeneratedsSuper):
         if value is not None and 'default' not in already_processed:
             already_processed.add('default')
             self.default = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class parameterlessStringType
 
 
 class uniqueidentifier(GeneratedsSuper):
-    """A unique identifier (GUID).The type to use to represent this column
-    in a Qt source file."""
+    """A unique identifier (GUID)."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'GUID', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='QString'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='VARCHAR', qtype='QString'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if uniqueidentifier.subclass:
@@ -2336,6 +2723,8 @@ class uniqueidentifier(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def validate_GUID(self, value):
@@ -2345,6 +2734,30 @@ class uniqueidentifier(GeneratedsSuper):
                     self.validate_GUID_patterns_, value):
                 warnings_.warn('Value "%s" does not match xsd pattern restrictions: %s' % (value.encode('utf-8'), self.validate_GUID_patterns_, ))
     validate_GUID_patterns_ = [['^\\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\}$']]
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2376,9 +2789,12 @@ class uniqueidentifier(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "QString" and 'qtype' not in already_processed:
+        if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='uniqueidentifier', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2398,124 +2814,32 @@ class uniqueidentifier(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class uniqueidentifier
 
 
-class variablePrecisionTime(GeneratedsSuper):
-    """Date and time column data type."""
-    member_data_items_ = {
-        'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'default': MemberSpec_('default', 'xs:string', 0),
-        'fractionalSecondsPrecision': MemberSpec_('fractionalSecondsPrecision', 'fractionalSecondsPrecision', 0),
-    }
-    subclass = None
-    superclass = None
-    def __init__(self, defaultExpression=None, default=None, fractionalSecondsPrecision=None):
-        self.original_tagname_ = None
-        self.defaultExpression = _cast(None, defaultExpression)
-        self.default = _cast(None, default)
-        self.fractionalSecondsPrecision = _cast(None, fractionalSecondsPrecision)
-    def factory(*args_, **kwargs_):
-        if variablePrecisionTime.subclass:
-            return variablePrecisionTime.subclass(*args_, **kwargs_)
-        else:
-            return variablePrecisionTime(*args_, **kwargs_)
-    factory = staticmethod(factory)
-    def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
-    def get_default(self): return self.default
-    def set_default(self, default): self.default = default
-    def get_fractionalSecondsPrecision(self): return self.fractionalSecondsPrecision
-    def set_fractionalSecondsPrecision(self, fractionalSecondsPrecision): self.fractionalSecondsPrecision = fractionalSecondsPrecision
-    def validate_fractionalSecondsPrecision(self, value):
-        # Validate type fractionalSecondsPrecision, a restriction on xs:integer.
-        if value is not None and Validate_simpletypes_:
-            if value < 0:
-                warnings_.warn('Value "%(value)s" does not match xsd minInclusive restriction on fractionalSecondsPrecision' % {"value" : value} )
-            if value > 7:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on fractionalSecondsPrecision' % {"value" : value} )
-    def hasContent_(self):
-        if (
-
-        ):
-            return True
-        else:
-            return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='variablePrecisionTime', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
-        if pretty_print:
-            eol_ = '\n'
-        else:
-            eol_ = ''
-        if self.original_tagname_ is not None:
-            name_ = self.original_tagname_
-        showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
-        already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='variablePrecisionTime')
-        if self.hasContent_():
-            outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='variablePrecisionTime', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='variablePrecisionTime'):
-        if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
-            already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.default is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
-        if self.fractionalSecondsPrecision is not None and 'fractionalSecondsPrecision' not in already_processed:
-            already_processed.add('fractionalSecondsPrecision')
-            outfile.write(' fractionalSecondsPrecision=%s' % (quote_attrib(self.fractionalSecondsPrecision), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='variablePrecisionTime', fromsubclass_=False, pretty_print=True):
-        pass
-    def build(self, node):
-        already_processed = set()
-        self.buildAttributes(node, node.attrib, already_processed)
-        for child in node:
-            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
-            self.buildChildren(child, node, nodeName_)
-        return self
-    def buildAttributes(self, node, attrs, already_processed):
-        value = find_attr_value_('defaultExpression', node)
-        if value is not None and 'defaultExpression' not in already_processed:
-            already_processed.add('defaultExpression')
-            self.defaultExpression = value
-        value = find_attr_value_('default', node)
-        if value is not None and 'default' not in already_processed:
-            already_processed.add('default')
-            self.default = value
-        value = find_attr_value_('fractionalSecondsPrecision', node)
-        if value is not None and 'fractionalSecondsPrecision' not in already_processed:
-            already_processed.add('fractionalSecondsPrecision')
-            try:
-                self.fractionalSecondsPrecision = int(value)
-            except ValueError as exp:
-                raise_parse_error(node, 'Bad integer attribute: %s' % exp)
-            self.validate_fractionalSecondsPrecision(self.fractionalSecondsPrecision)    # validate type fractionalSecondsPrecision
-    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
-        pass
-# end class variablePrecisionTime
-
-
 class dateType(GeneratedsSuper):
-    """A date (without time component).Default value for the column.The
-    type to use to represent this column in a Qt source file."""
+    """A date (without time component).Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:date', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='QDate'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='DATE', qtype='QDate'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
             initvalue_ = datetime_.datetime.strptime(default, '%Y-%m-%d').date()
@@ -2523,6 +2847,7 @@ class dateType(GeneratedsSuper):
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if dateType.subclass:
@@ -2534,8 +2859,34 @@ class dateType(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2567,9 +2918,12 @@ class dateType(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "QDate" and 'qtype' not in already_processed:
+        if self.sqltype != DATE and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QDate and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='dateType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2591,26 +2945,32 @@ class dateType(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class dateType
 
 
 class timeType(GeneratedsSuper):
-    """A time (without date component).Default value for the column.The
-    type to use to represent this column in a Qt source file."""
+    """A time (without date component).Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:time', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='QTime'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='TIME', qtype='QTime'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
             initvalue_ = datetime_.datetime.strptime(default, '%H:%M:%S').time()
@@ -2618,6 +2978,7 @@ class timeType(GeneratedsSuper):
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if timeType.subclass:
@@ -2629,8 +2990,34 @@ class timeType(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2662,9 +3049,12 @@ class timeType(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "QTime" and 'qtype' not in already_processed:
+        if self.sqltype != TIME and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QTime and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='timeType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2686,26 +3076,32 @@ class timeType(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class timeType
 
 
 class dateTimeType(GeneratedsSuper):
-    """A date and a time.Default value for the column.The type to use to
-    represent this column in a Qt source file."""
+    """A date and a time.Default value for the column."""
     member_data_items_ = {
         'default': MemberSpec_('default', 'xs:time', 0),
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, qtype='QDateTime'):
+    def __init__(self, default=None, defaultExpression=None, sqltype='VARCHAR', qtype='QDateTime'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
             initvalue_ = datetime_.datetime.strptime(default, '%H:%M:%S').time()
@@ -2713,6 +3109,7 @@ class dateTimeType(GeneratedsSuper):
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if dateTimeType.subclass:
@@ -2724,8 +3121,34 @@ class dateTimeType(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_defaultExpression(self): return self.defaultExpression
     def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2757,9 +3180,12 @@ class dateTimeType(GeneratedsSuper):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-        if self.qtype != "QDateTime" and 'qtype' not in already_processed:
+        if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QDateTime and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='dateTimeType', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2781,10 +3207,16 @@ class dateTimeType(GeneratedsSuper):
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class dateTimeType
@@ -2792,21 +3224,22 @@ class dateTimeType(GeneratedsSuper):
 
 class char(GeneratedsSuper):
     """TODO: What is this?The length may be an integer (1-8000) or it may
-    be `max` to use the largest possible value.The type to use to
-    represent this column in a Qt source file."""
+    be `max` to use the largest possible value."""
     member_data_items_ = {
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
         'default': MemberSpec_('default', 'xs:string', 0),
         'length': MemberSpec_('length', 'charLength', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, length=None, qtype='QString'):
+    def __init__(self, defaultExpression=None, default=None, length=None, sqltype='CHARACTER', qtype='QString'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.length = _cast(None, length)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if char.subclass:
@@ -2820,11 +3253,37 @@ class char(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_length(self): return self.length
     def set_length(self, length): self.length = length
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def validate_charLength(self, value):
         # Validate type charLength, a restriction on None.
         pass
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2859,9 +3318,12 @@ class char(GeneratedsSuper):
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
-        if self.qtype != "QString" and 'qtype' not in already_processed:
+        if self.sqltype != CHARACTER and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='char', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2885,10 +3347,16 @@ class char(GeneratedsSuper):
             already_processed.add('length')
             self.length = value
             self.validate_charLength(self.length)    # validate type charLength
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class char
@@ -2896,17 +3364,18 @@ class char(GeneratedsSuper):
 
 class binary(GeneratedsSuper):
     """TODO: What is this?The length may be an integer (1-8000) or it may
-    be `max` to use the largest possible value.The type to use to
-    represent this column in a Qt source file."""
+    be `max` to use the largest possible value."""
     member_data_items_ = {
         'length': MemberSpec_('length', 'charLength', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, length=None, qtype='QByteArray'):
+    def __init__(self, length=None, sqltype='VARBINARY', qtype='QByteArray'):
         self.original_tagname_ = None
         self.length = _cast(None, length)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if binary.subclass:
@@ -2916,11 +3385,37 @@ class binary(GeneratedsSuper):
     factory = staticmethod(factory)
     def get_length(self): return self.length
     def set_length(self, length): self.length = length
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def validate_charLength(self, value):
         # Validate type charLength, a restriction on None.
         pass
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -2949,9 +3444,12 @@ class binary(GeneratedsSuper):
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
-        if self.qtype != "QByteArray" and 'qtype' not in already_processed:
+        if self.sqltype != VARBINARY and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QByteArray and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='binary', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2967,10 +3465,16 @@ class binary(GeneratedsSuper):
             already_processed.add('length')
             self.length = value
             self.validate_charLength(self.length)    # validate type charLength
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class binary
@@ -2978,21 +3482,22 @@ class binary(GeneratedsSuper):
 
 class nchar(GeneratedsSuper):
     """TODO: What is this?Maximum number of characters (an integer in
-    1-4000 range) or `max` to use maximum length.The type to use to
-    represent this column in a Qt source file."""
+    1-4000 range) or `max` to use maximum length."""
     member_data_items_ = {
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
         'default': MemberSpec_('default', 'xs:string', 0),
         'length': MemberSpec_('length', 'ncharLength', 0),
-        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+        'sqltype': MemberSpec_('sqltype', 'sqlType', 0),
+        'qtype': MemberSpec_('qtype', 'qtType', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, length=None, qtype='QByteArray'):
+    def __init__(self, defaultExpression=None, default=None, length=None, sqltype='VARCHAR', qtype='QByteArray'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.length = _cast(None, length)
+        self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if nchar.subclass:
@@ -3006,11 +3511,37 @@ class nchar(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_length(self): return self.length
     def set_length(self, length): self.length = length
+    def get_sqltype(self): return self.sqltype
+    def set_sqltype(self, sqltype): self.sqltype = sqltype
     def get_qtype(self): return self.qtype
     def set_qtype(self, qtype): self.qtype = qtype
     def validate_ncharLength(self, value):
         # Validate type ncharLength, a restriction on None.
         pass
+    def validate_sqlType(self, value):
+        # Validate type sqlType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+    def validate_qtType(self, value):
+        # Validate type qtType, a restriction on xs:string.
+        if value is not None and Validate_simpletypes_:
+            value = str(value)
+            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumeration_respectee = False
+            for enum in enumerations:
+                if value == enum:
+                    enumeration_respectee = True
+                    break
+            if not enumeration_respectee:
+                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
     def hasContent_(self):
         if (
 
@@ -3045,9 +3576,12 @@ class nchar(GeneratedsSuper):
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
-        if self.qtype != "QByteArray" and 'qtype' not in already_processed:
+        if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
+        if self.qtype != QByteArray and 'qtype' not in already_processed:
             already_processed.add('qtype')
-            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+            outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='nchar', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -3071,10 +3605,16 @@ class nchar(GeneratedsSuper):
             already_processed.add('length')
             self.length = value
             self.validate_ncharLength(self.length)    # validate type ncharLength
+        value = find_attr_value_('sqltype', node)
+        if value is not None and 'sqltype' not in already_processed:
+            already_processed.add('sqltype')
+            self.sqltype = value
+            self.validate_sqlType(self.sqltype)    # validate type sqlType
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
             self.qtype = value
+            self.validate_qtType(self.qtype)    # validate type qtType
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class nchar
@@ -3226,16 +3766,12 @@ class column(GeneratedsSuper):
         'decimal': MemberSpec_('decimal', 'decimal', 0),
         'numericScale0': MemberSpec_('numericScale0', 'decimalScale0', 0),
         'decimalScale0': MemberSpec_('decimalScale0', 'decimalScale0', 0),
-        'smallmoney': MemberSpec_('smallmoney', 'smallmoney', 0),
         'money': MemberSpec_('money', 'money', 0),
         'float_': MemberSpec_('float_', 'float', 0),
         'real': MemberSpec_('real', 'real', 0),
         'date': MemberSpec_('date', 'dateType', 0),
         'datetime': MemberSpec_('datetime', 'dateTimeType', 0),
         'time': MemberSpec_('time', 'timeType', 0),
-        'datetimeoffset': MemberSpec_('datetimeoffset', 'variablePrecisionTime', 0),
-        'datetime2': MemberSpec_('datetime2', 'variablePrecisionTime', 0),
-        'smalldatetime': MemberSpec_('smalldatetime', 'parameterlessStringType', 0),
         'char': MemberSpec_('char', 'char', 0),
         'varchar': MemberSpec_('varchar', 'char', 0),
         'text': MemberSpec_('text', 'parameterlessStringType', 0),
@@ -3245,16 +3781,12 @@ class column(GeneratedsSuper):
         'binary': MemberSpec_('binary', 'binary', 0),
         'varbinary': MemberSpec_('varbinary', 'binary', 0),
         'image': MemberSpec_('image', 'binary', 0),
-        'rowversion': MemberSpec_('rowversion', 'parameterlessType', 0),
-        'hierarchyid': MemberSpec_('hierarchyid', 'parameterlessStringType', 0),
-        'uniqueidentifier': MemberSpec_('uniqueidentifier', 'uniqueidentifier', 0),
-        'sql_variant': MemberSpec_('sql_variant', 'parameterlessStringType', 0),
         'xml': MemberSpec_('xml', 'parameterlessStringType', 0),
         'vrtcol': MemberSpec_('vrtcol', 'vrtcol', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignBehavior='choose', foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, choice=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, smallmoney=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, datetimeoffset=None, datetime2=None, smalldatetime=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, rowversion=None, hierarchyid=None, uniqueidentifier=None, sql_variant=None, xml=None, vrtcol=None):
+    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignBehavior='choose', foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, choice=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, xml=None, vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
@@ -3276,16 +3808,12 @@ class column(GeneratedsSuper):
         self.decimal = decimal
         self.numericScale0 = numericScale0
         self.decimalScale0 = decimalScale0
-        self.smallmoney = smallmoney
         self.money = money
         self.float_ = float_
         self.real = real
         self.date = date
         self.datetime = datetime
         self.time = time
-        self.datetimeoffset = datetimeoffset
-        self.datetime2 = datetime2
-        self.smalldatetime = smalldatetime
         self.char = char
         self.varchar = varchar
         self.text = text
@@ -3295,10 +3823,6 @@ class column(GeneratedsSuper):
         self.binary = binary
         self.varbinary = varbinary
         self.image = image
-        self.rowversion = rowversion
-        self.hierarchyid = hierarchyid
-        self.uniqueidentifier = uniqueidentifier
-        self.sql_variant = sql_variant
         self.xml = xml
         self.vrtcol = vrtcol
     def factory(*args_, **kwargs_):
@@ -3329,8 +3853,6 @@ class column(GeneratedsSuper):
     def set_numericScale0(self, numericScale0): self.numericScale0 = numericScale0
     def get_decimalScale0(self): return self.decimalScale0
     def set_decimalScale0(self, decimalScale0): self.decimalScale0 = decimalScale0
-    def get_smallmoney(self): return self.smallmoney
-    def set_smallmoney(self, smallmoney): self.smallmoney = smallmoney
     def get_money(self): return self.money
     def set_money(self, money): self.money = money
     def get_float(self): return self.float_
@@ -3343,12 +3865,6 @@ class column(GeneratedsSuper):
     def set_datetime(self, datetime): self.datetime = datetime
     def get_time(self): return self.time
     def set_time(self, time): self.time = time
-    def get_datetimeoffset(self): return self.datetimeoffset
-    def set_datetimeoffset(self, datetimeoffset): self.datetimeoffset = datetimeoffset
-    def get_datetime2(self): return self.datetime2
-    def set_datetime2(self, datetime2): self.datetime2 = datetime2
-    def get_smalldatetime(self): return self.smalldatetime
-    def set_smalldatetime(self, smalldatetime): self.smalldatetime = smalldatetime
     def get_char(self): return self.char
     def set_char(self, char): self.char = char
     def get_varchar(self): return self.varchar
@@ -3367,14 +3883,6 @@ class column(GeneratedsSuper):
     def set_varbinary(self, varbinary): self.varbinary = varbinary
     def get_image(self): return self.image
     def set_image(self, image): self.image = image
-    def get_rowversion(self): return self.rowversion
-    def set_rowversion(self, rowversion): self.rowversion = rowversion
-    def get_hierarchyid(self): return self.hierarchyid
-    def set_hierarchyid(self, hierarchyid): self.hierarchyid = hierarchyid
-    def get_uniqueidentifier(self): return self.uniqueidentifier
-    def set_uniqueidentifier(self, uniqueidentifier): self.uniqueidentifier = uniqueidentifier
-    def get_sql_variant(self): return self.sql_variant
-    def set_sql_variant(self, sql_variant): self.sql_variant = sql_variant
     def get_xml(self): return self.xml
     def set_xml(self, xml): self.xml = xml
     def get_vrtcol(self): return self.vrtcol
@@ -3410,16 +3918,12 @@ class column(GeneratedsSuper):
             self.decimal is not None or
             self.numericScale0 is not None or
             self.decimalScale0 is not None or
-            self.smallmoney is not None or
             self.money is not None or
             self.float_ is not None or
             self.real is not None or
             self.date is not None or
             self.datetime is not None or
             self.time is not None or
-            self.datetimeoffset is not None or
-            self.datetime2 is not None or
-            self.smalldatetime is not None or
             self.char is not None or
             self.varchar is not None or
             self.text is not None or
@@ -3429,10 +3933,6 @@ class column(GeneratedsSuper):
             self.binary is not None or
             self.varbinary is not None or
             self.image is not None or
-            self.rowversion is not None or
-            self.hierarchyid is not None or
-            self.uniqueidentifier is not None or
-            self.sql_variant is not None or
             self.xml is not None or
             self.vrtcol is not None
         ):
@@ -3512,8 +4012,6 @@ class column(GeneratedsSuper):
             self.numericScale0.export(outfile, level, namespace_, name_='numericScale0', pretty_print=pretty_print)
         if self.decimalScale0 is not None:
             self.decimalScale0.export(outfile, level, namespace_, name_='decimalScale0', pretty_print=pretty_print)
-        if self.smallmoney is not None:
-            self.smallmoney.export(outfile, level, namespace_, name_='smallmoney', pretty_print=pretty_print)
         if self.money is not None:
             self.money.export(outfile, level, namespace_, name_='money', pretty_print=pretty_print)
         if self.float_ is not None:
@@ -3526,12 +4024,6 @@ class column(GeneratedsSuper):
             self.datetime.export(outfile, level, namespace_, name_='datetime', pretty_print=pretty_print)
         if self.time is not None:
             self.time.export(outfile, level, namespace_, name_='time', pretty_print=pretty_print)
-        if self.datetimeoffset is not None:
-            self.datetimeoffset.export(outfile, level, namespace_, name_='datetimeoffset', pretty_print=pretty_print)
-        if self.datetime2 is not None:
-            self.datetime2.export(outfile, level, namespace_, name_='datetime2', pretty_print=pretty_print)
-        if self.smalldatetime is not None:
-            self.smalldatetime.export(outfile, level, namespace_, name_='smalldatetime', pretty_print=pretty_print)
         if self.char is not None:
             self.char.export(outfile, level, namespace_, name_='char', pretty_print=pretty_print)
         if self.varchar is not None:
@@ -3550,14 +4042,6 @@ class column(GeneratedsSuper):
             self.varbinary.export(outfile, level, namespace_, name_='varbinary', pretty_print=pretty_print)
         if self.image is not None:
             self.image.export(outfile, level, namespace_, name_='image', pretty_print=pretty_print)
-        if self.rowversion is not None:
-            self.rowversion.export(outfile, level, namespace_, name_='rowversion', pretty_print=pretty_print)
-        if self.hierarchyid is not None:
-            self.hierarchyid.export(outfile, level, namespace_, name_='hierarchyid', pretty_print=pretty_print)
-        if self.uniqueidentifier is not None:
-            self.uniqueidentifier.export(outfile, level, namespace_, name_='uniqueidentifier', pretty_print=pretty_print)
-        if self.sql_variant is not None:
-            self.sql_variant.export(outfile, level, namespace_, name_='sql_variant', pretty_print=pretty_print)
         if self.xml is not None:
             self.xml.export(outfile, level, namespace_, name_='xml', pretty_print=pretty_print)
         if self.vrtcol is not None:
@@ -3672,11 +4156,6 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.decimalScale0 = obj_
             obj_.original_tagname_ = 'decimalScale0'
-        elif nodeName_ == 'smallmoney':
-            obj_ = smallmoney.factory()
-            obj_.build(child_)
-            self.smallmoney = obj_
-            obj_.original_tagname_ = 'smallmoney'
         elif nodeName_ == 'money':
             obj_ = money.factory()
             obj_.build(child_)
@@ -3707,21 +4186,6 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.time = obj_
             obj_.original_tagname_ = 'time'
-        elif nodeName_ == 'datetimeoffset':
-            obj_ = variablePrecisionTime.factory()
-            obj_.build(child_)
-            self.datetimeoffset = obj_
-            obj_.original_tagname_ = 'datetimeoffset'
-        elif nodeName_ == 'datetime2':
-            obj_ = variablePrecisionTime.factory()
-            obj_.build(child_)
-            self.datetime2 = obj_
-            obj_.original_tagname_ = 'datetime2'
-        elif nodeName_ == 'smalldatetime':
-            obj_ = parameterlessStringType.factory()
-            obj_.build(child_)
-            self.smalldatetime = obj_
-            obj_.original_tagname_ = 'smalldatetime'
         elif nodeName_ == 'char':
             obj_ = char.factory()
             obj_.build(child_)
@@ -3767,26 +4231,6 @@ class column(GeneratedsSuper):
             obj_.build(child_)
             self.image = obj_
             obj_.original_tagname_ = 'image'
-        elif nodeName_ == 'rowversion':
-            obj_ = parameterlessType.factory()
-            obj_.build(child_)
-            self.rowversion = obj_
-            obj_.original_tagname_ = 'rowversion'
-        elif nodeName_ == 'hierarchyid':
-            obj_ = parameterlessStringType.factory()
-            obj_.build(child_)
-            self.hierarchyid = obj_
-            obj_.original_tagname_ = 'hierarchyid'
-        elif nodeName_ == 'uniqueidentifier':
-            obj_ = uniqueidentifier.factory()
-            obj_.build(child_)
-            self.uniqueidentifier = obj_
-            obj_.original_tagname_ = 'uniqueidentifier'
-        elif nodeName_ == 'sql_variant':
-            obj_ = parameterlessStringType.factory()
-            obj_.build(child_)
-            self.sql_variant = obj_
-            obj_.original_tagname_ = 'sql_variant'
         elif nodeName_ == 'xml':
             obj_ = parameterlessStringType.factory()
             obj_.build(child_)
@@ -5662,30 +6106,24 @@ class database(GeneratedsSuper):
 
 
 GDSClassesMapping = {
-    'datetimeoffset': variablePrecisionTime,
+    'xml': parameterlessStringType,
     'subset': viewSubset,
+    'varchar': char,
+    'writeback': viewWriteBack,
+    'column': viewWriteBackCol,
     'text': parameterlessStringType,
     'image': binary,
-    'numeric': decimal,
-    'datetime': dateTimeType,
-    'hierarchyid': parameterlessStringType,
-    'numericScale0': decimalScale0,
-    'nvarchar': nchar,
-    'xml': parameterlessStringType,
-    'smalldatetime': parameterlessStringType,
     'columns': columnList,
-    'writeback': viewWriteBack,
-    'rowversion': parameterlessType,
-    'varchar': char,
-    'key': constraint,
-    'date': dateType,
-    'ntext': parameterlessStringType,
-    'sql_variant': parameterlessStringType,
-    'column': viewWriteBackCol,
-    'datetime2': variablePrecisionTime,
+    'numericScale0': decimalScale0,
+    'datetime': dateTimeType,
     'item': choiceItem,
+    'numeric': decimal,
+    'key': constraint,
     'time': timeType,
+    'date': dateType,
     'varbinary': binary,
+    'nvarchar': nchar,
+    'ntext': parameterlessStringType,
 }
 
 
@@ -5840,7 +6278,6 @@ __all__ = [
     "relationshipColumn",
     "relationships",
     "smallint",
-    "smallmoney",
     "table",
     "tables",
     "timeType",
@@ -5848,7 +6285,6 @@ __all__ = [
     "tristate",
     "uniqueConstraints",
     "uniqueidentifier",
-    "variablePrecisionTime",
     "view",
     "viewSubset",
     "viewWriteBack",
