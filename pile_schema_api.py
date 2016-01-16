@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Jan 15 22:35:20 2016 by generateDS.py version 2.17a.
+# Generated Sat Jan 16 13:43:13 2016 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -3626,9 +3626,9 @@ class vrtcol(GeneratedsSuper):
     and the entry in the related model. This element only indicates
     the source column in that table and the label. The parent column
     element must provide name, label and foreignInsert attributes.
-    The name of the real column that selects into a foreign
-    table.Tells if the value for the the cell requires a callback or
-    is provided by the database."""
+    The name of the real column (the one that selects into a foreign
+    table).Tells if the value for the the cell requires a callback
+    or is provided by the database."""
     member_data_items_ = {
         'dynamic': MemberSpec_('dynamic', 'xs:boolean', 0),
         'references': MemberSpec_('references', 'xs:string', 0),
@@ -3773,7 +3773,7 @@ class column(GeneratedsSuper):
         'datetime': MemberSpec_('datetime', 'dateTimeType', 0),
         'time': MemberSpec_('time', 'timeType', 0),
         'char': MemberSpec_('char', 'char', 0),
-        'varchar': MemberSpec_('varchar', 'char', 0),
+        'varchar': MemberSpec_('varchar', 'parameterlessStringType', 0),
         'text': MemberSpec_('text', 'parameterlessStringType', 0),
         'nchar': MemberSpec_('nchar', 'nchar', 0),
         'nvarchar': MemberSpec_('nvarchar', 'nchar', 0),
@@ -4192,7 +4192,7 @@ class column(GeneratedsSuper):
             self.char = obj_
             obj_.original_tagname_ = 'char'
         elif nodeName_ == 'varchar':
-            obj_ = char.factory()
+            obj_ = parameterlessStringType.factory()
             obj_.build(child_)
             self.varchar = obj_
             obj_.original_tagname_ = 'varchar'
@@ -6108,7 +6108,7 @@ class database(GeneratedsSuper):
 GDSClassesMapping = {
     'xml': parameterlessStringType,
     'subset': viewSubset,
-    'varchar': char,
+    'varchar': parameterlessStringType,
     'writeback': viewWriteBack,
     'column': viewWriteBackCol,
     'text': parameterlessStringType,

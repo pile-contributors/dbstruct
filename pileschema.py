@@ -29,7 +29,7 @@ import os
 import platform
 
 # file generated from PileSchema.xsd
-import pile_schema_api
+import pile_schema_sclass as pile_schema_api
 
 # The logger used to communicate to outside world (see setup_logging() )
 LOGGER = None
@@ -99,42 +99,6 @@ class Driver(object):
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-class ForeignKey(object):
-    '''
-    A class that stores information about foreign keys.
-
-    Parameters:
-    ----------
-    name : str
-        The name of the column in current table.
-    table : str
-        The name of the foreign table.
-    foreign_col : str
-        The name of the column in foreign table.
-    behaviour : str
-        Allow the user to add new values or not.
-    '''
-    def __init__(self, name, table, foreign_col, behaviour):
-        self.name = name
-        self.table = table
-        self.foreign_col = foreign_col
-        self.prevent_add = behaviour in [None, '', 'choose']
-        super(ForeignKey, self).__init__()
-
-    @staticmethod
-    def from_node(node):
-        '''Retrieves the foreign key data from a node and returns the object'''
-        if node.foreignTable:
-            return ForeignKey(
-                node.foreignColumn, node.foreignTable,
-                node.foreignInsert, node.foreignBehavior)
-        else:
-            return None
-
-# ----------------------------------------------------------------------------
-# ----------------------------------------------------------------------------
-# ----------------------------------------------------------------------------
-
 class SqlDriver(Driver):
     '''
     Default implementation for generating Sql statements.
@@ -145,8 +109,6 @@ class SqlDriver(Driver):
     def __init__(self):
         # this is where we accumulate the content of the file
         self.sql_string = ''
-        # the list of foreign keys as ForeignKey instances for current table
-        self.foreign_keys = {}
         # base class constructor
         super(SqlDriver, self).__init__()
 
@@ -165,7 +127,6 @@ class SqlDriver(Driver):
     def table_start(self, name, node):
         '''Starting to process table `name`'''
         self.sql_string += 'CREATE TABLE IF NOT EXISTS `' + name + '` (\n'
-        self.foreign_keys = {}
 
     def table_end(self, name, node):
         '''Done processing table `name`'''
@@ -176,61 +137,40 @@ class SqlDriver(Driver):
         except AttributeError:
             pass
         # add collected foreign keys
-        for fkey in self.foreign_keys:
-            fdata = self.foreign_keys[fkey]
-            self.append_foreign_key(fdata)
+        for fkey in node.foreign_columns:
+            self.append_foreign_key(fkey)
         # that should do it
         self.end_sql_statement()
 
-    def column(self, name, label, datatype, nulls, node, dtnode):
+    def column(self, name, node):
         '''Processing a column'''
         # skip virtual columns
-        if datatype == 'vrtcol':
+        if node.datatype == 'vrtcol':
             return
 
         # first comes the name
         self.sql_string += '  `' + name + '` '
-        # then the datatype
-        try:
-            length = dtnode.length
-        except AttributeError:
-            length = None
-        if length:
-            self.sql_string += dtnode.sqltype + '(' + length + ') '
+        # then the datatype and its size
+        self.sql_string += node.sqltype
+        if node.length:
+            self.sql_string += '(' + node.length + ') '
         else:
-            self.sql_string += dtnode.sqltype + ' '
+            self.sql_string += ' '
         # any defaults
-        try:
-            defval = dtnode.default
-        except AttributeError:
-            defval = None
-        try:
-            defexpr = dtnode.defaultExpression
-        except AttributeError:
-            defexpr = defval
-        if defval:
+        defval = node.default
+        if defval is not None:
             self.sql_string += 'DEFAULT ' + str(defval) + ' '
-        elif defexpr:
-            self.sql_string += 'DEFAULT ' + defexpr + ' '
         # null constraint
-        if not nulls:
+        if not node.allowNulls:
             self.sql_string += 'NOT NULL '
-        # auto-incrementing
-        try:
-            identity = dtnode.identity
-        except AttributeError:
-            identity = None
-        if not identity is None:
+        # auto-incrementing for identity column
+        if node.identity:
             self.sql_string += 'AUTO_INCREMENT '
+        # strip trailing whitespace
         if self.sql_string[-1] == ' ':
             self.sql_string = self.sql_string[:-1]
         # and that's it folks
         self.sql_string += ',\n'
-
-        # Is this column a foreign key into another table?
-        ftable = ForeignKey.from_node(node)
-        if ftable is not None:
-            self.foreign_keys[name] = ftable
 
     def view_start(self, name, node):
         '''Starting to process view `name`'''
@@ -292,8 +232,8 @@ class SqlDriver(Driver):
             '  FOREIGN KEY(' + \
             fdata.name + \
             ') REFERENCES ' + \
-            fdata.table + \
-            '(' + fdata.foreign_col + '),\n'
+            fdata.foreignTable + \
+            '(' + fdata.foreignColumn + '),\n'
 
 
 # ----------------------------------------------------------------------------
@@ -318,9 +258,42 @@ class QtDriver(Driver):
         self.export_macro = export_macro
         self.import_header = import_header
         self.base_class = base_class
+        # will be collected in later stages
+        self.db_name = None
         # base class constructor
         super(QtDriver, self).__init__()
 
+    def database_start(self, name, node):
+        '''Starting to process database `name`'''
+        self.db_name = name
+
+    def database_end(self, name, node):
+        '''Done processing database `name`'''
+        pass
+
+    def table_start(self, name, node):
+        '''Starting to process table `name`'''
+        pass
+
+    def table_end(self, name, node):
+        '''Done processing table `name`'''
+        pass
+
+    def column(self, name, node):
+        '''Processing a column'''
+        pass
+
+    def view_start(self, name, node):
+        '''Starting to process view `name`'''
+        pass
+
+    def view_end(self, name, node):
+        '''Done processing view `name`'''
+        pass
+
+    def view_subset(self, node, subset):
+        '''Process a subset in a view'''
+        pass
 
 # ----------------------------------------------------------------------------
 # ------------------[   Intermediate level Functions   ]----------------------
@@ -358,47 +331,22 @@ def process_with_driver(driver, database):
     tables = database.tables
     views = database.views
 
-    if not tables is None and not tables.table is None:
-        for table in tables.table:
-            driver.table_start(table.name, table)
+    for table in tables.table:
+        driver.table_start(table.name, table)
+        columns = table.columns
+        for column in columns.column:
+            driver.column(column.name, column)
+        driver.table_end(table.name, table)
 
-            columns = table.columns
-            for column in columns.column:
-
-                datatype_name = ''
-                datatype = None
-                for kkk in dir(column):
-                    # This is a hack; it exists because the generated class
-                    # does no provide any means to iterate child elements
-                    # It relies on the assumption that all elements
-                    # are custom types
-                    if str(type(getattr(column, kkk))).find('class') > 0:
-                        datatype = getattr(column, kkk)
-                        datatype_name = kkk
-                        break
-
-                driver.column(
-                    column.name,
-                    string_choice(
-                        column.label,
-                        column.name,
-                        column.label),
-                    datatype_name,
-                    str2bool(column.allowNulls),
-                    column, datatype)
-
-            driver.table_end(table.name, table)
-
-    if not views is None and not views.view is None:
-        for view in views.view:
-            driver.view_start(view.name, view)
-            subset = view.subset
-            if subset is not None:
-                driver.view_subset(view, subset)
-            else:
-                LOGGER.error('Unknown view type')
-                return -1
-            driver.view_end(view.name, view)
+    for view in views.view:
+        driver.view_start(view.name, view)
+        subset = view.subset
+        if subset is not None:
+            driver.view_subset(view, subset)
+        else:
+            LOGGER.error('Unknown view type')
+            return -1
+        driver.view_end(view.name, view)
 
     driver.database_end(database.name, database)
 

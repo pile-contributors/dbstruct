@@ -13,29 +13,34 @@
 
     <xs:complexType name="identity">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The column containing this element is the identity column.</xs:documentation>
+            <xs:documentation xml:lang="en">The column containing this element
+            is the identity column.</xs:documentation>
         </xs:annotation>
 
         <xs:attribute name="seed" use="optional" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: What is
+                this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="increment" use="optional" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The increment step to use.</xs:documentation>
+                <xs:documentation xml:lang="en">The increment step
+                to use.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="notForReplication" use="optional" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: What is
+                this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:group name="withIdentity">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Elements part of this group may use the `identity` element.</xs:documentation>
+            <xs:documentation xml:lang="en">Elements part of this group may
+            use the `identity` element.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="identity" minOccurs="0" maxOccurs="1" type="identity" />
@@ -44,18 +49,21 @@
 
     <xs:attributeGroup name="withDefaultExpression">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Elements part of this group may use the `defaultExpression` attribute.</xs:documentation>
+            <xs:documentation xml:lang="en">Elements part of this group may
+            use the `defaultExpression` attribute.</xs:documentation>
         </xs:annotation>
         <xs:attribute name="defaultExpression" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default for a variable or column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default for a variable
+                or column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>
 
     <xs:simpleType name="sqlType">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The type to use to represent this column in a (generic) sql database schema.</xs:documentation>
+            <xs:documentation xml:lang="en">The type to use to represent
+            this column in a (generic) sql database schema.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
           <xs:enumeration value="VARCHAR" />
@@ -83,7 +91,7 @@
 
     <xs:simpleType name="qtType">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The type to use to represent 
+            <xs:documentation xml:lang="en">The type to use to represent
             this column in a Qt source file.</xs:documentation>
         </xs:annotation>
 
@@ -122,7 +130,8 @@
 
         <xs:attribute name="default" use="optional" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -132,14 +141,16 @@
 
     <xs:complexType name="tristate">
         <xs:annotation>
-            <xs:documentation xml:lang="en">True(2), False (0) and Undefined(1).</xs:documentation>
+            <xs:documentation xml:lang="en">True(2), False (0) and
+            Undefined(1).</xs:documentation>
         </xs:annotation>
 
         <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="tristateValues">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -149,14 +160,16 @@
 
     <xs:complexType name="int">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Common integer (int) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Common integer (int) column
+            data type.</xs:documentation>
         </xs:annotation>
 
         <xs:group ref="withIdentity" />
         <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="xs:int">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for the
+                column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -167,7 +180,8 @@
 
     <xs:complexType name="bigint">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Large integer (long) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Large integer (long) column
+            data type.</xs:documentation>
         </xs:annotation>
 
         <xs:group ref="withIdentity" />
@@ -175,7 +189,8 @@
 
         <xs:attribute name="default" use="optional" type="xs:long">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for the
+                column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -185,7 +200,8 @@
 
     <xs:complexType name="smallint">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Small integer (short) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Small integer (short) column
+            data type.</xs:documentation>
         </xs:annotation>
 
         <xs:group ref="withIdentity" />
@@ -193,7 +209,8 @@
 
         <xs:attribute name="default" use="optional" type="xs:short">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for the
+                column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -203,7 +220,8 @@
 
     <xs:complexType name="tinyint">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Tiny integer (byte) column data type.</xs:documentation>
+            <xs:documentation xml:lang="en">Tiny integer (byte) column
+            data type.</xs:documentation>
         </xs:annotation>
 
         <xs:group ref="withIdentity" />
@@ -211,7 +229,8 @@
 
         <xs:attribute name="default" use="optional" type="xs:byte">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -305,7 +324,8 @@
         <xs:attributeGroup ref="withDefaultExpression" />
         <xs:attribute name="default" use="optional" type="xs:decimal">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -329,7 +349,8 @@
         </xs:attribute>
         <xs:attribute name="scale" use="required" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: What
+                is this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="default" use="optional" type="xs:decimal">
@@ -423,7 +444,8 @@
 
     <xs:simpleType name="GUID">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The representation of a GUID with restrictions added to validate input.</xs:documentation>
+            <xs:documentation xml:lang="en">The representation of a GUID with
+            restrictions added to validate input.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}" />
@@ -432,7 +454,8 @@
 
     <xs:complexType name="uniqueidentifier">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A unique identifier (GUID).</xs:documentation>
+            <xs:documentation xml:lang="en">A unique identifier
+            (GUID).</xs:documentation>
         </xs:annotation>
 
         <xs:attributeGroup ref="withDefaultExpression" />
@@ -447,14 +470,16 @@
 
     <xs:complexType name="dateType">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A date (without time component).</xs:documentation>
+            <xs:documentation xml:lang="en">A date (without time
+            component).</xs:documentation>
         </xs:annotation>
 
         <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:date">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -464,14 +489,16 @@
 
     <xs:complexType name="timeType">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A time (without date component).</xs:documentation>
+            <xs:documentation xml:lang="en">A time (without date
+            component).</xs:documentation>
         </xs:annotation>
 
         <xs:attributeGroup ref="withDefaultExpression" />
 
         <xs:attribute name="default" use="optional" type="xs:time">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -488,7 +515,8 @@
 
         <xs:attribute name="default" use="optional" type="xs:time">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Default value for the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Default value for
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -501,7 +529,8 @@
 
     <xs:simpleType name="withMax">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Allows the use of `max` as a keyword in attribute.</xs:documentation>
+            <xs:documentation xml:lang="en">Allows the use of `max`
+            as a keyword in attribute.</xs:documentation>
         </xs:annotation>
 
         <xs:restriction base="xs:string">
@@ -511,7 +540,8 @@
 
     <xs:simpleType name="charInteger">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Allows as value an integer in 1-8000 range.</xs:documentation>
+            <xs:documentation xml:lang="en">Allows as value an integer
+            in 1-8000 range.</xs:documentation>
         </xs:annotation>
 
         <xs:restriction base="xs:integer">
@@ -522,7 +552,8 @@
 
     <xs:simpleType name="charLength">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Allowed values are `max` or an integer in 1-8000 range.</xs:documentation>
+            <xs:documentation xml:lang="en">Allowed values are `max` or
+            an integer in 1-8000 range.</xs:documentation>
         </xs:annotation>
 
         <xs:union memberTypes="charInteger withMax" />
@@ -537,7 +568,9 @@
         <xs:attributeGroup ref="withStringDefault" />
         <xs:attribute name="length" use="optional" type="charLength">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The length may be an integer (1-8000) or it may be `max` to use the largest possible value.</xs:documentation>
+                <xs:documentation xml:lang="en">The length may be an
+                integer (1-8000) or it may be `max` to use the largest
+                possible value.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -552,7 +585,9 @@
 
         <xs:attribute name="length" use="optional" type="charLength">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The length may be an integer (1-8000) or it may be `max` to use the largest possible value.</xs:documentation>
+                <xs:documentation xml:lang="en">The length may be an
+                integer (1-8000) or it may be `max` to use the largest
+                possible value.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -562,7 +597,8 @@
 
     <xs:simpleType name="ncharInteger">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Allows as value an integer in 1-4000 range.</xs:documentation>
+            <xs:documentation xml:lang="en">Allows as value an integer in
+            1-4000 range.</xs:documentation>
         </xs:annotation>
 
         <xs:restriction base="xs:integer">
@@ -573,12 +609,14 @@
 
     <xs:simpleType name="ncharLength">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Restriction placed on the number of characters.</xs:documentation>
+            <xs:documentation xml:lang="en">Restriction placed on the
+            number of characters.</xs:documentation>
         </xs:annotation>
 
         <xs:union memberTypes="ncharInteger withMax">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Allows as value an integer (1-4000) or `max`.</xs:documentation>
+                <xs:documentation xml:lang="en">Allows as value an integer
+                (1-4000) or `max`.</xs:documentation>
             </xs:annotation>
         </xs:union>
     </xs:simpleType>
@@ -593,7 +631,9 @@
 
         <xs:attribute name="length" use="optional" type="ncharLength">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Maximum number of characters (an integer in 1-4000 range) or `max` to use maximum length.</xs:documentation>
+                <xs:documentation xml:lang="en">Maximum number of characters
+                (an integer in 1-4000 range) or `max` to use maximum
+                length.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -617,11 +657,12 @@
         <xs:attribute name="references" use="optional" type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">The name of the real column
-                that selects into a foreign table.</xs:documentation>
+                (the one that selects into a foreign table).</xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="dynamic" use="optional" type="xs:boolean" default="false">
+        <xs:attribute name="dynamic" use="optional"
+                      type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Tells if the value for the
                 the cell requires a callback or is provided by the
@@ -668,7 +709,7 @@
 
             <!--Character strings-->
             <xs:element name="char" type="char" />
-            <xs:element name="varchar" type="char" />
+            <xs:element name="varchar" type="parameterlessStringType" />
             <xs:element name="text" type="parameterlessStringType" />
 
             <!--Unicode character strings-->
@@ -690,7 +731,8 @@
 
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of this column as it will be known to the database.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of this column as it
+                will be known to the database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="label" use="optional" type="xs:string">
@@ -701,11 +743,14 @@
         </xs:attribute>
         <xs:attribute name="userformat" use="optional" type="xs:string" default="">
             <xs:annotation>
-                <xs:documentation xml:lang="en"><p>Formatting options for when the value is presented to the user.</p>
+                <xs:documentation xml:lang="en"><p>Formatting options for
+                when the value is presented to the user.</p>
                 <p>The content depends on the type of value:</p>
                 <dl>
                     <dt>bit:</dt>
-                    <dd>May be Yes, yes, On, on, True, true or another string; in latter case the string is shown if the value is true (1) and is hidden if the value is false (0)</dd>
+                    <dd>May be Yes, yes, On, on, True, true or another string;
+                    in latter case the string is shown if the value is true
+                    (1) and is hidden if the value is false (0)</dd>
                     <dt>decimal, float, numeric, real, etc:</dt>
                     <dd><pre>fieldWidth`format`precision`fillChar</pre>
                     <p>Four values are used and are delimited by the ` character.</p>
@@ -794,7 +839,8 @@
 
     <xs:complexType name="columnList">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The list of columns for a table.</xs:documentation>
+            <xs:documentation xml:lang="en">The list of columns
+            for a table.</xs:documentation>
         </xs:annotation>
         <xs:choice>
             <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="column" />
@@ -805,7 +851,8 @@
 
     <xs:simpleType name="sortOrder">
         <xs:annotation>
-            <xs:documentation xml:lang="en">indicated the direction of the sorting for a column.</xs:documentation>
+            <xs:documentation xml:lang="en">indicated the direction of
+            the sorting for a column.</xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="Ascending" />
@@ -815,67 +862,80 @@
 
     <xs:complexType name="constraintColumn">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A column that is part of a constraint.</xs:documentation>
+            <xs:documentation xml:lang="en">A column that is part of
+            a constraint.</xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The name of the column.</xs:documentation>
+                <xs:documentation xml:lang="en">The name of
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="sortOrder" use="optional" type="sortOrder">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The order used to sort the column.</xs:documentation>
+                <xs:documentation xml:lang="en">The order used to sort
+                the column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="constraint">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A column(s) based constraint.</xs:documentation>
+            <xs:documentation xml:lang="en">A column(s) based
+            constraint.</xs:documentation>
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="constraintColumn" />
+            <xs:element name="column" maxOccurs="unbounded"
+                        minOccurs="1" type="constraintColumn" />
         </xs:sequence>
 
         <xs:attribute name="name" use="optional" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the constraint.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                constraint.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="clustered" use="optional" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: what
+                is this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="fillFactor" use="optional" type="xs:integer">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: what
+                is this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="padIndex" use="optional" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation xml:lang="en">TODO: what is this?</xs:documentation>
+                <xs:documentation xml:lang="en">TODO: what
+                is this?</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="primaryKey">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The (optional) primary key for a table.</xs:documentation>
+            <xs:documentation xml:lang="en">The (optional) primary key
+            for a table.</xs:documentation>
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="key" maxOccurs="1" minOccurs="0" type="constraint" />
+            <xs:element name="key" type="constraint"
+                        maxOccurs="1" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="uniqueConstraints">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The list of unique constraints associated with a table.</xs:documentation>
+            <xs:documentation xml:lang="en">The list of unique constraints
+            associated with a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="constraint" maxOccurs="unbounded" minOccurs="0" type="constraint" />
+            <xs:element name="constraint" maxOccurs="unbounded"
+                        minOccurs="0" type="constraint" />
         </xs:sequence>
     </xs:complexType>
 
@@ -883,7 +943,8 @@
 
     <xs:complexType name="index">
         <xs:annotation>
-            <xs:documentation xml:lang="en">One entry in the list of indexes in a table.</xs:documentation>
+            <xs:documentation xml:lang="en">One entry in the list of
+            indexes in a table.</xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="constraint">
@@ -894,10 +955,12 @@
 
     <xs:complexType name="indexes">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The list of indexes in a table.</xs:documentation>
+            <xs:documentation xml:lang="en">The list of indexes
+            in a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="index" maxOccurs="unbounded" minOccurs="0" type="index" />
+            <xs:element name="index" type="index"
+                        maxOccurs="unbounded" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
@@ -905,59 +968,72 @@
 
     <xs:complexType name="relationshipColumn">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A column in a relationship.</xs:documentation>
+            <xs:documentation xml:lang="en">A column in a
+            relationship.</xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the column.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                column.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="foreignKeyColumns">
         <xs:annotation>
-            <xs:documentation xml:lang="en">The list of foreign keys.</xs:documentation>
+            <xs:documentation xml:lang="en">The list of foreign
+            keys.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn" />
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1"
+                        type="relationshipColumn" />
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="primaryKeyTable">
         <xs:annotation>
-            <xs:documentation xml:lang="en">TODO: What is this?.</xs:documentation>
+            <xs:documentation xml:lang="en">TODO: What is
+            this?.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="column" maxOccurs="unbounded" minOccurs="1" type="relationshipColumn" />
+            <xs:element name="column" maxOccurs="unbounded" minOccurs="1"
+                        type="relationshipColumn" />
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the table? TODO.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                table? TODO.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="relationship">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A single relation for a table.</xs:documentation>
+            <xs:documentation xml:lang="en">A single relation for
+            a table.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="foreignKeyColumns" maxOccurs="1" minOccurs="1" type="foreignKeyColumns" />
-            <xs:element name="primaryKeyTable" maxOccurs="1" minOccurs="1" type="primaryKeyTable" />
+            <xs:element name="foreignKeyColumns" maxOccurs="1" minOccurs="1"
+                        type="foreignKeyColumns" />
+            <xs:element name="primaryKeyTable" maxOccurs="1" minOccurs="1"
+                        type="primaryKeyTable" />
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the relation.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                relation.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="relationships">
         <xs:annotation>
-            <xs:documentation xml:lang="en">List of relations for a table; can only consist of `relationship` entries.</xs:documentation>
+            <xs:documentation xml:lang="en">List of relations for a table;
+            can only consist of `relationship` entries.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="relationship" maxOccurs="unbounded" minOccurs="0" type="relationship" />
+            <xs:element name="relationship" maxOccurs="unbounded"
+                        minOccurs="0" type="relationship" />
         </xs:sequence>
     </xs:complexType>
 
@@ -965,28 +1041,38 @@
 
     <xs:complexType name="table">
         <xs:annotation>
-            <xs:documentation xml:lang="en">An actual table (not view).</xs:documentation>
+            <xs:documentation xml:lang="en">An actual table
+            (not view).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="columns" maxOccurs="1" minOccurs="1" type="columnList" />
-            <xs:element name="primaryKey" maxOccurs="1" minOccurs="0" type="primaryKey" />
-            <xs:element name="uniqueConstraints" maxOccurs="1" minOccurs="0" type="uniqueConstraints" />
-            <xs:element name="indexes" maxOccurs="1" minOccurs="0" type="indexes" />
-            <xs:element name="relationships" maxOccurs="1" minOccurs="0" type="relationships" />
+            <xs:element name="columns" type="columnList"
+                        maxOccurs="1" minOccurs="1" />
+            <xs:element name="primaryKey" type="primaryKey"
+                        maxOccurs="1" minOccurs="0" />
+            <xs:element name="uniqueConstraints" type="uniqueConstraints"
+                        maxOccurs="1" minOccurs="0" />
+            <xs:element name="indexes" type="indexes"
+                        maxOccurs="1" minOccurs="0" />
+            <xs:element name="relationships" type="relationships"
+                        maxOccurs="1" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the table.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                table.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="tables">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A single element inside the database; contains the list of actual tables (not views).</xs:documentation>
+            <xs:documentation xml:lang="en">A single element inside the
+            database; contains the list of actual tables (not
+            views).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="table" maxOccurs="unbounded" minOccurs="0" type="table" />
+            <xs:element name="table" type="table"
+                        maxOccurs="unbounded" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
@@ -1091,7 +1177,8 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="column" type="viewWriteBackCol" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="column" type="viewWriteBackCol"
+                        minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
 
         <xs:attribute name="table" type="xs:string" use="required">
@@ -1106,12 +1193,15 @@
 
     <xs:complexType name="view">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A view inside another table or tables.</xs:documentation>
+            <xs:documentation xml:lang="en">A view inside another table
+            or tables.</xs:documentation>
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="subset" type="viewSubset" minOccurs="0" maxOccurs="1" />
-            <xs:element name="writeback" type="viewWriteBack" minOccurs="0" maxOccurs="1" />
+            <xs:element name="subset" type="viewSubset"
+                        minOccurs="0" maxOccurs="1" />
+            <xs:element name="writeback" type="viewWriteBack"
+                        minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="name" type="xs:string" use="required">
@@ -1124,16 +1214,19 @@
 
     <xs:complexType name="views">
         <xs:annotation>
-            <xs:documentation xml:lang="en">A single element inside the database; contains the list of views.</xs:documentation>
+            <xs:documentation xml:lang="en">A single element inside the
+            database; contains the list of views.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="view" maxOccurs="unbounded" minOccurs="0" type="view" />
+            <xs:element name="view" maxOccurs="unbounded"
+                        minOccurs="0" type="view" />
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="database">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Describes a database and (optionally) connection details.</xs:documentation>
+            <xs:documentation xml:lang="en">Describes a database and
+            (optionally) connection details.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="tables" maxOccurs="1" minOccurs="0" type="tables" />
@@ -1142,37 +1235,45 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of the database.</xs:documentation>
+                <xs:documentation xml:lang="en">Name of the
+                database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="driver" type ="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The actual kind of this database.</xs:documentation>
+                <xs:documentation xml:lang="en">The actual kind of this
+                database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="path" type ="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The path on local computer where database is located (for SqLite, for example).</xs:documentation>
+                <xs:documentation xml:lang="en">The path on local computer
+                where database is located (for SqLite, for
+                example).</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="username" type ="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Database user that will access the database.</xs:documentation>
+                <xs:documentation xml:lang="en">Database user that will
+                access the database.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="password" type ="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Password for database user.</xs:documentation>
+                <xs:documentation xml:lang="en">Password for database
+                user.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="host" type ="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The host for databases on remote hosts.</xs:documentation>
+                <xs:documentation xml:lang="en">The host for databases on
+                remote hosts.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="port" type ="xs:unsignedShort" use="optional">
             <xs:annotation>
-                <xs:documentation xml:lang="en">The port for databases on remote hosts.</xs:documentation>
+                <xs:documentation xml:lang="en">The port for databases on
+                remote hosts.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
