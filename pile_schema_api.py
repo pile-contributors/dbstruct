@@ -53,33 +53,46 @@ except ImportError as exp:
 
     class GeneratedsSuper(object):
         tzoff_pattern = re_.compile(r'(\+|-)((0\d|1[0-3]):[0-5]\d|14:00)$')
+
         class _FixedOffsetTZ(datetime_.tzinfo):
+
             def __init__(self, offset, name):
                 self.__offset = datetime_.timedelta(minutes=offset)
                 self.__name = name
+
             def utcoffset(self, dt):
                 return self.__offset
+
             def tzname(self, dt):
                 return self.__name
+
             def dst(self, dt):
                 return None
+
         def gds_format_string(self, input_data, input_name=''):
             return input_data
+
         def gds_validate_string(self, input_data, node=None, input_name=''):
             if not input_data:
                 return ''
             else:
                 return input_data
+
         def gds_format_base64(self, input_data, input_name=''):
             return base64.b64encode(input_data)
+
         def gds_validate_base64(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_integer(self, input_data, input_name=''):
             return '%d' % input_data
+
         def gds_validate_integer(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_integer_list(self, input_data, input_name=''):
             return '%s' % ' '.join(input_data)
+
         def gds_validate_integer_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -89,12 +102,16 @@ except ImportError as exp:
                 except (TypeError, ValueError):
                     raise_parse_error(node, 'Requires sequence of integers')
             return values
+
         def gds_format_float(self, input_data, input_name=''):
             return ('%.15f' % input_data).rstrip('0')
+
         def gds_validate_float(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_float_list(self, input_data, input_name=''):
             return '%s' % ' '.join(input_data)
+
         def gds_validate_float_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -104,12 +121,16 @@ except ImportError as exp:
                 except (TypeError, ValueError):
                     raise_parse_error(node, 'Requires sequence of floats')
             return values
+
         def gds_format_double(self, input_data, input_name=''):
             return '%e' % input_data
+
         def gds_validate_double(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_double_list(self, input_data, input_name=''):
             return '%s' % ' '.join(input_data)
+
         def gds_validate_double_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -119,12 +140,16 @@ except ImportError as exp:
                 except (TypeError, ValueError):
                     raise_parse_error(node, 'Requires sequence of doubles')
             return values
+
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
+
         def gds_validate_boolean(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_boolean_list(self, input_data, input_name=''):
             return '%s' % ' '.join(input_data)
+
         def gds_validate_boolean_list(
                 self, input_data, node=None, input_name=''):
             values = input_data.split()
@@ -135,8 +160,10 @@ except ImportError as exp:
                         'Requires sequence of booleans '
                         '("true", "1", "false", "0")')
             return values
+
         def gds_validate_datetime(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_datetime(self, input_data, input_name=''):
             if input_data.microsecond == 0:
                 _svalue = '%04d-%02d-%02dT%02d:%02d:%02d' % (
@@ -173,6 +200,7 @@ except ImportError as exp:
                         minutes = (total_seconds - (hours * 3600)) // 60
                         _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
             return _svalue
+
         @classmethod
         def gds_parse_datetime(cls, input_data):
             tz = None
@@ -200,8 +228,10 @@ except ImportError as exp:
                     input_data, '%Y-%m-%dT%H:%M:%S')
             dt = dt.replace(tzinfo=tz)
             return dt
+
         def gds_validate_date(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_date(self, input_data, input_name=''):
             _svalue = '%04d-%02d-%02d' % (
                 input_data.year,
@@ -227,6 +257,7 @@ except ImportError as exp:
             except AttributeError:
                 pass
             return _svalue
+
         @classmethod
         def gds_parse_date(cls, input_data):
             tz = None
@@ -246,8 +277,10 @@ except ImportError as exp:
             dt = datetime_.datetime.strptime(input_data, '%Y-%m-%d')
             dt = dt.replace(tzinfo=tz)
             return dt.date()
+
         def gds_validate_time(self, input_data, node=None, input_name=''):
             return input_data
+
         def gds_format_time(self, input_data, input_name=''):
             if input_data.microsecond == 0:
                 _svalue = '%02d:%02d:%02d' % (
@@ -278,6 +311,7 @@ except ImportError as exp:
                         minutes = (total_seconds - (hours * 3600)) // 60
                         _svalue += '{0:02d}:{1:02d}'.format(hours, minutes)
             return _svalue
+
         def gds_validate_simple_patterns(self, patterns, target):
             # pat is a list of lists of strings/patterns.  We should:
             # - AND the outer elements
@@ -293,6 +327,7 @@ except ImportError as exp:
                     found1 = False
                     break
             return found1
+
         @classmethod
         def gds_parse_time(cls, input_data):
             tz = None
@@ -315,8 +350,10 @@ except ImportError as exp:
                 dt = datetime_.datetime.strptime(input_data, '%H:%M:%S')
             dt = dt.replace(tzinfo=tz)
             return dt.time()
+
         def gds_str_lower(self, instring):
             return instring.lower()
+
         def get_path_(self, node):
             path_list = []
             self.get_path_list_(node, path_list)
@@ -324,6 +361,7 @@ except ImportError as exp:
             path = '/'.join(path_list)
             return path
         Tag_strip_pattern_ = re_.compile(r'\{.*\}')
+
         def get_path_list_(self, node, path_list):
             if node is None:
                 return
@@ -331,6 +369,7 @@ except ImportError as exp:
             if tag:
                 path_list.append(tag)
             self.get_path_list_(node.getparent(), path_list)
+
         def get_class_obj_(self, node, default_class=None):
             class_obj1 = default_class
             if 'xsi' in node.nsmap:
@@ -343,8 +382,10 @@ except ImportError as exp:
                     if class_obj2 is not None:
                         class_obj1 = class_obj2
             return class_obj1
+
         def gds_build_any(self, node, type_name=None):
             return None
+
         @classmethod
         def gds_reverse_node_mapping(cls, mapping):
             return dict(((v, k) for k, v in mapping.iteritems()))
@@ -357,9 +398,9 @@ except ImportError as exp:
 
 ## from IPython.Shell import IPShellEmbed
 ## args = ''
-## ipshell = IPShellEmbed(args,
+# ipshell = IPShellEmbed(args,
 ##     banner = 'Dropping into IPython',
-##     exit_msg = 'Leaving Interpreter, back to program.')
+# exit_msg = 'Leaving Interpreter, back to program.')
 
 # Then use the following line where and when you want to drop into the
 # IPython shell:
@@ -494,19 +535,25 @@ class MixedContainer:
     TypeDouble = 6
     TypeBoolean = 7
     TypeBase64 = 8
+
     def __init__(self, category, content_type, name, value):
         self.category = category
         self.content_type = content_type
         self.name = name
         self.value = value
+
     def getCategory(self):
         return self.category
+
     def getContenttype(self, content_type):
         return self.content_type
+
     def getValue(self):
         return self.value
+
     def getName(self):
         return self.name
+
     def export(self, outfile, level, name, namespace, pretty_print=True):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
@@ -516,6 +563,7 @@ class MixedContainer:
             self.exportSimple(outfile, level, name)
         else:    # category == MixedContainer.CategoryComplex
             self.value.export(outfile, level, namespace, name, pretty_print)
+
     def exportSimple(self, outfile, level, name):
         if self.content_type == MixedContainer.TypeString:
             outfile.write('<%s>%s</%s>' % (
@@ -534,6 +582,7 @@ class MixedContainer:
         elif self.content_type == MixedContainer.TypeBase64:
             outfile.write('<%s>%s</%s>' % (
                 self.name, base64.b64encode(self.value), self.name))
+
     def to_etree(self, element):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
@@ -553,6 +602,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
+
     def to_etree_simple(self):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
@@ -567,6 +617,7 @@ class MixedContainer:
         elif self.content_type == MixedContainer.TypeBase64:
             text = '%s' % base64.b64encode(self.value)
         return text
+
     def exportLiteral(self, outfile, level, name):
         if self.category == MixedContainer.CategoryText:
             showIndent(outfile, level)
@@ -589,14 +640,20 @@ class MixedContainer:
 
 
 class MemberSpec_(object):
+
     def __init__(self, name='', data_type='', container=0):
         self.name = name
         self.data_type = data_type
         self.container = container
+
     def set_name(self, name): self.name = name
+
     def get_name(self): return self.name
+
     def set_data_type(self, data_type): self.data_type = data_type
+
     def get_data_type_chain(self): return self.data_type
+
     def get_data_type(self):
         if isinstance(self.data_type, list):
             if len(self.data_type) > 0:
@@ -605,7 +662,9 @@ class MemberSpec_(object):
                 return 'xs:string'
         else:
             return self.data_type
+
     def set_container(self, container): self.container = container
+
     def get_container(self): return self.container
 
 
@@ -624,14 +683,17 @@ class parameterlessType(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self):
         self.original_tagname_ = None
+
     def factory(*args_, **kwargs_):
         if parameterlessType.subclass:
             return parameterlessType.subclass(*args_, **kwargs_)
         else:
             return parameterlessType(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def hasContent_(self):
         if (
 
@@ -639,7 +701,15 @@ class parameterlessType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='parameterlessType', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='parameterlessType',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -647,19 +717,51 @@ class parameterlessType(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='parameterlessType')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='parameterlessType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='parameterlessType', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='parameterlessType',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='parameterlessType'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='parameterlessType'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='parameterlessType', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='parameterlessType',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -667,8 +769,10 @@ class parameterlessType(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class parameterlessType
@@ -684,23 +788,33 @@ class identity(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, seed=None, increment=None, notForReplication=None):
         self.original_tagname_ = None
         self.seed = _cast(int, seed)
         self.increment = _cast(int, increment)
         self.notForReplication = _cast(bool, notForReplication)
+
     def factory(*args_, **kwargs_):
         if identity.subclass:
             return identity.subclass(*args_, **kwargs_)
         else:
             return identity(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_seed(self): return self.seed
+
     def set_seed(self, seed): self.seed = seed
+
     def get_increment(self): return self.increment
+
     def set_increment(self, increment): self.increment = increment
+
     def get_notForReplication(self): return self.notForReplication
-    def set_notForReplication(self, notForReplication): self.notForReplication = notForReplication
+
+    def set_notForReplication(
+        self, notForReplication): self.notForReplication = notForReplication
+
     def hasContent_(self):
         if (
 
@@ -708,7 +822,15 @@ class identity(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='identity', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='identity',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -716,27 +838,71 @@ class identity(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='identity')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='identity')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='identity', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='identity',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='identity'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='identity'):
         if self.seed is not None and 'seed' not in already_processed:
             already_processed.add('seed')
-            outfile.write(' seed="%s"' % self.gds_format_integer(self.seed, input_name='seed'))
+            outfile.write(
+                ' seed="%s"' %
+                self.gds_format_integer(
+                    self.seed,
+                    input_name='seed'))
         if self.increment is not None and 'increment' not in already_processed:
             already_processed.add('increment')
-            outfile.write(' increment="%s"' % self.gds_format_integer(self.increment, input_name='increment'))
+            outfile.write(
+                ' increment="%s"' %
+                self.gds_format_integer(
+                    self.increment,
+                    input_name='increment'))
         if self.notForReplication is not None and 'notForReplication' not in already_processed:
             already_processed.add('notForReplication')
-            outfile.write(' notForReplication="%s"' % self.gds_format_boolean(self.notForReplication, input_name='notForReplication'))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='identity', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' notForReplication="%s"' %
+                self.gds_format_boolean(
+                    self.notForReplication,
+                    input_name='notForReplication'))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='identity',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -744,6 +910,7 @@ class identity(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('seed', node)
         if value is not None and 'seed' not in already_processed:
@@ -768,6 +935,7 @@ class identity(GeneratedsSuper):
                 self.notForReplication = False
             else:
                 raise_parse_error(node, 'Bad boolean attribute')
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class identity
@@ -783,50 +951,105 @@ class bit(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='BOOLEAN', qtype='bool'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='BOOLEAN',
+            qtype='bool'):
         self.original_tagname_ = None
         self.default = _cast(bool, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if bit.subclass:
             return bit.subclass(*args_, **kwargs_)
         else:
             return bit(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -834,7 +1057,15 @@ class bit(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='bit', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='bit',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -842,30 +1073,72 @@ class bit(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='bit')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='bit')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='bit', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='bit',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='bit'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='bit'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_boolean(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_boolean(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != BOOLEAN and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != bool and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='bit', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='bit',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -873,6 +1146,7 @@ class bit(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -897,6 +1171,7 @@ class bit(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class bit
@@ -912,26 +1187,43 @@ class tristate(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='char'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='SMALLINT',
+            qtype='char'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if tristate.subclass:
             return tristate.subclass(*args_, **kwargs_)
         else:
             return tristate(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_tristateValues(self, value):
         # Validate type tristateValues, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
@@ -943,31 +1235,72 @@ class tristate(GeneratedsSuper):
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on tristateValues' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on tristateValues' % {
+                        "value": value.encode("utf-8")})
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -975,7 +1308,15 @@ class tristate(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='tristate', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tristate',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -983,30 +1324,68 @@ class tristate(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='tristate')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='tristate')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='tristate', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='tristate',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='tristate'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='tristate'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
             outfile.write(' default=%s' % (quote_attrib(self.default), ))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != char and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tristate', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tristate',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1014,12 +1393,14 @@ class tristate(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
             already_processed.add('default')
             self.default = value
-            self.validate_tristateValues(self.default)    # validate type tristateValues
+            self.validate_tristateValues(
+                self.default)    # validate type tristateValues
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
@@ -1034,6 +1415,7 @@ class tristate(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class tristate
@@ -1050,7 +1432,15 @@ class integer(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='INTEGER', qtype='int', identity=None, valueOf_=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='INTEGER',
+            qtype='int',
+            identity=None,
+            valueOf_=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
@@ -1058,46 +1448,97 @@ class integer(GeneratedsSuper):
         self.qtype = _cast(None, qtype)
         self.identity = identity
         self.valueOf_ = valueOf_
+
     def factory(*args_, **kwargs_):
         if integer.subclass:
             return integer.subclass(*args_, **kwargs_)
         else:
             return integer(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_identity(self): return self.identity
+
     def set_identity(self, identity): self.identity = identity
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1105,7 +1546,15 @@ class integer(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='int', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='int',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1113,36 +1562,83 @@ class integer(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='int')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='int')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='int', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='int',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='int'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='int'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_integer(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != INTEGER and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != int and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='int', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='int',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.identity is not None:
-            self.identity.export(outfile, level, namespace_, name_='identity', pretty_print=pretty_print)
+            self.identity.export(
+                outfile,
+                level,
+                namespace_,
+                name_='identity',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1150,6 +1646,7 @@ class integer(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1172,6 +1669,7 @@ class integer(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1192,53 +1690,111 @@ class bigint(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='BIGINT', qtype='long', identity=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='BIGINT',
+            qtype='long',
+            identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
+
     def factory(*args_, **kwargs_):
         if bigint.subclass:
             return bigint.subclass(*args_, **kwargs_)
         else:
             return bigint(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_identity(self): return self.identity
+
     def set_identity(self, identity): self.identity = identity
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1246,7 +1802,15 @@ class bigint(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='bigint', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='bigint',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1254,36 +1818,83 @@ class bigint(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='bigint')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='bigint')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='bigint', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='bigint',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='bigint'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='bigint'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_integer(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != BIGINT and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != long and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='bigint', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='bigint',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.identity is not None:
-            self.identity.export(outfile, level, namespace_, name_='identity', pretty_print=pretty_print)
+            self.identity.export(
+                outfile,
+                level,
+                namespace_,
+                name_='identity',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1291,6 +1902,7 @@ class bigint(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1313,6 +1925,7 @@ class bigint(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1333,53 +1946,111 @@ class smallint(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='short', identity=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='SMALLINT',
+            qtype='short',
+            identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
+
     def factory(*args_, **kwargs_):
         if smallint.subclass:
             return smallint.subclass(*args_, **kwargs_)
         else:
             return smallint(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_identity(self): return self.identity
+
     def set_identity(self, identity): self.identity = identity
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1387,7 +2058,15 @@ class smallint(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='smallint', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='smallint',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1395,36 +2074,83 @@ class smallint(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='smallint')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='smallint')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='smallint', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='smallint',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='smallint'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='smallint'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_integer(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != short and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='smallint', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='smallint',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.identity is not None:
-            self.identity.export(outfile, level, namespace_, name_='identity', pretty_print=pretty_print)
+            self.identity.export(
+                outfile,
+                level,
+                namespace_,
+                name_='identity',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1432,6 +2158,7 @@ class smallint(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1454,6 +2181,7 @@ class smallint(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1474,53 +2202,111 @@ class tinyint(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='SMALLINT', qtype='char', identity=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='SMALLINT',
+            qtype='char',
+            identity=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.identity = identity
+
     def factory(*args_, **kwargs_):
         if tinyint.subclass:
             return tinyint.subclass(*args_, **kwargs_)
         else:
             return tinyint(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_identity(self): return self.identity
+
     def set_identity(self, identity): self.identity = identity
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.identity is not None
@@ -1528,7 +2314,15 @@ class tinyint(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='tinyint', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tinyint',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1536,36 +2330,83 @@ class tinyint(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='tinyint')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='tinyint')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='tinyint', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='tinyint',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='tinyint'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='tinyint'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_integer(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != SMALLINT and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != char and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tinyint', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tinyint',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.identity is not None:
-            self.identity.export(outfile, level, namespace_, name_='identity', pretty_print=pretty_print)
+            self.identity.export(
+                outfile,
+                level,
+                namespace_,
+                name_='identity',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1573,6 +2414,7 @@ class tinyint(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1595,6 +2437,7 @@ class tinyint(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -1616,23 +2459,32 @@ class choiceItem(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, label='', id=None, name=None):
         self.original_tagname_ = None
         self.label = _cast(None, label)
         self.id = _cast(int, id)
         self.name = _cast(None, name)
+
     def factory(*args_, **kwargs_):
         if choiceItem.subclass:
             return choiceItem.subclass(*args_, **kwargs_)
         else:
             return choiceItem(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_label(self): return self.label
+
     def set_label(self, label): self.label = label
+
     def get_id(self): return self.id
+
     def set_id(self, id): self.id = id
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
 
@@ -1640,7 +2492,15 @@ class choiceItem(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='choiceItem', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='choiceItem',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1648,27 +2508,75 @@ class choiceItem(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='choiceItem')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='choiceItem')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='choiceItem', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='choiceItem',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='choiceItem'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='choiceItem'):
         if self.label != "" and 'label' not in already_processed:
             already_processed.add('label')
-            outfile.write(' label=%s' % (self.gds_format_string(quote_attrib(self.label).encode(ExternalEncoding), input_name='label'), ))
+            outfile.write(
+                ' label=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.label).encode(ExternalEncoding),
+                    input_name='label'),
+                 ))
         if self.id is not None and 'id' not in already_processed:
             already_processed.add('id')
-            outfile.write(' id="%s"' % self.gds_format_integer(self.id, input_name='id'))
+            outfile.write(
+                ' id="%s"' %
+                self.gds_format_integer(
+                    self.id,
+                    input_name='id'))
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='choiceItem', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='choiceItem',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1676,6 +2584,7 @@ class choiceItem(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('label', node)
         if value is not None and 'label' not in already_processed:
@@ -1692,6 +2601,7 @@ class choiceItem(GeneratedsSuper):
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class choiceItem
@@ -1708,7 +2618,14 @@ class choice(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='INTEGER', qtype='int', item=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='INTEGER',
+            qtype='int',
+            item=None):
         self.original_tagname_ = None
         self.default = _cast(int, default)
         self.defaultExpression = _cast(None, defaultExpression)
@@ -1718,49 +2635,103 @@ class choice(GeneratedsSuper):
             self.item = []
         else:
             self.item = item
+
     def factory(*args_, **kwargs_):
         if choice.subclass:
             return choice.subclass(*args_, **kwargs_)
         else:
             return choice(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_item(self): return self.item
+
     def set_item(self, item): self.item = item
+
     def add_item(self, value): self.item.append(value)
+
     def insert_item_at(self, index, value): self.item.insert(index, value)
+
     def replace_item_at(self, index, value): self.item[index] = value
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.item
@@ -1768,7 +2739,15 @@ class choice(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='choice', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='choice',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1776,36 +2755,83 @@ class choice(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='choice')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='choice')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='choice', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='choice',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='choice'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='choice'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_integer(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_integer(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != INTEGER and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != int and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='choice', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='choice',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for item_ in self.item:
-            item_.export(outfile, level, namespace_, name_='item', pretty_print=pretty_print)
+            item_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='item',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1813,6 +2839,7 @@ class choice(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1835,6 +2862,7 @@ class choice(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'item':
             obj_ = choiceItem.factory()
@@ -1855,7 +2883,15 @@ class float_(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, qtype='float', sqltype='FLOAT', mantissaBits=None, defaultExpression=None, valueOf_=None):
+
+    def __init__(
+            self,
+            default=None,
+            qtype='float',
+            sqltype='FLOAT',
+            mantissaBits=None,
+            defaultExpression=None,
+            valueOf_=None):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.qtype = _cast(None, qtype)
@@ -1863,53 +2899,109 @@ class float_(GeneratedsSuper):
         self.mantissaBits = _cast(None, mantissaBits)
         self.defaultExpression = _cast(None, defaultExpression)
         self.valueOf_ = valueOf_
+
     def factory(*args_, **kwargs_):
         if float_.subclass:
             return float_.subclass(*args_, **kwargs_)
         else:
             return float_(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_mantissaBits(self): return self.mantissaBits
+
     def set_mantissaBits(self, mantissaBits): self.mantissaBits = mantissaBits
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_mantissaBits(self, value):
         # Validate type mantissaBits, a restriction on xs:integer.
         if value is not None and Validate_simpletypes_:
             if value < 1:
-                warnings_.warn('Value "%(value)s" does not match xsd minInclusive restriction on mantissaBits' % {"value" : value} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd minInclusive restriction on mantissaBits' % {
+                        "value": value})
             if value > 53:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on mantissaBits' % {"value" : value} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd maxInclusive restriction on mantissaBits' % {
+                        "value": value})
+
     def hasContent_(self):
         if (
 
@@ -1917,7 +3009,15 @@ class float_(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='float', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='float',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -1925,19 +3025,46 @@ class float_(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='float')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='float')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='float', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='float',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='float'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='float'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_float(
+                    self.default,
+                    input_name='default'))
         if self.qtype != float and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
@@ -1946,12 +3073,28 @@ class float_(GeneratedsSuper):
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.mantissaBits is not None and 'mantissaBits' not in already_processed:
             already_processed.add('mantissaBits')
-            outfile.write(' mantissaBits=%s' % (quote_attrib(self.mantissaBits), ))
+            outfile.write(' mantissaBits=%s' %
+                          (quote_attrib(self.mantissaBits), ))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='float', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='float',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -1959,6 +3102,7 @@ class float_(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -1966,7 +3110,9 @@ class float_(GeneratedsSuper):
             try:
                 self.default = float(value)
             except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
+                raise ValueError(
+                    'Bad float/double attribute (default): %s' %
+                    exp)
         value = find_attr_value_('qtype', node)
         if value is not None and 'qtype' not in already_processed:
             already_processed.add('qtype')
@@ -1984,11 +3130,13 @@ class float_(GeneratedsSuper):
                 self.mantissaBits = int(value)
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
-            self.validate_mantissaBits(self.mantissaBits)    # validate type mantissaBits
+            self.validate_mantissaBits(
+                self.mantissaBits)    # validate type mantissaBits
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
             self.defaultExpression = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class float_
@@ -2004,50 +3152,105 @@ class real(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='REAL', qtype='double'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='REAL',
+            qtype='double'):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if real.subclass:
             return real.subclass(*args_, **kwargs_)
         else:
             return real(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2055,7 +3258,15 @@ class real(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='real', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='real',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2063,30 +3274,72 @@ class real(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='real')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='real')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='real', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='real',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='real'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='real'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_float(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != REAL and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != double and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='real', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='real',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2094,6 +3347,7 @@ class real(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -2101,7 +3355,9 @@ class real(GeneratedsSuper):
             try:
                 self.default = float(value)
             except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
+                raise ValueError(
+                    'Bad float/double attribute (default): %s' %
+                    exp)
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
@@ -2116,6 +3372,7 @@ class real(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class real
@@ -2135,7 +3392,16 @@ class decimal(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, scale=None, default=None, precision=None, sqltype='DECIMAL', qtype='double', valueOf_=None):
+
+    def __init__(
+            self,
+            defaultExpression=None,
+            scale=None,
+            default=None,
+            precision=None,
+            sqltype='DECIMAL',
+            qtype='double',
+            valueOf_=None):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.scale = _cast(int, scale)
@@ -2144,48 +3410,101 @@ class decimal(GeneratedsSuper):
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
         self.valueOf_ = valueOf_
+
     def factory(*args_, **kwargs_):
         if decimal.subclass:
             return decimal.subclass(*args_, **kwargs_)
         else:
             return decimal(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_scale(self): return self.scale
+
     def set_scale(self, scale): self.scale = scale
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_precision(self): return self.precision
+
     def set_precision(self, precision): self.precision = precision
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2193,7 +3512,15 @@ class decimal(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='decimal', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='decimal',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2201,36 +3528,86 @@ class decimal(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='decimal')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='decimal')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='decimal', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='decimal',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='decimal'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='decimal'):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.scale is not None and 'scale' not in already_processed:
             already_processed.add('scale')
-            outfile.write(' scale="%s"' % self.gds_format_integer(self.scale, input_name='scale'))
+            outfile.write(
+                ' scale="%s"' %
+                self.gds_format_integer(
+                    self.scale,
+                    input_name='scale'))
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_float(
+                    self.default,
+                    input_name='default'))
         if self.precision is not None and 'precision' not in already_processed:
             already_processed.add('precision')
-            outfile.write(' precision="%s"' % self.gds_format_integer(self.precision, input_name='precision'))
+            outfile.write(
+                ' precision="%s"' %
+                self.gds_format_integer(
+                    self.precision,
+                    input_name='precision'))
         if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != double and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='decimal', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='decimal',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2238,6 +3615,7 @@ class decimal(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
@@ -2256,7 +3634,9 @@ class decimal(GeneratedsSuper):
             try:
                 self.default = float(value)
             except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
+                raise ValueError(
+                    'Bad float/double attribute (default): %s' %
+                    exp)
         value = find_attr_value_('precision', node)
         if value is not None and 'precision' not in already_processed:
             already_processed.add('precision')
@@ -2274,6 +3654,7 @@ class decimal(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class decimal
@@ -2293,7 +3674,15 @@ class decimalScale0(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='DECIMAL', qtype='double', precision=None, identity=None):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='DECIMAL',
+            qtype='double',
+            precision=None,
+            identity=None):
         self.original_tagname_ = None
         self.default = _cast(float, default)
         self.defaultExpression = _cast(None, defaultExpression)
@@ -2301,48 +3690,101 @@ class decimalScale0(GeneratedsSuper):
         self.qtype = _cast(None, qtype)
         self.precision = _cast(int, precision)
         self.identity = identity
+
     def factory(*args_, **kwargs_):
         if decimalScale0.subclass:
             return decimalScale0.subclass(*args_, **kwargs_)
         else:
             return decimalScale0(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_identity(self): return self.identity
+
     def set_identity(self, identity): self.identity = identity
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def get_precision(self): return self.precision
+
     def set_precision(self, precision): self.precision = precision
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
             self.identity is not None
@@ -2350,7 +3792,15 @@ class decimalScale0(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='decimalScale0', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='decimalScale0',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2358,23 +3808,56 @@ class decimalScale0(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='decimalScale0')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='decimalScale0')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='decimalScale0', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='decimalScale0',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='decimalScale0'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='decimalScale0'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_float(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_float(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
@@ -2383,14 +3866,32 @@ class decimalScale0(GeneratedsSuper):
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
         if self.precision is not None and 'precision' not in already_processed:
             already_processed.add('precision')
-            outfile.write(' precision="%s"' % self.gds_format_integer(self.precision, input_name='precision'))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='decimalScale0', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' precision="%s"' %
+                self.gds_format_integer(
+                    self.precision,
+                    input_name='precision'))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='decimalScale0',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.identity is not None:
-            self.identity.export(outfile, level, namespace_, name_='identity', pretty_print=pretty_print)
+            self.identity.export(
+                outfile,
+                level,
+                namespace_,
+                name_='identity',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2398,6 +3899,7 @@ class decimalScale0(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -2405,7 +3907,9 @@ class decimalScale0(GeneratedsSuper):
             try:
                 self.default = float(value)
             except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
+                raise ValueError(
+                    'Bad float/double attribute (default): %s' %
+                    exp)
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
@@ -2427,6 +3931,7 @@ class decimalScale0(GeneratedsSuper):
                 self.precision = int(value)
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'identity':
             obj_ = identity.factory()
@@ -2446,59 +3951,121 @@ class money(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='DECIMAL', qtype='double'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='DECIMAL',
+            qtype='double'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if money.subclass:
             return money.subclass(*args_, **kwargs_)
         else:
             return money(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_moneydefault(self, value):
         # Validate type moneydefault, a restriction on xs:decimal.
         if value is not None and Validate_simpletypes_:
             if value < -922337203685477.5808:
-                warnings_.warn('Value "%(value)s" does not match xsd minInclusive restriction on moneydefault' % {"value" : value} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd minInclusive restriction on moneydefault' % {
+                        "value": value})
             if value > 922337203685477.5807:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {"value" : value} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {
+                        "value": value})
             if len(str(value)) >= 10:
-                warnings_.warn('Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {"value" : value} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd maxInclusive restriction on moneydefault' % {
+                        "value": value})
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2506,7 +4073,15 @@ class money(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='money', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='money',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2514,30 +4089,68 @@ class money(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='money')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='money')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='money', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='money',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='money'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='money'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
             outfile.write(' default=%s' % (quote_attrib(self.default), ))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != DECIMAL and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != double and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='money', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='money',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2545,6 +4158,7 @@ class money(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -2552,8 +4166,11 @@ class money(GeneratedsSuper):
             try:
                 self.default = float(value)
             except ValueError as exp:
-                raise ValueError('Bad float/double attribute (default): %s' % exp)
-            self.validate_moneydefault(self.default)    # validate type moneydefault
+                raise ValueError(
+                    'Bad float/double attribute (default): %s' %
+                    exp)
+            self.validate_moneydefault(
+                self.default)    # validate type moneydefault
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
@@ -2568,6 +4185,7 @@ class money(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class money
@@ -2583,50 +4201,105 @@ class parameterlessStringType(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, sqltype='VARCHAR', qtype='QString'):
+
+    def __init__(
+            self,
+            defaultExpression=None,
+            default=None,
+            sqltype='VARCHAR',
+            qtype='QString'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if parameterlessStringType.subclass:
             return parameterlessStringType.subclass(*args_, **kwargs_)
         else:
             return parameterlessStringType(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2634,7 +4307,15 @@ class parameterlessStringType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='parameterlessStringType', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='parameterlessStringType',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2642,30 +4323,74 @@ class parameterlessStringType(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='parameterlessStringType')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='parameterlessStringType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='parameterlessStringType', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='parameterlessStringType',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='parameterlessStringType'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='parameterlessStringType'):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+            outfile.write(
+                ' default=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.default).encode(ExternalEncoding),
+                    input_name='default'),
+                 ))
         if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='parameterlessStringType', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='parameterlessStringType',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2673,6 +4398,7 @@ class parameterlessStringType(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
@@ -2692,6 +4418,7 @@ class parameterlessStringType(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class parameterlessStringType
@@ -2707,57 +4434,116 @@ class uniqueidentifier(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='VARCHAR', qtype='QString'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='VARCHAR',
+            qtype='QString'):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if uniqueidentifier.subclass:
             return uniqueidentifier.subclass(*args_, **kwargs_)
         else:
             return uniqueidentifier(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_GUID(self, value):
         # Validate type GUID, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             if not self.gds_validate_simple_patterns(
                     self.validate_GUID_patterns_, value):
-                warnings_.warn('Value "%s" does not match xsd pattern restrictions: %s' % (value.encode('utf-8'), self.validate_GUID_patterns_, ))
-    validate_GUID_patterns_ = [['^\\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\}$']]
+                warnings_.warn(
+                    'Value "%s" does not match xsd pattern restrictions: %s' %
+                    (value.encode('utf-8'), self.validate_GUID_patterns_, ))
+    validate_GUID_patterns_ = [
+        ['^\\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\}$']]
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2765,7 +4551,15 @@ class uniqueidentifier(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='uniqueidentifier', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='uniqueidentifier',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2773,30 +4567,68 @@ class uniqueidentifier(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='uniqueidentifier')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='uniqueidentifier')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='uniqueidentifier', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='uniqueidentifier',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='uniqueidentifier'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='uniqueidentifier'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
             outfile.write(' default=%s' % (quote_attrib(self.default), ))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='uniqueidentifier', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='uniqueidentifier',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2804,6 +4636,7 @@ class uniqueidentifier(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -2824,6 +4657,7 @@ class uniqueidentifier(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class uniqueidentifier
@@ -2839,54 +4673,110 @@ class dateType(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='DATE', qtype='QDate'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='DATE',
+            qtype='QDate'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
-            initvalue_ = datetime_.datetime.strptime(default, '%Y-%m-%d').date()
+            initvalue_ = datetime_.datetime.strptime(
+                default, '%Y-%m-%d').date()
         else:
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if dateType.subclass:
             return dateType.subclass(*args_, **kwargs_)
         else:
             return dateType(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -2894,7 +4784,15 @@ class dateType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='dateType', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='dateType',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -2902,30 +4800,72 @@ class dateType(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='dateType')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='dateType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='dateType', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='dateType',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='dateType'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='dateType'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_date(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_date(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != DATE and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != QDate and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='dateType', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='dateType',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -2933,6 +4873,7 @@ class dateType(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -2955,6 +4896,7 @@ class dateType(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class dateType
@@ -2970,54 +4912,110 @@ class timeType(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='TIME', qtype='QTime'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='TIME',
+            qtype='QTime'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
-            initvalue_ = datetime_.datetime.strptime(default, '%H:%M:%S').time()
+            initvalue_ = datetime_.datetime.strptime(
+                default, '%H:%M:%S').time()
         else:
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if timeType.subclass:
             return timeType.subclass(*args_, **kwargs_)
         else:
             return timeType(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -3025,7 +5023,15 @@ class timeType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='timeType', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='timeType',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3033,30 +5039,72 @@ class timeType(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='timeType')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='timeType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='timeType', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='timeType',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='timeType'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='timeType'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_time(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_time(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != TIME and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != QTime and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='timeType', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='timeType',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3064,6 +5112,7 @@ class timeType(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -3086,6 +5135,7 @@ class timeType(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class timeType
@@ -3101,54 +5151,110 @@ class dateTimeType(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, default=None, defaultExpression=None, sqltype='VARCHAR', qtype='QDateTime'):
+
+    def __init__(
+            self,
+            default=None,
+            defaultExpression=None,
+            sqltype='VARCHAR',
+            qtype='QDateTime'):
         self.original_tagname_ = None
         if isinstance(default, basestring):
-            initvalue_ = datetime_.datetime.strptime(default, '%H:%M:%S').time()
+            initvalue_ = datetime_.datetime.strptime(
+                default, '%H:%M:%S').time()
         else:
             initvalue_ = default
         self.default = initvalue_
         self.defaultExpression = _cast(None, defaultExpression)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if dateTimeType.subclass:
             return dateTimeType.subclass(*args_, **kwargs_)
         else:
             return dateTimeType(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -3156,7 +5262,15 @@ class dateTimeType(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='dateTimeType', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='dateTimeType',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3164,30 +5278,72 @@ class dateTimeType(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='dateTimeType')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='dateTimeType')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='dateTimeType', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='dateTimeType',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='dateTimeType'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='dateTimeType'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default="%s"' % self.gds_format_time(self.default, input_name='default'))
+            outfile.write(
+                ' default="%s"' %
+                self.gds_format_time(
+                    self.default,
+                    input_name='default'))
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.sqltype != VARCHAR and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
             outfile.write(' sqltype=%s' % (quote_attrib(self.sqltype), ))
         if self.qtype != QDateTime and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='dateTimeType', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='dateTimeType',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3195,6 +5351,7 @@ class dateTimeType(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -3217,6 +5374,7 @@ class dateTimeType(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class dateTimeType
@@ -3234,56 +5392,115 @@ class char(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, length=None, sqltype='CHARACTER', qtype='QString'):
+
+    def __init__(
+            self,
+            defaultExpression=None,
+            default=None,
+            length=None,
+            sqltype='CHARACTER',
+            qtype='QString'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.length = _cast(None, length)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if char.subclass:
             return char.subclass(*args_, **kwargs_)
         else:
             return char(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_length(self): return self.length
+
     def set_length(self, length): self.length = length
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_charLength(self, value):
         # Validate type charLength, a restriction on None.
         pass
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -3291,7 +5508,15 @@ class char(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='char', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='char',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3299,22 +5524,57 @@ class char(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='char')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='char')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='char', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='char',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='char'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='char'):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+            outfile.write(
+                ' default=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.default).encode(ExternalEncoding),
+                    input_name='default'),
+                 ))
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
@@ -3324,8 +5584,17 @@ class char(GeneratedsSuper):
         if self.qtype != QString and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='char', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='char',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3333,6 +5602,7 @@ class char(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
@@ -3357,6 +5627,7 @@ class char(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class char
@@ -3372,50 +5643,98 @@ class binary(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, length=None, sqltype='VARBINARY', qtype='QByteArray'):
         self.original_tagname_ = None
         self.length = _cast(None, length)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if binary.subclass:
             return binary.subclass(*args_, **kwargs_)
         else:
             return binary(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_length(self): return self.length
+
     def set_length(self, length): self.length = length
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_charLength(self, value):
         # Validate type charLength, a restriction on None.
         pass
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -3423,7 +5742,15 @@ class binary(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='binary', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='binary',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3431,16 +5758,39 @@ class binary(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='binary')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='binary')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='binary', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='binary',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='binary'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='binary'):
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
@@ -3450,8 +5800,17 @@ class binary(GeneratedsSuper):
         if self.qtype != QByteArray and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='binary', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='binary',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3459,6 +5818,7 @@ class binary(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('length', node)
         if value is not None and 'length' not in already_processed:
@@ -3475,6 +5835,7 @@ class binary(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class binary
@@ -3492,56 +5853,115 @@ class nchar(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, length=None, sqltype='VARCHAR', qtype='QByteArray'):
+
+    def __init__(
+            self,
+            defaultExpression=None,
+            default=None,
+            length=None,
+            sqltype='VARCHAR',
+            qtype='QByteArray'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.length = _cast(None, length)
         self.sqltype = _cast(None, sqltype)
         self.qtype = _cast(None, qtype)
+
     def factory(*args_, **kwargs_):
         if nchar.subclass:
             return nchar.subclass(*args_, **kwargs_)
         else:
             return nchar(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_defaultExpression(self): return self.defaultExpression
-    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+
+    def set_defaultExpression(
+        self, defaultExpression): self.defaultExpression = defaultExpression
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_length(self): return self.length
+
     def set_length(self, length): self.length = length
+
     def get_sqltype(self): return self.sqltype
+
     def set_sqltype(self, sqltype): self.sqltype = sqltype
+
     def get_qtype(self): return self.qtype
+
     def set_qtype(self, qtype): self.qtype = qtype
+
     def validate_ncharLength(self, value):
         # Validate type ncharLength, a restriction on None.
         pass
+
     def validate_sqlType(self, value):
         # Validate type sqlType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['VARCHAR', 'CHARACTER', 'BINARY', 'BOOLEAN', 'VARBINARY', 'INTEGER', 'SMALLINT', 'BIGINT', 'DECIMAL', 'NUMERIC', 'FLOAT', 'REAL', 'DOUBLE', 'DATE', 'TIME', 'TIMESTAMP', 'INTERVAL', 'ARRAY', 'MULTISET', 'XML']
+            enumerations = [
+                'VARCHAR',
+                'CHARACTER',
+                'BINARY',
+                'BOOLEAN',
+                'VARBINARY',
+                'INTEGER',
+                'SMALLINT',
+                'BIGINT',
+                'DECIMAL',
+                'NUMERIC',
+                'FLOAT',
+                'REAL',
+                'DOUBLE',
+                'DATE',
+                'TIME',
+                'TIMESTAMP',
+                'INTERVAL',
+                'ARRAY',
+                'MULTISET',
+                'XML']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sqlType' % {
+                        "value": value.encode("utf-8")})
+
     def validate_qtType(self, value):
         # Validate type qtType, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
             value = str(value)
-            enumerations = ['bool', 'char', 'int', 'long', 'short', 'float', 'double', 'QByteArray', 'QString', 'QDate', 'QTime', 'QDateTime']
+            enumerations = [
+                'bool',
+                'char',
+                'int',
+                'long',
+                'short',
+                'float',
+                'double',
+                'QByteArray',
+                'QString',
+                'QDate',
+                'QTime',
+                'QDateTime']
             enumeration_respectee = False
             for enum in enumerations:
                 if value == enum:
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on qtType' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on qtType' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -3549,7 +5969,15 @@ class nchar(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='nchar', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='nchar',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3557,22 +5985,57 @@ class nchar(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='nchar')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='nchar')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='nchar', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='nchar',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='nchar'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='nchar'):
         if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
             already_processed.add('defaultExpression')
-            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+            outfile.write(
+                ' defaultExpression=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.defaultExpression).encode(ExternalEncoding),
+                    input_name='defaultExpression'),
+                 ))
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+            outfile.write(
+                ' default=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.default).encode(ExternalEncoding),
+                    input_name='default'),
+                 ))
         if self.length is not None and 'length' not in already_processed:
             already_processed.add('length')
             outfile.write(' length=%s' % (quote_attrib(self.length), ))
@@ -3582,8 +6045,17 @@ class nchar(GeneratedsSuper):
         if self.qtype != QByteArray and 'qtype' not in already_processed:
             already_processed.add('qtype')
             outfile.write(' qtype=%s' % (quote_attrib(self.qtype), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='nchar', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='nchar',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3591,6 +6063,7 @@ class nchar(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('defaultExpression', node)
         if value is not None and 'defaultExpression' not in already_processed:
@@ -3604,7 +6077,8 @@ class nchar(GeneratedsSuper):
         if value is not None and 'length' not in already_processed:
             already_processed.add('length')
             self.length = value
-            self.validate_ncharLength(self.length)    # validate type ncharLength
+            self.validate_ncharLength(
+                self.length)    # validate type ncharLength
         value = find_attr_value_('sqltype', node)
         if value is not None and 'sqltype' not in already_processed:
             already_processed.add('sqltype')
@@ -3615,6 +6089,7 @@ class nchar(GeneratedsSuper):
             already_processed.add('qtype')
             self.qtype = value
             self.validate_qtType(self.qtype)    # validate type qtType
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class nchar
@@ -3635,20 +6110,27 @@ class vrtcol(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, dynamic=False, references=None):
         self.original_tagname_ = None
         self.dynamic = _cast(bool, dynamic)
         self.references = _cast(None, references)
+
     def factory(*args_, **kwargs_):
         if vrtcol.subclass:
             return vrtcol.subclass(*args_, **kwargs_)
         else:
             return vrtcol(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_dynamic(self): return self.dynamic
+
     def set_dynamic(self, dynamic): self.dynamic = dynamic
+
     def get_references(self): return self.references
+
     def set_references(self, references): self.references = references
+
     def hasContent_(self):
         if (
 
@@ -3656,7 +6138,15 @@ class vrtcol(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='vrtcol', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='vrtcol',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3664,24 +6154,66 @@ class vrtcol(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='vrtcol')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='vrtcol')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='vrtcol', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='vrtcol',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='vrtcol'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='vrtcol'):
         if self.dynamic and 'dynamic' not in already_processed:
             already_processed.add('dynamic')
-            outfile.write(' dynamic="%s"' % self.gds_format_boolean(self.dynamic, input_name='dynamic'))
+            outfile.write(
+                ' dynamic="%s"' %
+                self.gds_format_boolean(
+                    self.dynamic,
+                    input_name='dynamic'))
         if self.references is not None and 'references' not in already_processed:
             already_processed.add('references')
-            outfile.write(' references=%s' % (self.gds_format_string(quote_attrib(self.references).encode(ExternalEncoding), input_name='references'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='vrtcol', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' references=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.references).encode(ExternalEncoding),
+                    input_name='references'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='vrtcol',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -3689,6 +6221,7 @@ class vrtcol(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('dynamic', node)
         if value is not None and 'dynamic' not in already_processed:
@@ -3703,6 +6236,7 @@ class vrtcol(GeneratedsSuper):
         if value is not None and 'references' not in already_processed:
             already_processed.add('references')
             self.references = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class vrtcol
@@ -3786,7 +6320,46 @@ class column(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, foreignInsert='id', name=None, foreignTable=None, label=None, allowNulls=True, readOnly=False, foreignBehavior='choose', foreignColumn='id', userformat='', bit=None, tristate=None, integer=None, bigint=None, smallint=None, tinyint=None, choice=None, numeric=None, decimal=None, numericScale0=None, decimalScale0=None, money=None, float_=None, real=None, date=None, datetime=None, time=None, char=None, varchar=None, text=None, nchar=None, nvarchar=None, ntext=None, binary=None, varbinary=None, image=None, xml=None, vrtcol=None):
+
+    def __init__(
+            self,
+            foreignInsert='id',
+            name=None,
+            foreignTable=None,
+            label=None,
+            allowNulls=True,
+            readOnly=False,
+            foreignBehavior='choose',
+            foreignColumn='id',
+            userformat='',
+            bit=None,
+            tristate=None,
+            integer=None,
+            bigint=None,
+            smallint=None,
+            tinyint=None,
+            choice=None,
+            numeric=None,
+            decimal=None,
+            numericScale0=None,
+            decimalScale0=None,
+            money=None,
+            float_=None,
+            real=None,
+            date=None,
+            datetime=None,
+            time=None,
+            char=None,
+            varchar=None,
+            text=None,
+            nchar=None,
+            nvarchar=None,
+            ntext=None,
+            binary=None,
+            varbinary=None,
+            image=None,
+            xml=None,
+            vrtcol=None):
         self.original_tagname_ = None
         self.foreignInsert = _cast(None, foreignInsert)
         self.name = _cast(None, name)
@@ -3825,86 +6398,167 @@ class column(GeneratedsSuper):
         self.image = image
         self.xml = xml
         self.vrtcol = vrtcol
+
     def factory(*args_, **kwargs_):
         if column.subclass:
             return column.subclass(*args_, **kwargs_)
         else:
             return column(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_bit(self): return self.bit
+
     def set_bit(self, bit): self.bit = bit
+
     def get_tristate(self): return self.tristate
+
     def set_tristate(self, tristate): self.tristate = tristate
+
     def get_integer(self): return self.integer
+
     def set_integer(self, integer): self.integer = integer
+
     def get_bigint(self): return self.bigint
+
     def set_bigint(self, bigint): self.bigint = bigint
+
     def get_smallint(self): return self.smallint
+
     def set_smallint(self, smallint): self.smallint = smallint
+
     def get_tinyint(self): return self.tinyint
+
     def set_tinyint(self, tinyint): self.tinyint = tinyint
+
     def get_choice(self): return self.choice
+
     def set_choice(self, choice): self.choice = choice
+
     def get_numeric(self): return self.numeric
+
     def set_numeric(self, numeric): self.numeric = numeric
+
     def get_decimal(self): return self.decimal
+
     def set_decimal(self, decimal): self.decimal = decimal
+
     def get_numericScale0(self): return self.numericScale0
-    def set_numericScale0(self, numericScale0): self.numericScale0 = numericScale0
+
+    def set_numericScale0(
+        self, numericScale0): self.numericScale0 = numericScale0
+
     def get_decimalScale0(self): return self.decimalScale0
-    def set_decimalScale0(self, decimalScale0): self.decimalScale0 = decimalScale0
+
+    def set_decimalScale0(
+        self, decimalScale0): self.decimalScale0 = decimalScale0
+
     def get_money(self): return self.money
+
     def set_money(self, money): self.money = money
+
     def get_float(self): return self.float_
+
     def set_float(self, float_): self.float_ = float_
+
     def get_real(self): return self.real
+
     def set_real(self, real): self.real = real
+
     def get_date(self): return self.date
+
     def set_date(self, date): self.date = date
+
     def get_datetime(self): return self.datetime
+
     def set_datetime(self, datetime): self.datetime = datetime
+
     def get_time(self): return self.time
+
     def set_time(self, time): self.time = time
+
     def get_char(self): return self.char
+
     def set_char(self, char): self.char = char
+
     def get_varchar(self): return self.varchar
+
     def set_varchar(self, varchar): self.varchar = varchar
+
     def get_text(self): return self.text
+
     def set_text(self, text): self.text = text
+
     def get_nchar(self): return self.nchar
+
     def set_nchar(self, nchar): self.nchar = nchar
+
     def get_nvarchar(self): return self.nvarchar
+
     def set_nvarchar(self, nvarchar): self.nvarchar = nvarchar
+
     def get_ntext(self): return self.ntext
+
     def set_ntext(self, ntext): self.ntext = ntext
+
     def get_binary(self): return self.binary
+
     def set_binary(self, binary): self.binary = binary
+
     def get_varbinary(self): return self.varbinary
+
     def set_varbinary(self, varbinary): self.varbinary = varbinary
+
     def get_image(self): return self.image
+
     def set_image(self, image): self.image = image
+
     def get_xml(self): return self.xml
+
     def set_xml(self, xml): self.xml = xml
+
     def get_vrtcol(self): return self.vrtcol
+
     def set_vrtcol(self, vrtcol): self.vrtcol = vrtcol
+
     def get_foreignInsert(self): return self.foreignInsert
-    def set_foreignInsert(self, foreignInsert): self.foreignInsert = foreignInsert
+
+    def set_foreignInsert(
+        self, foreignInsert): self.foreignInsert = foreignInsert
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def get_foreignTable(self): return self.foreignTable
+
     def set_foreignTable(self, foreignTable): self.foreignTable = foreignTable
+
     def get_label(self): return self.label
+
     def set_label(self, label): self.label = label
+
     def get_allowNulls(self): return self.allowNulls
+
     def set_allowNulls(self, allowNulls): self.allowNulls = allowNulls
+
     def get_readOnly(self): return self.readOnly
+
     def set_readOnly(self, readOnly): self.readOnly = readOnly
+
     def get_foreignBehavior(self): return self.foreignBehavior
-    def set_foreignBehavior(self, foreignBehavior): self.foreignBehavior = foreignBehavior
+
+    def set_foreignBehavior(
+        self, foreignBehavior): self.foreignBehavior = foreignBehavior
+
     def get_foreignColumn(self): return self.foreignColumn
-    def set_foreignColumn(self, foreignColumn): self.foreignColumn = foreignColumn
+
+    def set_foreignColumn(
+        self, foreignColumn): self.foreignColumn = foreignColumn
+
     def get_userformat(self): return self.userformat
+
     def set_userformat(self, userformat): self.userformat = userformat
+
     def hasContent_(self):
         if (
             self.bit is not None or
@@ -3939,7 +6593,15 @@ class column(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='column', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='column',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -3947,105 +6609,327 @@ class column(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='column')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='column')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='column', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='column',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='column'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='column'):
         if self.foreignInsert != "id" and 'foreignInsert' not in already_processed:
             already_processed.add('foreignInsert')
-            outfile.write(' foreignInsert=%s' % (self.gds_format_string(quote_attrib(self.foreignInsert).encode(ExternalEncoding), input_name='foreignInsert'), ))
+            outfile.write(
+                ' foreignInsert=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.foreignInsert).encode(ExternalEncoding),
+                    input_name='foreignInsert'),
+                 ))
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
         if self.foreignTable is not None and 'foreignTable' not in already_processed:
             already_processed.add('foreignTable')
-            outfile.write(' foreignTable=%s' % (self.gds_format_string(quote_attrib(self.foreignTable).encode(ExternalEncoding), input_name='foreignTable'), ))
+            outfile.write(
+                ' foreignTable=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.foreignTable).encode(ExternalEncoding),
+                    input_name='foreignTable'),
+                 ))
         if self.label is not None and 'label' not in already_processed:
             already_processed.add('label')
-            outfile.write(' label=%s' % (self.gds_format_string(quote_attrib(self.label).encode(ExternalEncoding), input_name='label'), ))
+            outfile.write(
+                ' label=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.label).encode(ExternalEncoding),
+                    input_name='label'),
+                 ))
         if not self.allowNulls and 'allowNulls' not in already_processed:
             already_processed.add('allowNulls')
-            outfile.write(' allowNulls="%s"' % self.gds_format_boolean(self.allowNulls, input_name='allowNulls'))
+            outfile.write(
+                ' allowNulls="%s"' %
+                self.gds_format_boolean(
+                    self.allowNulls,
+                    input_name='allowNulls'))
         if self.readOnly and 'readOnly' not in already_processed:
             already_processed.add('readOnly')
-            outfile.write(' readOnly="%s"' % self.gds_format_boolean(self.readOnly, input_name='readOnly'))
+            outfile.write(
+                ' readOnly="%s"' %
+                self.gds_format_boolean(
+                    self.readOnly,
+                    input_name='readOnly'))
         if self.foreignBehavior != "choose" and 'foreignBehavior' not in already_processed:
             already_processed.add('foreignBehavior')
-            outfile.write(' foreignBehavior=%s' % (self.gds_format_string(quote_attrib(self.foreignBehavior).encode(ExternalEncoding), input_name='foreignBehavior'), ))
+            outfile.write(
+                ' foreignBehavior=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.foreignBehavior).encode(ExternalEncoding),
+                    input_name='foreignBehavior'),
+                 ))
         if self.foreignColumn != "id" and 'foreignColumn' not in already_processed:
             already_processed.add('foreignColumn')
-            outfile.write(' foreignColumn=%s' % (self.gds_format_string(quote_attrib(self.foreignColumn).encode(ExternalEncoding), input_name='foreignColumn'), ))
+            outfile.write(
+                ' foreignColumn=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.foreignColumn).encode(ExternalEncoding),
+                    input_name='foreignColumn'),
+                 ))
         if self.userformat != "" and 'userformat' not in already_processed:
             already_processed.add('userformat')
-            outfile.write(' userformat=%s' % (self.gds_format_string(quote_attrib(self.userformat).encode(ExternalEncoding), input_name='userformat'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='column', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' userformat=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.userformat).encode(ExternalEncoding),
+                    input_name='userformat'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='column',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.bit is not None:
-            self.bit.export(outfile, level, namespace_, name_='bit', pretty_print=pretty_print)
+            self.bit.export(
+                outfile,
+                level,
+                namespace_,
+                name_='bit',
+                pretty_print=pretty_print)
         if self.tristate is not None:
-            self.tristate.export(outfile, level, namespace_, name_='tristate', pretty_print=pretty_print)
+            self.tristate.export(
+                outfile,
+                level,
+                namespace_,
+                name_='tristate',
+                pretty_print=pretty_print)
         if self.integer is not None:
-            self.integer.export(outfile, level, namespace_, name_='int', pretty_print=pretty_print)
+            self.integer.export(
+                outfile,
+                level,
+                namespace_,
+                name_='int',
+                pretty_print=pretty_print)
         if self.bigint is not None:
-            self.bigint.export(outfile, level, namespace_, name_='bigint', pretty_print=pretty_print)
+            self.bigint.export(
+                outfile,
+                level,
+                namespace_,
+                name_='bigint',
+                pretty_print=pretty_print)
         if self.smallint is not None:
-            self.smallint.export(outfile, level, namespace_, name_='smallint', pretty_print=pretty_print)
+            self.smallint.export(
+                outfile,
+                level,
+                namespace_,
+                name_='smallint',
+                pretty_print=pretty_print)
         if self.tinyint is not None:
-            self.tinyint.export(outfile, level, namespace_, name_='tinyint', pretty_print=pretty_print)
+            self.tinyint.export(
+                outfile,
+                level,
+                namespace_,
+                name_='tinyint',
+                pretty_print=pretty_print)
         if self.choice is not None:
-            self.choice.export(outfile, level, namespace_, name_='choice', pretty_print=pretty_print)
+            self.choice.export(
+                outfile,
+                level,
+                namespace_,
+                name_='choice',
+                pretty_print=pretty_print)
         if self.numeric is not None:
-            self.numeric.export(outfile, level, namespace_, name_='numeric', pretty_print=pretty_print)
+            self.numeric.export(
+                outfile,
+                level,
+                namespace_,
+                name_='numeric',
+                pretty_print=pretty_print)
         if self.decimal is not None:
-            self.decimal.export(outfile, level, namespace_, name_='decimal', pretty_print=pretty_print)
+            self.decimal.export(
+                outfile,
+                level,
+                namespace_,
+                name_='decimal',
+                pretty_print=pretty_print)
         if self.numericScale0 is not None:
-            self.numericScale0.export(outfile, level, namespace_, name_='numericScale0', pretty_print=pretty_print)
+            self.numericScale0.export(
+                outfile,
+                level,
+                namespace_,
+                name_='numericScale0',
+                pretty_print=pretty_print)
         if self.decimalScale0 is not None:
-            self.decimalScale0.export(outfile, level, namespace_, name_='decimalScale0', pretty_print=pretty_print)
+            self.decimalScale0.export(
+                outfile,
+                level,
+                namespace_,
+                name_='decimalScale0',
+                pretty_print=pretty_print)
         if self.money is not None:
-            self.money.export(outfile, level, namespace_, name_='money', pretty_print=pretty_print)
+            self.money.export(
+                outfile,
+                level,
+                namespace_,
+                name_='money',
+                pretty_print=pretty_print)
         if self.float_ is not None:
-            self.float_.export(outfile, level, namespace_, name_='float', pretty_print=pretty_print)
+            self.float_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='float',
+                pretty_print=pretty_print)
         if self.real is not None:
-            self.real.export(outfile, level, namespace_, name_='real', pretty_print=pretty_print)
+            self.real.export(
+                outfile,
+                level,
+                namespace_,
+                name_='real',
+                pretty_print=pretty_print)
         if self.date is not None:
-            self.date.export(outfile, level, namespace_, name_='date', pretty_print=pretty_print)
+            self.date.export(
+                outfile,
+                level,
+                namespace_,
+                name_='date',
+                pretty_print=pretty_print)
         if self.datetime is not None:
-            self.datetime.export(outfile, level, namespace_, name_='datetime', pretty_print=pretty_print)
+            self.datetime.export(
+                outfile,
+                level,
+                namespace_,
+                name_='datetime',
+                pretty_print=pretty_print)
         if self.time is not None:
-            self.time.export(outfile, level, namespace_, name_='time', pretty_print=pretty_print)
+            self.time.export(
+                outfile,
+                level,
+                namespace_,
+                name_='time',
+                pretty_print=pretty_print)
         if self.char is not None:
-            self.char.export(outfile, level, namespace_, name_='char', pretty_print=pretty_print)
+            self.char.export(
+                outfile,
+                level,
+                namespace_,
+                name_='char',
+                pretty_print=pretty_print)
         if self.varchar is not None:
-            self.varchar.export(outfile, level, namespace_, name_='varchar', pretty_print=pretty_print)
+            self.varchar.export(
+                outfile,
+                level,
+                namespace_,
+                name_='varchar',
+                pretty_print=pretty_print)
         if self.text is not None:
-            self.text.export(outfile, level, namespace_, name_='text', pretty_print=pretty_print)
+            self.text.export(
+                outfile,
+                level,
+                namespace_,
+                name_='text',
+                pretty_print=pretty_print)
         if self.nchar is not None:
-            self.nchar.export(outfile, level, namespace_, name_='nchar', pretty_print=pretty_print)
+            self.nchar.export(
+                outfile,
+                level,
+                namespace_,
+                name_='nchar',
+                pretty_print=pretty_print)
         if self.nvarchar is not None:
-            self.nvarchar.export(outfile, level, namespace_, name_='nvarchar', pretty_print=pretty_print)
+            self.nvarchar.export(
+                outfile,
+                level,
+                namespace_,
+                name_='nvarchar',
+                pretty_print=pretty_print)
         if self.ntext is not None:
-            self.ntext.export(outfile, level, namespace_, name_='ntext', pretty_print=pretty_print)
+            self.ntext.export(
+                outfile,
+                level,
+                namespace_,
+                name_='ntext',
+                pretty_print=pretty_print)
         if self.binary is not None:
-            self.binary.export(outfile, level, namespace_, name_='binary', pretty_print=pretty_print)
+            self.binary.export(
+                outfile,
+                level,
+                namespace_,
+                name_='binary',
+                pretty_print=pretty_print)
         if self.varbinary is not None:
-            self.varbinary.export(outfile, level, namespace_, name_='varbinary', pretty_print=pretty_print)
+            self.varbinary.export(
+                outfile,
+                level,
+                namespace_,
+                name_='varbinary',
+                pretty_print=pretty_print)
         if self.image is not None:
-            self.image.export(outfile, level, namespace_, name_='image', pretty_print=pretty_print)
+            self.image.export(
+                outfile,
+                level,
+                namespace_,
+                name_='image',
+                pretty_print=pretty_print)
         if self.xml is not None:
-            self.xml.export(outfile, level, namespace_, name_='xml', pretty_print=pretty_print)
+            self.xml.export(
+                outfile,
+                level,
+                namespace_,
+                name_='xml',
+                pretty_print=pretty_print)
         if self.vrtcol is not None:
-            self.vrtcol.export(outfile, level, namespace_, name_='vrtcol', pretty_print=pretty_print)
+            self.vrtcol.export(
+                outfile,
+                level,
+                namespace_,
+                name_='vrtcol',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4053,6 +6937,7 @@ class column(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('foreignInsert', node)
         if value is not None and 'foreignInsert' not in already_processed:
@@ -4100,6 +6985,7 @@ class column(GeneratedsSuper):
         if value is not None and 'userformat' not in already_processed:
             already_processed.add('userformat')
             self.userformat = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'bit':
             obj_ = bit.factory()
@@ -4251,23 +7137,31 @@ class columnList(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, column=None):
         self.original_tagname_ = None
         if column is None:
             self.column = []
         else:
             self.column = column
+
     def factory(*args_, **kwargs_):
         if columnList.subclass:
             return columnList.subclass(*args_, **kwargs_)
         else:
             return columnList(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_column(self): return self.column
+
     def set_column(self, column): self.column = column
+
     def add_column(self, value): self.column.append(value)
+
     def insert_column_at(self, index, value): self.column.insert(index, value)
+
     def replace_column_at(self, index, value): self.column[index] = value
+
     def hasContent_(self):
         if (
             self.column
@@ -4275,7 +7169,15 @@ class columnList(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='columnList', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='columnList',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4283,25 +7185,62 @@ class columnList(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='columnList')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='columnList')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='columnList', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='columnList',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='columnList'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='columnList'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='columnList', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='columnList',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for column_ in self.column:
-            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+            column_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='column',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4309,8 +7248,10 @@ class columnList(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'column':
             obj_ = column.factory()
@@ -4329,20 +7270,27 @@ class constraintColumn(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, name=None, sortOrder=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
         self.sortOrder = _cast(None, sortOrder)
+
     def factory(*args_, **kwargs_):
         if constraintColumn.subclass:
             return constraintColumn.subclass(*args_, **kwargs_)
         else:
             return constraintColumn(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def get_sortOrder(self): return self.sortOrder
+
     def set_sortOrder(self, sortOrder): self.sortOrder = sortOrder
+
     def validate_sortOrder(self, value):
         # Validate type sortOrder, a restriction on xs:string.
         if value is not None and Validate_simpletypes_:
@@ -4354,7 +7302,10 @@ class constraintColumn(GeneratedsSuper):
                     enumeration_respectee = True
                     break
             if not enumeration_respectee:
-                warnings_.warn('Value "%(value)s" does not match xsd enumeration restriction on sortOrder' % {"value" : value.encode("utf-8")} )
+                warnings_.warn(
+                    'Value "%(value)s" does not match xsd enumeration restriction on sortOrder' % {
+                        "value": value.encode("utf-8")})
+
     def hasContent_(self):
         if (
 
@@ -4362,7 +7313,15 @@ class constraintColumn(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='constraintColumn', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='constraintColumn',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4370,24 +7329,62 @@ class constraintColumn(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='constraintColumn')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='constraintColumn')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='constraintColumn', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='constraintColumn',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='constraintColumn'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='constraintColumn'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
         if self.sortOrder is not None and 'sortOrder' not in already_processed:
             already_processed.add('sortOrder')
             outfile.write(' sortOrder=%s' % (quote_attrib(self.sortOrder), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='constraintColumn', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='constraintColumn',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4395,6 +7392,7 @@ class constraintColumn(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
@@ -4404,7 +7402,9 @@ class constraintColumn(GeneratedsSuper):
         if value is not None and 'sortOrder' not in already_processed:
             already_processed.add('sortOrder')
             self.sortOrder = value
-            self.validate_sortOrder(self.sortOrder)    # validate type sortOrder
+            self.validate_sortOrder(
+                self.sortOrder)    # validate type sortOrder
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class constraintColumn
@@ -4422,7 +7422,15 @@ class constraint(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, clustered=None, padIndex=None, fillFactor=None, name=None, column=None, extensiontype_=None):
+
+    def __init__(
+            self,
+            clustered=None,
+            padIndex=None,
+            fillFactor=None,
+            name=None,
+            column=None,
+            extensiontype_=None):
         self.original_tagname_ = None
         self.clustered = _cast(bool, clustered)
         self.padIndex = _cast(bool, padIndex)
@@ -4433,27 +7441,45 @@ class constraint(GeneratedsSuper):
         else:
             self.column = column
         self.extensiontype_ = extensiontype_
+
     def factory(*args_, **kwargs_):
         if constraint.subclass:
             return constraint.subclass(*args_, **kwargs_)
         else:
             return constraint(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_column(self): return self.column
+
     def set_column(self, column): self.column = column
+
     def add_column(self, value): self.column.append(value)
+
     def insert_column_at(self, index, value): self.column.insert(index, value)
+
     def replace_column_at(self, index, value): self.column[index] = value
+
     def get_clustered(self): return self.clustered
+
     def set_clustered(self, clustered): self.clustered = clustered
+
     def get_padIndex(self): return self.padIndex
+
     def set_padIndex(self, padIndex): self.padIndex = padIndex
+
     def get_fillFactor(self): return self.fillFactor
+
     def set_fillFactor(self, fillFactor): self.fillFactor = fillFactor
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def get_extensiontype_(self): return self.extensiontype_
-    def set_extensiontype_(self, extensiontype_): self.extensiontype_ = extensiontype_
+
+    def set_extensiontype_(
+        self, extensiontype_): self.extensiontype_ = extensiontype_
+
     def hasContent_(self):
         if (
             self.column
@@ -4461,7 +7487,15 @@ class constraint(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='constraint', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='constraint',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4469,40 +7503,96 @@ class constraint(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='constraint')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='constraint')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='constraint', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='constraint',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='constraint'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='constraint'):
         if self.clustered is not None and 'clustered' not in already_processed:
             already_processed.add('clustered')
-            outfile.write(' clustered="%s"' % self.gds_format_boolean(self.clustered, input_name='clustered'))
+            outfile.write(
+                ' clustered="%s"' %
+                self.gds_format_boolean(
+                    self.clustered,
+                    input_name='clustered'))
         if self.padIndex is not None and 'padIndex' not in already_processed:
             already_processed.add('padIndex')
-            outfile.write(' padIndex="%s"' % self.gds_format_boolean(self.padIndex, input_name='padIndex'))
+            outfile.write(
+                ' padIndex="%s"' %
+                self.gds_format_boolean(
+                    self.padIndex,
+                    input_name='padIndex'))
         if self.fillFactor is not None and 'fillFactor' not in already_processed:
             already_processed.add('fillFactor')
-            outfile.write(' fillFactor="%s"' % self.gds_format_integer(self.fillFactor, input_name='fillFactor'))
+            outfile.write(
+                ' fillFactor="%s"' %
+                self.gds_format_integer(
+                    self.fillFactor,
+                    input_name='fillFactor'))
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
         if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
             already_processed.add('xsi:type')
-            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            outfile.write(
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
             outfile.write(' xsi:type="%s"' % self.extensiontype_)
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='constraint', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='constraint',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for column_ in self.column:
-            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+            column_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='column',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4510,6 +7600,7 @@ class constraint(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('clustered', node)
         if value is not None and 'clustered' not in already_processed:
@@ -4544,6 +7635,7 @@ class constraint(GeneratedsSuper):
         if value is not None and 'xsi:type' not in already_processed:
             already_processed.add('xsi:type')
             self.extensiontype_ = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'column':
             obj_ = constraintColumn.factory()
@@ -4560,17 +7652,22 @@ class primaryKey(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, key=None):
         self.original_tagname_ = None
         self.key = key
+
     def factory(*args_, **kwargs_):
         if primaryKey.subclass:
             return primaryKey.subclass(*args_, **kwargs_)
         else:
             return primaryKey(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_key(self): return self.key
+
     def set_key(self, key): self.key = key
+
     def hasContent_(self):
         if (
             self.key is not None
@@ -4578,7 +7675,15 @@ class primaryKey(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='primaryKey', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='primaryKey',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4586,25 +7691,62 @@ class primaryKey(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='primaryKey')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='primaryKey')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='primaryKey', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='primaryKey',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='primaryKey'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='primaryKey'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='primaryKey', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='primaryKey',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.key is not None:
-            self.key.export(outfile, level, namespace_, name_='key', pretty_print=pretty_print)
+            self.key.export(
+                outfile,
+                level,
+                namespace_,
+                name_='key',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4612,8 +7754,10 @@ class primaryKey(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'key':
             class_obj_ = self.get_class_obj_(child_, constraint)
@@ -4631,23 +7775,37 @@ class uniqueConstraints(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, constraint=None):
         self.original_tagname_ = None
         if constraint is None:
             self.constraint = []
         else:
             self.constraint = constraint
+
     def factory(*args_, **kwargs_):
         if uniqueConstraints.subclass:
             return uniqueConstraints.subclass(*args_, **kwargs_)
         else:
             return uniqueConstraints(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_constraint(self): return self.constraint
+
     def set_constraint(self, constraint): self.constraint = constraint
+
     def add_constraint(self, value): self.constraint.append(value)
-    def insert_constraint_at(self, index, value): self.constraint.insert(index, value)
-    def replace_constraint_at(self, index, value): self.constraint[index] = value
+
+    def insert_constraint_at(
+        self,
+        index,
+        value): self.constraint.insert(
+        index,
+        value)
+
+    def replace_constraint_at(self, index, value): self.constraint[
+        index] = value
+
     def hasContent_(self):
         if (
             self.constraint
@@ -4655,7 +7813,15 @@ class uniqueConstraints(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='uniqueConstraints', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='uniqueConstraints',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4663,25 +7829,62 @@ class uniqueConstraints(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='uniqueConstraints')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='uniqueConstraints')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='uniqueConstraints', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='uniqueConstraints',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='uniqueConstraints'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='uniqueConstraints'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='uniqueConstraints', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='uniqueConstraints',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for constraint_ in self.constraint:
-            constraint_.export(outfile, level, namespace_, name_='constraint', pretty_print=pretty_print)
+            constraint_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='constraint',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4689,8 +7892,10 @@ class uniqueConstraints(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'constraint':
             class_obj_ = self.get_class_obj_(child_, constraint)
@@ -4708,18 +7913,38 @@ class index(constraint):
     }
     subclass = None
     superclass = constraint
-    def __init__(self, clustered=None, padIndex=None, fillFactor=None, name=None, column=None, unique=None):
+
+    def __init__(
+            self,
+            clustered=None,
+            padIndex=None,
+            fillFactor=None,
+            name=None,
+            column=None,
+            unique=None):
         self.original_tagname_ = None
-        super(index, self).__init__(clustered, padIndex, fillFactor, name, column, )
+        super(
+            index,
+            self).__init__(
+            clustered,
+            padIndex,
+            fillFactor,
+            name,
+            column,
+        )
         self.unique = _cast(bool, unique)
+
     def factory(*args_, **kwargs_):
         if index.subclass:
             return index.subclass(*args_, **kwargs_)
         else:
             return index(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_unique(self): return self.unique
+
     def set_unique(self, unique): self.unique = unique
+
     def hasContent_(self):
         if (
             super(index, self).hasContent_()
@@ -4727,7 +7952,15 @@ class index(constraint):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='index', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='index',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4735,23 +7968,74 @@ class index(constraint):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='index')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='index')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='index', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='index',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='index'):
-        super(index, self).exportAttributes(outfile, level, already_processed, namespace_, name_='index')
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='index'):
+        super(
+            index,
+            self).exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='index')
         if self.unique is not None and 'unique' not in already_processed:
             already_processed.add('unique')
-            outfile.write(' unique="%s"' % self.gds_format_boolean(self.unique, input_name='unique'))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='index', fromsubclass_=False, pretty_print=True):
-        super(index, self).exportChildren(outfile, level, namespace_, name_, True, pretty_print=pretty_print)
+            outfile.write(
+                ' unique="%s"' %
+                self.gds_format_boolean(
+                    self.unique,
+                    input_name='unique'))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='index',
+            fromsubclass_=False,
+            pretty_print=True):
+        super(
+            index,
+            self).exportChildren(
+            outfile,
+            level,
+            namespace_,
+            name_,
+            True,
+            pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4759,6 +8043,7 @@ class index(constraint):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('unique', node)
         if value is not None and 'unique' not in already_processed:
@@ -4770,6 +8055,7 @@ class index(constraint):
             else:
                 raise_parse_error(node, 'Bad boolean attribute')
         super(index, self).buildAttributes(node, attrs, already_processed)
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         super(index, self).buildChildren(child_, node, nodeName_, True)
         pass
@@ -4783,23 +8069,31 @@ class indexes(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, index=None):
         self.original_tagname_ = None
         if index is None:
             self.index = []
         else:
             self.index = index
+
     def factory(*args_, **kwargs_):
         if indexes.subclass:
             return indexes.subclass(*args_, **kwargs_)
         else:
             return indexes(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_index(self): return self.index
+
     def set_index(self, index): self.index = index
+
     def add_index(self, value): self.index.append(value)
+
     def insert_index_at(self, index, value): self.index.insert(index, value)
+
     def replace_index_at(self, index, value): self.index[index] = value
+
     def hasContent_(self):
         if (
             self.index
@@ -4807,7 +8101,15 @@ class indexes(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='indexes', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='indexes',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4815,25 +8117,62 @@ class indexes(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='indexes')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='indexes')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='indexes', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='indexes',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='indexes'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='indexes'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='indexes', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='indexes',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for index_ in self.index:
-            index_.export(outfile, level, namespace_, name_='index', pretty_print=pretty_print)
+            index_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='index',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4841,8 +8180,10 @@ class indexes(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'index':
             obj_ = index.factory()
@@ -4859,17 +8200,22 @@ class relationshipColumn(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, name=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
+
     def factory(*args_, **kwargs_):
         if relationshipColumn.subclass:
             return relationshipColumn.subclass(*args_, **kwargs_)
         else:
             return relationshipColumn(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
 
@@ -4877,7 +8223,15 @@ class relationshipColumn(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='relationshipColumn', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationshipColumn',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4885,21 +8239,59 @@ class relationshipColumn(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='relationshipColumn')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='relationshipColumn')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='relationshipColumn', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='relationshipColumn',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='relationshipColumn'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='relationshipColumn'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='relationshipColumn', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationshipColumn',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4907,11 +8299,13 @@ class relationshipColumn(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class relationshipColumn
@@ -4924,23 +8318,31 @@ class foreignKeyColumns(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, column=None):
         self.original_tagname_ = None
         if column is None:
             self.column = []
         else:
             self.column = column
+
     def factory(*args_, **kwargs_):
         if foreignKeyColumns.subclass:
             return foreignKeyColumns.subclass(*args_, **kwargs_)
         else:
             return foreignKeyColumns(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_column(self): return self.column
+
     def set_column(self, column): self.column = column
+
     def add_column(self, value): self.column.append(value)
+
     def insert_column_at(self, index, value): self.column.insert(index, value)
+
     def replace_column_at(self, index, value): self.column[index] = value
+
     def hasContent_(self):
         if (
             self.column
@@ -4948,7 +8350,15 @@ class foreignKeyColumns(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='foreignKeyColumns', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='foreignKeyColumns',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -4956,25 +8366,62 @@ class foreignKeyColumns(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='foreignKeyColumns')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='foreignKeyColumns')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='foreignKeyColumns', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='foreignKeyColumns',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='foreignKeyColumns'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='foreignKeyColumns'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='foreignKeyColumns', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='foreignKeyColumns',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for column_ in self.column:
-            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+            column_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='column',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -4982,8 +8429,10 @@ class foreignKeyColumns(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'column':
             obj_ = relationshipColumn.factory()
@@ -5001,6 +8450,7 @@ class primaryKeyTable(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, name=None, column=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
@@ -5008,19 +8458,28 @@ class primaryKeyTable(GeneratedsSuper):
             self.column = []
         else:
             self.column = column
+
     def factory(*args_, **kwargs_):
         if primaryKeyTable.subclass:
             return primaryKeyTable.subclass(*args_, **kwargs_)
         else:
             return primaryKeyTable(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_column(self): return self.column
+
     def set_column(self, column): self.column = column
+
     def add_column(self, value): self.column.append(value)
+
     def insert_column_at(self, index, value): self.column.insert(index, value)
+
     def replace_column_at(self, index, value): self.column[index] = value
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
             self.column
@@ -5028,7 +8487,15 @@ class primaryKeyTable(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='primaryKeyTable', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='primaryKeyTable',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5036,27 +8503,70 @@ class primaryKeyTable(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='primaryKeyTable')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='primaryKeyTable')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='primaryKeyTable', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='primaryKeyTable',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='primaryKeyTable'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='primaryKeyTable'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='primaryKeyTable', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='primaryKeyTable',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for column_ in self.column:
-            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+            column_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='column',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5064,11 +8574,13 @@ class primaryKeyTable(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'column':
             obj_ = relationshipColumn.factory()
@@ -5087,23 +8599,38 @@ class relationship(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, name=None, foreignKeyColumns=None, primaryKeyTable=None):
+
+    def __init__(
+            self,
+            name=None,
+            foreignKeyColumns=None,
+            primaryKeyTable=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
         self.foreignKeyColumns = foreignKeyColumns
         self.primaryKeyTable = primaryKeyTable
+
     def factory(*args_, **kwargs_):
         if relationship.subclass:
             return relationship.subclass(*args_, **kwargs_)
         else:
             return relationship(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_foreignKeyColumns(self): return self.foreignKeyColumns
-    def set_foreignKeyColumns(self, foreignKeyColumns): self.foreignKeyColumns = foreignKeyColumns
+
+    def set_foreignKeyColumns(
+        self, foreignKeyColumns): self.foreignKeyColumns = foreignKeyColumns
+
     def get_primaryKeyTable(self): return self.primaryKeyTable
-    def set_primaryKeyTable(self, primaryKeyTable): self.primaryKeyTable = primaryKeyTable
+
+    def set_primaryKeyTable(
+        self, primaryKeyTable): self.primaryKeyTable = primaryKeyTable
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
             self.foreignKeyColumns is not None or
@@ -5112,7 +8639,15 @@ class relationship(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='relationship', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationship',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5120,29 +8655,77 @@ class relationship(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='relationship')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='relationship')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='relationship', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='relationship',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='relationship'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='relationship'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='relationship', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationship',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.foreignKeyColumns is not None:
-            self.foreignKeyColumns.export(outfile, level, namespace_, name_='foreignKeyColumns', pretty_print=pretty_print)
+            self.foreignKeyColumns.export(
+                outfile,
+                level,
+                namespace_,
+                name_='foreignKeyColumns',
+                pretty_print=pretty_print)
         if self.primaryKeyTable is not None:
-            self.primaryKeyTable.export(outfile, level, namespace_, name_='primaryKeyTable', pretty_print=pretty_print)
+            self.primaryKeyTable.export(
+                outfile,
+                level,
+                namespace_,
+                name_='primaryKeyTable',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5150,11 +8733,13 @@ class relationship(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'foreignKeyColumns':
             obj_ = foreignKeyColumns.factory()
@@ -5177,23 +8762,34 @@ class relationships(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, relationship=None):
         self.original_tagname_ = None
         if relationship is None:
             self.relationship = []
         else:
             self.relationship = relationship
+
     def factory(*args_, **kwargs_):
         if relationships.subclass:
             return relationships.subclass(*args_, **kwargs_)
         else:
             return relationships(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_relationship(self): return self.relationship
+
     def set_relationship(self, relationship): self.relationship = relationship
+
     def add_relationship(self, value): self.relationship.append(value)
-    def insert_relationship_at(self, index, value): self.relationship.insert(index, value)
-    def replace_relationship_at(self, index, value): self.relationship[index] = value
+
+    def insert_relationship_at(
+        self, index, value): self.relationship.insert(
+        index, value)
+
+    def replace_relationship_at(
+        self, index, value): self.relationship[index] = value
+
     def hasContent_(self):
         if (
             self.relationship
@@ -5201,7 +8797,15 @@ class relationships(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='relationships', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationships',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5209,25 +8813,62 @@ class relationships(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='relationships')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='relationships')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='relationships', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='relationships',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='relationships'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='relationships'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='relationships', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='relationships',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for relationship_ in self.relationship:
-            relationship_.export(outfile, level, namespace_, name_='relationship', pretty_print=pretty_print)
+            relationship_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='relationship',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5235,8 +8876,10 @@ class relationships(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'relationship':
             obj_ = relationship.factory()
@@ -5258,7 +8901,15 @@ class table(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, name=None, columns=None, primaryKey=None, uniqueConstraints=None, indexes=None, relationships=None):
+
+    def __init__(
+            self,
+            name=None,
+            columns=None,
+            primaryKey=None,
+            uniqueConstraints=None,
+            indexes=None,
+            relationships=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
         self.columns = columns
@@ -5266,24 +8917,40 @@ class table(GeneratedsSuper):
         self.uniqueConstraints = uniqueConstraints
         self.indexes = indexes
         self.relationships = relationships
+
     def factory(*args_, **kwargs_):
         if table.subclass:
             return table.subclass(*args_, **kwargs_)
         else:
             return table(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_columns(self): return self.columns
+
     def set_columns(self, columns): self.columns = columns
+
     def get_primaryKey(self): return self.primaryKey
+
     def set_primaryKey(self, primaryKey): self.primaryKey = primaryKey
+
     def get_uniqueConstraints(self): return self.uniqueConstraints
-    def set_uniqueConstraints(self, uniqueConstraints): self.uniqueConstraints = uniqueConstraints
+
+    def set_uniqueConstraints(
+        self, uniqueConstraints): self.uniqueConstraints = uniqueConstraints
+
     def get_indexes(self): return self.indexes
+
     def set_indexes(self, indexes): self.indexes = indexes
+
     def get_relationships(self): return self.relationships
-    def set_relationships(self, relationships): self.relationships = relationships
+
+    def set_relationships(
+        self, relationships): self.relationships = relationships
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
             self.columns is not None or
@@ -5295,7 +8962,15 @@ class table(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='table', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='table',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5303,35 +8978,98 @@ class table(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='table')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='table')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='table', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='table',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='table'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='table'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='table', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='table',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.columns is not None:
-            self.columns.export(outfile, level, namespace_, name_='columns', pretty_print=pretty_print)
+            self.columns.export(
+                outfile,
+                level,
+                namespace_,
+                name_='columns',
+                pretty_print=pretty_print)
         if self.primaryKey is not None:
-            self.primaryKey.export(outfile, level, namespace_, name_='primaryKey', pretty_print=pretty_print)
+            self.primaryKey.export(
+                outfile,
+                level,
+                namespace_,
+                name_='primaryKey',
+                pretty_print=pretty_print)
         if self.uniqueConstraints is not None:
-            self.uniqueConstraints.export(outfile, level, namespace_, name_='uniqueConstraints', pretty_print=pretty_print)
+            self.uniqueConstraints.export(
+                outfile,
+                level,
+                namespace_,
+                name_='uniqueConstraints',
+                pretty_print=pretty_print)
         if self.indexes is not None:
-            self.indexes.export(outfile, level, namespace_, name_='indexes', pretty_print=pretty_print)
+            self.indexes.export(
+                outfile,
+                level,
+                namespace_,
+                name_='indexes',
+                pretty_print=pretty_print)
         if self.relationships is not None:
-            self.relationships.export(outfile, level, namespace_, name_='relationships', pretty_print=pretty_print)
+            self.relationships.export(
+                outfile,
+                level,
+                namespace_,
+                name_='relationships',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5339,11 +9077,13 @@ class table(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'columns':
             obj_ = columnList.factory()
@@ -5381,23 +9121,31 @@ class tables(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, table=None):
         self.original_tagname_ = None
         if table is None:
             self.table = []
         else:
             self.table = table
+
     def factory(*args_, **kwargs_):
         if tables.subclass:
             return tables.subclass(*args_, **kwargs_)
         else:
             return tables(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_table(self): return self.table
+
     def set_table(self, table): self.table = table
+
     def add_table(self, value): self.table.append(value)
+
     def insert_table_at(self, index, value): self.table.insert(index, value)
+
     def replace_table_at(self, index, value): self.table[index] = value
+
     def hasContent_(self):
         if (
             self.table
@@ -5405,7 +9153,15 @@ class tables(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='tables', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tables',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5413,25 +9169,62 @@ class tables(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='tables')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='tables')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='tables', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='tables',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='tables'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='tables'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='tables', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='tables',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for table_ in self.table:
-            table_.export(outfile, level, namespace_, name_='table', pretty_print=pretty_print)
+            table_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='table',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5439,8 +9232,10 @@ class tables(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'table':
             obj_ = table.factory()
@@ -5476,7 +9271,16 @@ class viewSubset(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, constraint=None, name1=None, value=None, col1=None, in_=None, incol=None, where=None):
+
+    def __init__(
+            self,
+            constraint=None,
+            name1=None,
+            value=None,
+            col1=None,
+            in_=None,
+            incol=None,
+            where=None):
         self.original_tagname_ = None
         self.constraint = _cast(None, constraint)
         self.name1 = _cast(None, name1)
@@ -5485,26 +9289,42 @@ class viewSubset(GeneratedsSuper):
         self.in_ = _cast(None, in_)
         self.incol = _cast(None, incol)
         self.where = _cast(None, where)
+
     def factory(*args_, **kwargs_):
         if viewSubset.subclass:
             return viewSubset.subclass(*args_, **kwargs_)
         else:
             return viewSubset(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_constraint(self): return self.constraint
+
     def set_constraint(self, constraint): self.constraint = constraint
+
     def get_name1(self): return self.name1
+
     def set_name1(self, name1): self.name1 = name1
+
     def get_value(self): return self.value
+
     def set_value(self, value): self.value = value
+
     def get_col1(self): return self.col1
+
     def set_col1(self, col1): self.col1 = col1
+
     def get_in(self): return self.in_
+
     def set_in(self, in_): self.in_ = in_
+
     def get_incol(self): return self.incol
+
     def set_incol(self, incol): self.incol = incol
+
     def get_where(self): return self.where
+
     def set_where(self, where): self.where = where
+
     def hasContent_(self):
         if (
 
@@ -5512,7 +9332,15 @@ class viewSubset(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='viewSubset', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewSubset',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5520,39 +9348,113 @@ class viewSubset(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='viewSubset')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='viewSubset')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='viewSubset', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='viewSubset',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='viewSubset'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='viewSubset'):
         if self.constraint is not None and 'constraint' not in already_processed:
             already_processed.add('constraint')
-            outfile.write(' constraint=%s' % (self.gds_format_string(quote_attrib(self.constraint).encode(ExternalEncoding), input_name='constraint'), ))
+            outfile.write(
+                ' constraint=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.constraint).encode(ExternalEncoding),
+                    input_name='constraint'),
+                 ))
         if self.name1 is not None and 'name1' not in already_processed:
             already_processed.add('name1')
-            outfile.write(' name1=%s' % (self.gds_format_string(quote_attrib(self.name1).encode(ExternalEncoding), input_name='name1'), ))
+            outfile.write(
+                ' name1=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name1).encode(ExternalEncoding),
+                    input_name='name1'),
+                 ))
         if self.value is not None and 'value' not in already_processed:
             already_processed.add('value')
-            outfile.write(' value=%s' % (self.gds_format_string(quote_attrib(self.value).encode(ExternalEncoding), input_name='value'), ))
+            outfile.write(
+                ' value=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.value).encode(ExternalEncoding),
+                    input_name='value'),
+                 ))
         if self.col1 is not None and 'col1' not in already_processed:
             already_processed.add('col1')
-            outfile.write(' col1=%s' % (self.gds_format_string(quote_attrib(self.col1).encode(ExternalEncoding), input_name='col1'), ))
+            outfile.write(
+                ' col1=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.col1).encode(ExternalEncoding),
+                    input_name='col1'),
+                 ))
         if self.in_ is not None and 'in_' not in already_processed:
             already_processed.add('in_')
-            outfile.write(' in=%s' % (self.gds_format_string(quote_attrib(self.in_).encode(ExternalEncoding), input_name='in'), ))
+            outfile.write(
+                ' in=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.in_).encode(ExternalEncoding),
+                    input_name='in'),
+                 ))
         if self.incol is not None and 'incol' not in already_processed:
             already_processed.add('incol')
-            outfile.write(' incol=%s' % (self.gds_format_string(quote_attrib(self.incol).encode(ExternalEncoding), input_name='incol'), ))
+            outfile.write(
+                ' incol=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.incol).encode(ExternalEncoding),
+                    input_name='incol'),
+                 ))
         if self.where is not None and 'where' not in already_processed:
             already_processed.add('where')
-            outfile.write(' where=%s' % (self.gds_format_string(quote_attrib(self.where).encode(ExternalEncoding), input_name='where'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='viewSubset', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' where=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.where).encode(ExternalEncoding),
+                    input_name='where'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewSubset',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5560,6 +9462,7 @@ class viewSubset(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('constraint', node)
         if value is not None and 'constraint' not in already_processed:
@@ -5589,6 +9492,7 @@ class viewSubset(GeneratedsSuper):
         if value is not None and 'where' not in already_processed:
             already_processed.add('where')
             self.where = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class viewSubset
@@ -5608,23 +9512,32 @@ class viewWriteBackCol(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, default=None, name=None, value=None):
         self.original_tagname_ = None
         self.default = _cast(None, default)
         self.name = _cast(None, name)
         self.value = _cast(None, value)
+
     def factory(*args_, **kwargs_):
         if viewWriteBackCol.subclass:
             return viewWriteBackCol.subclass(*args_, **kwargs_)
         else:
             return viewWriteBackCol(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_default(self): return self.default
+
     def set_default(self, default): self.default = default
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def get_value(self): return self.value
+
     def set_value(self, value): self.value = value
+
     def hasContent_(self):
         if (
 
@@ -5632,7 +9545,15 @@ class viewWriteBackCol(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='viewWriteBackCol', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewWriteBackCol',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5640,27 +9561,77 @@ class viewWriteBackCol(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='viewWriteBackCol')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='viewWriteBackCol')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='viewWriteBackCol', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='viewWriteBackCol',
+                pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='viewWriteBackCol'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='viewWriteBackCol'):
         if self.default is not None and 'default' not in already_processed:
             already_processed.add('default')
-            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+            outfile.write(
+                ' default=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.default).encode(ExternalEncoding),
+                    input_name='default'),
+                 ))
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
         if self.value is not None and 'value' not in already_processed:
             already_processed.add('value')
-            outfile.write(' value=%s' % (self.gds_format_string(quote_attrib(self.value).encode(ExternalEncoding), input_name='value'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='viewWriteBackCol', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' value=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.value).encode(ExternalEncoding),
+                    input_name='value'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewWriteBackCol',
+            fromsubclass_=False,
+            pretty_print=True):
         pass
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5668,6 +9639,7 @@ class viewWriteBackCol(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('default', node)
         if value is not None and 'default' not in already_processed:
@@ -5681,6 +9653,7 @@ class viewWriteBackCol(GeneratedsSuper):
         if value is not None and 'value' not in already_processed:
             already_processed.add('value')
             self.value = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class viewWriteBackCol
@@ -5696,6 +9669,7 @@ class viewWriteBack(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, table=None, column=None):
         self.original_tagname_ = None
         self.table = _cast(None, table)
@@ -5703,19 +9677,28 @@ class viewWriteBack(GeneratedsSuper):
             self.column = []
         else:
             self.column = column
+
     def factory(*args_, **kwargs_):
         if viewWriteBack.subclass:
             return viewWriteBack.subclass(*args_, **kwargs_)
         else:
             return viewWriteBack(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_column(self): return self.column
+
     def set_column(self, column): self.column = column
+
     def add_column(self, value): self.column.append(value)
+
     def insert_column_at(self, index, value): self.column.insert(index, value)
+
     def replace_column_at(self, index, value): self.column[index] = value
+
     def get_table(self): return self.table
+
     def set_table(self, table): self.table = table
+
     def hasContent_(self):
         if (
             self.column
@@ -5723,7 +9706,15 @@ class viewWriteBack(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='viewWriteBack', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewWriteBack',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5731,27 +9722,70 @@ class viewWriteBack(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='viewWriteBack')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='viewWriteBack')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='viewWriteBack', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='viewWriteBack',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='viewWriteBack'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='viewWriteBack'):
         if self.table is not None and 'table' not in already_processed:
             already_processed.add('table')
-            outfile.write(' table=%s' % (self.gds_format_string(quote_attrib(self.table).encode(ExternalEncoding), input_name='table'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='viewWriteBack', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' table=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.table).encode(ExternalEncoding),
+                    input_name='table'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='viewWriteBack',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for column_ in self.column:
-            column_.export(outfile, level, namespace_, name_='column', pretty_print=pretty_print)
+            column_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='column',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5759,11 +9793,13 @@ class viewWriteBack(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('table', node)
         if value is not None and 'table' not in already_processed:
             already_processed.add('table')
             self.table = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'column':
             obj_ = viewWriteBackCol.factory()
@@ -5782,23 +9818,32 @@ class view(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, name=None, subset=None, writeback=None):
         self.original_tagname_ = None
         self.name = _cast(None, name)
         self.subset = subset
         self.writeback = writeback
+
     def factory(*args_, **kwargs_):
         if view.subclass:
             return view.subclass(*args_, **kwargs_)
         else:
             return view(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_subset(self): return self.subset
+
     def set_subset(self, subset): self.subset = subset
+
     def get_writeback(self): return self.writeback
+
     def set_writeback(self, writeback): self.writeback = writeback
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def hasContent_(self):
         if (
             self.subset is not None or
@@ -5807,7 +9852,15 @@ class view(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='view', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='view',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5815,29 +9868,77 @@ class view(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='view')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='view')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='view', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='view',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='view'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='view'):
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='view', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='view',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.subset is not None:
-            self.subset.export(outfile, level, namespace_, name_='subset', pretty_print=pretty_print)
+            self.subset.export(
+                outfile,
+                level,
+                namespace_,
+                name_='subset',
+                pretty_print=pretty_print)
         if self.writeback is not None:
-            self.writeback.export(outfile, level, namespace_, name_='writeback', pretty_print=pretty_print)
+            self.writeback.export(
+                outfile,
+                level,
+                namespace_,
+                name_='writeback',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5845,11 +9946,13 @@ class view(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('name', node)
         if value is not None and 'name' not in already_processed:
             already_processed.add('name')
             self.name = value
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'subset':
             obj_ = viewSubset.factory()
@@ -5871,23 +9974,31 @@ class views(GeneratedsSuper):
     }
     subclass = None
     superclass = None
+
     def __init__(self, view=None):
         self.original_tagname_ = None
         if view is None:
             self.view = []
         else:
             self.view = view
+
     def factory(*args_, **kwargs_):
         if views.subclass:
             return views.subclass(*args_, **kwargs_)
         else:
             return views(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_view(self): return self.view
+
     def set_view(self, view): self.view = view
+
     def add_view(self, value): self.view.append(value)
+
     def insert_view_at(self, index, value): self.view.insert(index, value)
+
     def replace_view_at(self, index, value): self.view[index] = value
+
     def hasContent_(self):
         if (
             self.view
@@ -5895,7 +10006,15 @@ class views(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='views', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='views',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -5903,25 +10022,62 @@ class views(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='views')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='views')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='views', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='views',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='views'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='views'):
         pass
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='views', fromsubclass_=False, pretty_print=True):
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='views',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         for view_ in self.view:
-            view_.export(outfile, level, namespace_, name_='view', pretty_print=pretty_print)
+            view_.export(
+                outfile,
+                level,
+                namespace_,
+                name_='view',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5929,8 +10085,10 @@ class views(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         pass
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'view':
             obj_ = view.factory()
@@ -5960,7 +10118,18 @@ class database(GeneratedsSuper):
     }
     subclass = None
     superclass = None
-    def __init__(self, username=None, name=None, driver=None, host=None, path=None, password=None, port=None, tables=None, views=None):
+
+    def __init__(
+            self,
+            username=None,
+            name=None,
+            driver=None,
+            host=None,
+            path=None,
+            password=None,
+            port=None,
+            tables=None,
+            views=None):
         self.original_tagname_ = None
         self.username = _cast(None, username)
         self.name = _cast(None, name)
@@ -5971,30 +10140,50 @@ class database(GeneratedsSuper):
         self.port = _cast(int, port)
         self.tables = tables
         self.views = views
+
     def factory(*args_, **kwargs_):
         if database.subclass:
             return database.subclass(*args_, **kwargs_)
         else:
             return database(*args_, **kwargs_)
     factory = staticmethod(factory)
+
     def get_tables(self): return self.tables
+
     def set_tables(self, tables): self.tables = tables
+
     def get_views(self): return self.views
+
     def set_views(self, views): self.views = views
+
     def get_username(self): return self.username
+
     def set_username(self, username): self.username = username
+
     def get_name(self): return self.name
+
     def set_name(self, name): self.name = name
+
     def get_driver(self): return self.driver
+
     def set_driver(self, driver): self.driver = driver
+
     def get_host(self): return self.host
+
     def set_host(self, host): self.host = host
+
     def get_path(self): return self.path
+
     def set_path(self, path): self.path = path
+
     def get_password(self): return self.password
+
     def set_password(self, password): self.password = password
+
     def get_port(self): return self.port
+
     def set_port(self, port): self.port = port
+
     def hasContent_(self):
         if (
             self.tables is not None or
@@ -6003,7 +10192,15 @@ class database(GeneratedsSuper):
             return True
         else:
             return False
-    def export(self, outfile, level, namespace_='dbsm:', name_='database', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+
+    def export(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='database',
+            namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
@@ -6011,47 +10208,129 @@ class database(GeneratedsSuper):
         if self.original_tagname_ is not None:
             name_ = self.original_tagname_
         showIndent(outfile, level, pretty_print)
-        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        outfile.write(
+            '<%s%s%s' %
+            (namespace_,
+             name_,
+             namespacedef_ and ' ' +
+             namespacedef_ or '',
+             ))
         already_processed = set()
-        self.exportAttributes(outfile, level, already_processed, namespace_, name_='database')
+        self.exportAttributes(
+            outfile,
+            level,
+            already_processed,
+            namespace_,
+            name_='database')
         if self.hasContent_():
             outfile.write('>%s' % (eol_, ))
-            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='database', pretty_print=pretty_print)
+            self.exportChildren(
+                outfile,
+                level + 1,
+                namespace_='dbsm:',
+                name_='database',
+                pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='database'):
+
+    def exportAttributes(
+            self,
+            outfile,
+            level,
+            already_processed,
+            namespace_='dbsm:',
+            name_='database'):
         if self.username is not None and 'username' not in already_processed:
             already_processed.add('username')
-            outfile.write(' username=%s' % (self.gds_format_string(quote_attrib(self.username).encode(ExternalEncoding), input_name='username'), ))
+            outfile.write(
+                ' username=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.username).encode(ExternalEncoding),
+                    input_name='username'),
+                 ))
         if self.name is not None and 'name' not in already_processed:
             already_processed.add('name')
-            outfile.write(' name=%s' % (self.gds_format_string(quote_attrib(self.name).encode(ExternalEncoding), input_name='name'), ))
+            outfile.write(
+                ' name=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.name).encode(ExternalEncoding),
+                    input_name='name'),
+                 ))
         if self.driver is not None and 'driver' not in already_processed:
             already_processed.add('driver')
-            outfile.write(' driver=%s' % (self.gds_format_string(quote_attrib(self.driver).encode(ExternalEncoding), input_name='driver'), ))
+            outfile.write(
+                ' driver=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.driver).encode(ExternalEncoding),
+                    input_name='driver'),
+                 ))
         if self.host is not None and 'host' not in already_processed:
             already_processed.add('host')
-            outfile.write(' host=%s' % (self.gds_format_string(quote_attrib(self.host).encode(ExternalEncoding), input_name='host'), ))
+            outfile.write(
+                ' host=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.host).encode(ExternalEncoding),
+                    input_name='host'),
+                 ))
         if self.path is not None and 'path' not in already_processed:
             already_processed.add('path')
-            outfile.write(' path=%s' % (self.gds_format_string(quote_attrib(self.path).encode(ExternalEncoding), input_name='path'), ))
+            outfile.write(
+                ' path=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.path).encode(ExternalEncoding),
+                    input_name='path'),
+                 ))
         if self.password is not None and 'password' not in already_processed:
             already_processed.add('password')
-            outfile.write(' password=%s' % (self.gds_format_string(quote_attrib(self.password).encode(ExternalEncoding), input_name='password'), ))
+            outfile.write(
+                ' password=%s' %
+                (self.gds_format_string(
+                    quote_attrib(
+                        self.password).encode(ExternalEncoding),
+                    input_name='password'),
+                 ))
         if self.port is not None and 'port' not in already_processed:
             already_processed.add('port')
-            outfile.write(' port="%s"' % self.gds_format_integer(self.port, input_name='port'))
-    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='database', fromsubclass_=False, pretty_print=True):
+            outfile.write(
+                ' port="%s"' %
+                self.gds_format_integer(
+                    self.port,
+                    input_name='port'))
+
+    def exportChildren(
+            self,
+            outfile,
+            level,
+            namespace_='dbsm:',
+            name_='database',
+            fromsubclass_=False,
+            pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
         if self.tables is not None:
-            self.tables.export(outfile, level, namespace_, name_='tables', pretty_print=pretty_print)
+            self.tables.export(
+                outfile,
+                level,
+                namespace_,
+                name_='tables',
+                pretty_print=pretty_print)
         if self.views is not None:
-            self.views.export(outfile, level, namespace_, name_='views', pretty_print=pretty_print)
+            self.views.export(
+                outfile,
+                level,
+                namespace_,
+                name_='views',
+                pretty_print=pretty_print)
+
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -6059,6 +10338,7 @@ class database(GeneratedsSuper):
             nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
             self.buildChildren(child, node, nodeName_)
         return self
+
     def buildAttributes(self, node, attrs, already_processed):
         value = find_attr_value_('username', node)
         if value is not None and 'username' not in already_processed:
@@ -6091,6 +10371,7 @@ class database(GeneratedsSuper):
                 self.port = int(value)
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
+
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         if nodeName_ == 'tables':
             obj_ = tables.factory()
@@ -6160,7 +10441,9 @@ def parse(inFileName, silence=False):
     if not silence:
         sys.stdout.write('<?xml version="1.0" ?>\n')
         rootObj.export(
-            sys.stdout, 0, name_=rootTag,
+            sys.stdout,
+            0,
+            name_=rootTag,
             namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"',
             pretty_print=True)
     return rootObj
@@ -6206,7 +10489,9 @@ def parseString(inString, silence=False):
     if not silence:
         sys.stdout.write('<?xml version="1.0" ?>\n')
         rootObj.export(
-            sys.stdout, 0, name_=rootTag,
+            sys.stdout,
+            0,
+            name_=rootTag,
             namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"')
     return rootObj
 
