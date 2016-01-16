@@ -2,20 +2,22 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Jan 16 13:43:13 2016 by generateDS.py version 2.17a.
+# Generated Sat Jan 16 14:38:00 2016 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
 #   ('--member-specs', 'dict')
 #   ('--no-questions', '')
 #   ('-f', '')
+#   ('-s', 'H:\\prog\\piles\\dbstruct\\archive\\pile_schema_sclass_original.py')
+#   ('--super', 'pile_schema_api')
 #   ('-o', 'H:\\prog\\piles\\dbstruct\\src\\dbstruct\\pile_schema_api.py')
 #
 # Command line arguments:
 #   H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Command line:
-#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_api.py" H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
+#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -s "H:\prog\piles\dbstruct\archive\pile_schema_sclass_original.py" --super="pile_schema_api" -o "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_api.py" H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   dbstruct

@@ -16,7 +16,13 @@
 #   H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Command line:
-#   C:\pf\Python27\Scripts\generateDS.py -s "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_sclass.py" --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --super="pile_schema_api" --no-questions -f -o "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_api.py" H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
+#   C:\pf\Python27\Scripts\generateDS.py -s ^
+#       "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_sclass.py" ^
+#       --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" ^
+#       --member-specs="dict" --super="pile_schema_api" ^
+#       --no-questions -f ^
+#       -o "H:\prog\piles\dbstruct\src\dbstruct\pile_schema_api.py" ^
+#       H:\prog\piles\dbstruct\src\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   dbstruct
@@ -558,9 +564,9 @@ class columnSub(supermod.column):
             image=None,
             xml=None,
             vrtcol=None):
-        super(
-            columnSub,
-            self).__init__(
+
+        self.datatype = None
+        super(columnSub, self).__init__(
             foreignInsert,
             name,
             foreignTable,
@@ -599,6 +605,56 @@ class columnSub(supermod.column):
             xml,
             vrtcol,
         )
+
+    def build(self, node):
+        super(columnSub, self).build(node)
+        assert(self.datatype is not None)
+        #import some attributes from datatype into this level
+        self.sqltype = self.dataprop.sqltype
+        self.qtype = self.dataprop.qtype
+        try:
+            self.length = self.dataprop.length
+        except AttributeError:
+            self.length = None
+
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        super(columnSub, self).buildChildren(child_, node,
+                                             nodeName_, fromsubclass_)
+        # we want to have an easy way of knowing the datatype
+        if nodeName_ == 'int':
+            self.datatype = 'integer'
+        elif nodeName_ == 'float':
+            self.datatype  = 'float_'
+        else:
+            self.datatype = nodeName_
+        # allow checking for identity in a simple manner (if self.identity: )
+        try:
+            self.identity = self.dataprop.identity
+        except AttributeError:
+            self.identity = None
+        
+    @property
+    def default(self):
+        if hasattr(self.dataprop, 'default'):
+            if self.dataprop.default is not None:
+                return self.dataprop.default
+        if hasattr(self.dataprop, 'defaultExpression'):
+            return self.dataprop.defaultExpression
+        return None
+
+    @property
+    def is_foreign(self):
+        return self.foreignTable is not None
+
+    @property
+    def dataprop(self):
+        return getattr(self, self.datatype)
+
+    @dataprop.setter
+    def dataprop(self, dataprop):
+        setattr(self, self.datatype, dataprop)
+
+
 supermod.column.subclass = columnSub
 # end class columnSub
 
@@ -764,9 +820,8 @@ class tableSub(supermod.table):
             uniqueConstraints=None,
             indexes=None,
             relationships=None):
-        super(
-            tableSub,
-            self).__init__(
+        self.foreign_columns = []
+        super(tableSub, self).__init__(
             name,
             columns,
             primaryKey,
@@ -774,6 +829,19 @@ class tableSub(supermod.table):
             indexes,
             relationships,
         )
+
+    def build(self, node):
+        super(tableSub, self).build(node)
+
+        # make sure there is a columns element
+        if self.columns is None:
+            self.columns = supermod.columnList.factory()
+        assert(self.columns.column is not None)
+        # create a list with all foreign columns
+        for col in self.columns.column:
+            if col.is_foreign:
+                self.foreign_columns.append(col)
+
 supermod.table.subclass = tableSub
 # end class tableSub
 
@@ -864,9 +932,7 @@ class databaseSub(supermod.database):
             port=None,
             tables=None,
             views=None):
-        super(
-            databaseSub,
-            self).__init__(
+        super(databaseSub, self).__init__(
             username,
             name,
             driver,
@@ -877,6 +943,17 @@ class databaseSub(supermod.database):
             tables,
             views,
         )
+
+    def build(self, node):
+        super(databaseSub, self).build(node)
+        # make sure we have tables and views objects
+        if self.tables is None:
+            self.tables = supermod.tables.factory()
+        assert(self.tables.table is not None)
+        if self.views is None:
+            self.views = supermod.views.factory()
+        assert(self.views.view is not None)
+
 supermod.database.subclass = databaseSub
 # end class databaseSub
 
@@ -1014,5 +1091,5 @@ def main():
 if __name__ == '__main__':
     #import pdb; pdb.set_trace()
     main()
-    
+
 # ----------------------------------------------------------------------------
