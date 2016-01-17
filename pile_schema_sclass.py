@@ -48,6 +48,86 @@ def parsexml_(infile, parser=None, **kwargs):
 
 ExternalEncoding = 'ascii'
 
+CPP_KEYWORDS = [
+    'alignas', 'alignof', 'and', 'and_eq', 'asm', 
+    'auto', 'bitand', 'bitor', 'bool', 'break',
+    'case', 'catch', 'char', 'char16_t', 'char32_t', 
+    'class', 'compl', 'concept', 'const',
+    'const_cast', 'constexpr', 'continue', 
+    'decltype', 'default', 'delete', 'do',
+    'double', 'dynamic_cast', 'else', 'enum', 
+    'explicit', 'export', 'extern', 'false',
+    'float', 'for', 'friend', 'goto', 'if', 
+    'inline', 'int', 'long', 'mutable', 'namespace',
+    'new', 'noexcept', 'not', 'not_eq', 
+    'nullptr', 'operator', 'or', 'or_eq', 'private',
+    'protected', 'public', 'register', 
+    'reinterpret_cast', 'requires', 'return',
+    'short', 'signed', 'sizeof', 'static', 
+    'static_assert', 'static_cast', 'struct',
+    'switch', 'template', 'this', 
+    'thread_local', 'throw', 'true', 'try', 'typedef',
+    'typeid', 'typename', 'union', 
+    'unsigned', 'using', 'virtual', 'void', 'volatile',
+    'wchar_t', 'while', 'xor', 'xor_eq']
+
+# ----------------------------------------------------------------------------
+# ------------------[          Custom classes          ]----------------------
+# ----------------------------------------------------------------------------
+
+class TaewMixin(object):
+    '''
+    Groups methods that are common to views and tables.
+    '''
+    def __init__(self):
+        super(TaewMixin, self).__init__()
+        
+
+    @property
+    def colid(self):
+        '''The COLID_ for id column, if any.'''
+        return self.id_column.colid \
+            if hasattr(self, 'id_column') and self.id_column \
+            else 'dbstruct::UNDEFINED'
+
+    @property
+    def dbcid(self):
+        '''The DBC_ for this table or view.'''
+        return 'DBC_%s' % self.name
+
+    @property
+    def header(self):
+        '''Name of the header for this table or view.'''
+        return '%s.h' % self.name.lower()
+
+    @property
+    def metaheader(self):
+        '''Name of the meta header for this table or view.'''
+        return '%s-meta.h' % self.name.lower()
+
+    @property
+    def var_name(self):
+        '''Name of the variable holding an instance of this table or view.'''
+        result = self.name.lower()
+        if result in CPP_KEYWORDS:
+            result = '%s_v' % result
+        return result
+
+    @property
+    def class_name(self):
+        '''Name of the class for this table or view.'''
+        return self.name
+
+    @property
+    def nspaced_class(self):
+        '''Name of the class with namespace for this table or view.'''
+        return self.database.nspaced(self.class_name)
+
+    @property
+    def meta_nspaced_class(self):
+        '''Name of the class with namespace for this table or view.'''
+        return self.database.meta_nspaced(self.class_name)
+        
 # ----------------------------------------------------------------------------
 # ------------------[    Data representation classes   ]----------------------
 # ----------------------------------------------------------------------------
@@ -86,6 +166,11 @@ class bitSub(supermod.bit):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.bit.subclass = bitSub
 # end class bitSub
 
@@ -107,6 +192,11 @@ class tristateSub(supermod.tristate):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.tristate.subclass = tristateSub
 # end class tristateSub
 
@@ -131,6 +221,11 @@ class integerSub(supermod.integer):
             qtype,
             identity,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.integer.subclass = integerSub
 # end class integerSub
 
@@ -154,6 +249,11 @@ class bigintSub(supermod.bigint):
             qtype,
             identity,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.bigint.subclass = bigintSub
 # end class bigintSub
 
@@ -177,6 +277,11 @@ class smallintSub(supermod.smallint):
             qtype,
             identity,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.smallint.subclass = smallintSub
 # end class smallintSub
 
@@ -200,6 +305,11 @@ class tinyintSub(supermod.tinyint):
             qtype,
             identity,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.tinyint.subclass = tinyintSub
 # end class tinyintSub
 
@@ -232,6 +342,11 @@ class choiceSub(supermod.choice):
             qtype,
             item,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.choice.subclass = choiceSub
 # end class choiceSub
 
@@ -256,6 +371,11 @@ class float_Sub(supermod.float_):
             mantissaBits,
             defaultExpression,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.float_.subclass = float_Sub
 # end class float_Sub
 
@@ -277,6 +397,11 @@ class realSub(supermod.real):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.real.subclass = realSub
 # end class realSub
 
@@ -303,6 +428,11 @@ class decimalSub(supermod.decimal):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.decimal.subclass = decimalSub
 # end class decimalSub
 
@@ -328,6 +458,11 @@ class decimalScale0Sub(supermod.decimalScale0):
             precision,
             identity,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.decimalScale0.subclass = decimalScale0Sub
 # end class decimalScale0Sub
 
@@ -349,6 +484,11 @@ class moneySub(supermod.money):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.money.subclass = moneySub
 # end class moneySub
 
@@ -370,6 +510,11 @@ class parameterlessStringTypeSub(supermod.parameterlessStringType):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.parameterlessStringType.subclass = parameterlessStringTypeSub
 # end class parameterlessStringTypeSub
 
@@ -391,6 +536,11 @@ class uniqueidentifierSub(supermod.uniqueidentifier):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.uniqueidentifier.subclass = uniqueidentifierSub
 # end class uniqueidentifierSub
 
@@ -412,6 +562,11 @@ class dateTypeSub(supermod.dateType):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.dateType.subclass = dateTypeSub
 # end class dateTypeSub
 
@@ -433,6 +588,11 @@ class timeTypeSub(supermod.timeType):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.timeType.subclass = timeTypeSub
 # end class timeTypeSub
 
@@ -454,6 +614,11 @@ class dateTimeTypeSub(supermod.dateTimeType):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.dateTimeType.subclass = dateTimeTypeSub
 # end class dateTimeTypeSub
 
@@ -477,6 +642,11 @@ class charSub(supermod.char):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.char.subclass = charSub
 # end class charSub
 
@@ -486,6 +656,11 @@ class binarySub(supermod.binary):
 
     def __init__(self, length=None, sqltype='VARBINARY', qtype='QByteArray'):
         super(binarySub, self).__init__(length, sqltype, qtype, )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.binary.subclass = binarySub
 # end class binarySub
 
@@ -509,6 +684,11 @@ class ncharSub(supermod.nchar):
             sqltype,
             qtype,
         )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.nchar.subclass = ncharSub
 # end class ncharSub
 
@@ -518,6 +698,11 @@ class vrtcolSub(supermod.vrtcol):
 
     def __init__(self, dynamic=False, references=None):
         super(vrtcolSub, self).__init__(dynamic, references, )
+        
+    def constructor(self):
+        '''C++ constructor for this type'''
+        return ''
+        
 supermod.vrtcol.subclass = vrtcolSub
 # end class vrtcolSub
 
@@ -564,8 +749,15 @@ class columnSub(supermod.column):
             image=None,
             xml=None,
             vrtcol=None):
-
+        # the kind of data this column holds
         self.datatype = None
+        # the index of this column inside its table (includes virtual columns)
+        self.myid = None
+        # the index of this column inside database table
+        self.my_real = None
+        # the table this column is part of
+        self.table = None
+        
         super(columnSub, self).__init__(
             foreignInsert,
             name,
@@ -647,6 +839,24 @@ class columnSub(supermod.column):
         return self.foreignTable is not None
 
     @property
+    def var_name(self):
+        result = self.name.lower()
+        if result in CPP_KEYWORDS:
+            result = '%s_v' % result
+        return result
+
+    @property
+    def colid(self):
+        return 'COLID_' + self.name.upper()
+
+    @property
+    def datatypeid(self):
+        upp = self.datatype.upper()
+        if upp == 'FLOAT_':
+            upp = 'FLOAT'
+        return 'DTY_%s' % upp
+
+    @property
     def dataprop(self):
         return getattr(self, self.datatype)
 
@@ -654,7 +864,64 @@ class columnSub(supermod.column):
     def dataprop(self, dataprop):
         setattr(self, self.datatype, dataprop)
 
+    @property
+    def title(self):
+        return self.name if self.label is None else self.label
 
+    @title.setter
+    def title(self, title):
+        self.label = title
+
+    @property
+    def qt_title(self):
+        '''The title in a form allowing qt application to translate it.'''
+        return 'QCoreApplication::translate("%s::%s", "%s")' % (
+            self.database.name, self.table.name, self.title)
+
+    @property
+    def virtual(self):
+        return self.datatype == 'vrtcol'
+
+    @property
+    def dynamic(self):
+        if hasattr(self.dataprop, 'dynamic'):
+            return self.dataprop.dynamic
+        else:
+            return False
+
+    @property
+    def database(self):
+        return self.table.database
+
+    @property
+    def inttype(self):
+        '''Tell if this column is some form of integer'''
+        return self.qtype in int_types
+
+    @property
+    def realtype(self):
+        '''Tell if this column is some form of real number'''
+        return self.qtype in real_types
+
+    @property
+    def qtconstructor(self):
+        return 'DbColumn::col (%-50s, %-40s, ' \
+               '%4d, %-90s, %4d, %-20s, %-5s, %-5s%s)' % (
+            'QLatin1String("%s")' % self.name, 
+            'DbDataType::%s' % self.datatypeid, 
+            self.myid, 
+            self.qt_title, 
+            self.my_real,
+            'dbstruct::UNDEFINED' if self.length is None else str(self.length),
+            'true' if self.allowNulls else 'false',
+            'true' if self.readOnly else 'false',
+            self.dataprop.constructor())
+
+
+int_types = [
+    'char', 'char', 'long', 'integer', 'int', 'short',
+    'bigint', 'smallint', 'tinyint']
+real_types = ['double', 'float']
 supermod.column.subclass = columnSub
 # end class columnSub
 
@@ -664,6 +931,122 @@ class columnListSub(supermod.columnList):
 
     def __init__(self, column=None):
         super(columnListSub, self).__init__(column, )
+    
+    def virtuals(self):
+        '''Enumerates all virtual columns'''
+        for col in self.column:
+            if col.virtual:
+                yield col
+    
+    def non_virtuals(self):
+        '''Enumerates all non-virtual columns'''
+        for col in self.column:
+            if not col.virtual:
+                yield col
+        
+    def filtered(self, with_id=True, only_real=True, exclude_fk=False):
+        '''
+        The list of column names (useful for sql statements).
+        
+        Parameters:
+        ----------
+        with_id : bool
+            Is the id column to be included or not.
+        only_real : bool
+            Is the id column to be included or not.
+        exclude_fk : bool
+            Should foreign keys be excluded or not.
+        '''
+        def included(col):
+            if only_real and col.virtual:
+                return False
+            if exclude_fk and col.is_foreign:
+                return False
+            if not with_id and col.name == 'id':
+                return False
+            return True
+        for col in self.column:
+            if included(col):
+                yield col
+        
+
+    def comma_columns(self, with_id=True, only_real=True, exclude_fk=False,
+                      padding='', lines=True, prefix=''):
+        '''
+        The list of column names (useful for sql statements).
+        
+        Parameters:
+        ----------
+        with_id : bool
+            Is the id column to be included or not.
+        only_real : bool
+            Is the id column to be included or not.
+        exclude_fk : bool
+            Should foreign keys be excluded or not.
+        padding : str
+            String to be added before each column (spaces, for example).
+        lines : bool
+            Should each column be placed on its oown line or not?
+        '''
+        join = '\n' if lines else ''
+        result = join.join(['%s"%s%s,"' % (padding, prefix, col.name)
+            for col in self.filtered(with_id, only_real, exclude_fk)])
+        if result.endswith(',"'):
+            result = result[:-2] + '"'
+        else:
+            result = '""'
+        return result
+
+    def assign_columns(self, with_id=True, only_real=True, exclude_fk=False,
+                      padding='', lines=True):
+        '''
+        The list of `col=:col` pairs (useful for sql statements).
+        
+        Parameters:
+        ----------
+        with_id : bool
+            Is the id column to be included or not.
+        only_real : bool
+            Is the id column to be included or not.
+        exclude_fk : bool
+            Should foreign keys be excluded or not.
+        padding : str
+            String to be added before each column (spaces, for example).
+        lines : bool
+            Should each column be placed on its oown line or not?
+        '''
+        join = '\n' if lines else ''
+        result = join.join(['%s"%s=:%s,"' % (padding, col.name, col.name)
+            for col in self.filtered(with_id, only_real, exclude_fk)])
+        if result.endswith(',"'):
+            result = result[:-2] + '"'
+        else:
+            result = '""'
+        return result
+        
+    def column_ids(self, with_id=True, only_real=True, exclude_fk=False,
+                      padding='', lines=True):
+        '''
+        The list of COLID_ values.
+        
+        Parameters:
+        ----------
+        with_id : bool
+            Is the id column to be included or not.
+        only_real : bool
+            Is the id column to be included or not.
+        exclude_fk : bool
+            Should foreign keys be excluded or not.
+        padding : str
+            String to be added before each column (spaces, for example).
+        lines : bool
+            Should each column be placed on its oown line or not?
+        '''
+        join = ',\n' if lines else ','
+        result = ''.join(['%s%s%s' % (padding, col.colid, join)
+            for col in self.filtered(with_id, only_real, exclude_fk)])
+        return result
+        
 supermod.columnList.subclass = columnListSub
 # end class columnListSub
 
@@ -810,7 +1193,7 @@ supermod.relationships.subclass = relationshipsSub
 
 # ----------------------------------------------------------------------------
 
-class tableSub(supermod.table):
+class tableSub(supermod.table, TaewMixin):
 
     def __init__(
             self,
@@ -821,6 +1204,8 @@ class tableSub(supermod.table):
             indexes=None,
             relationships=None):
         self.foreign_columns = []
+        self.database = None
+        self.id_column = None
         super(tableSub, self).__init__(
             name,
             columns,
@@ -837,10 +1222,33 @@ class tableSub(supermod.table):
         if self.columns is None:
             self.columns = supermod.columnList.factory()
         assert(self.columns.column is not None)
-        # create a list with all foreign columns
+        
+        # update columns
+        id_counter = 0
+        real_counter = 0
         for col in self.columns.column:
+            # inform each column who their daddy is
+            col.table = self
+            # allocate indices for each column
+            col.myid = id_counter
+            id_counter = id_counter + 1
+            # also allocate real indices for columns actually stored in db
+            if col.virtual:
+                col.my_real = -1
+            else:
+                col.my_real = real_counter
+                real_counter = real_counter + 1
+            # create a list with all foreign columns
             if col.is_foreign:
                 self.foreign_columns.append(col)
+            # find id column, if any
+            if col.name == 'id' and self.id_column is None:
+                self.id_column = col
+
+    @property
+    def dbtid(self):
+        '''The DBT_ for this table.'''
+        return 'DBT_%s' % self.name
 
 supermod.table.subclass = tableSub
 # end class tableSub
@@ -901,10 +1309,15 @@ supermod.viewWriteBack.subclass = viewWriteBackSub
 
 # ----------------------------------------------------------------------------
 
-class viewSub(supermod.view):
-
+class viewSub(supermod.view, TaewMixin):
     def __init__(self, name=None, subset=None, writeback=None):
         super(viewSub, self).__init__(name, subset, writeback, )
+
+    @property
+    def dbvid(self):
+        '''The DBV_ for this view.'''
+        return 'DBV_%s' % self.name
+        
 supermod.view.subclass = viewSub
 # end class viewSub
 
@@ -946,14 +1359,39 @@ class databaseSub(supermod.database):
 
     def build(self, node):
         super(databaseSub, self).build(node)
-        # make sure we have tables and views objects
+        # make sure we have tables objects
         if self.tables is None:
             self.tables = supermod.tables.factory()
         assert(self.tables.table is not None)
+        for tbl in self.tables.table:
+            # who's your daddy?!
+            tbl.database = self
+        # make sure we have views objects
         if self.views is None:
             self.views = supermod.views.factory()
         assert(self.views.view is not None)
+        for view in self.views.view:
+            # who's your daddy?!
+            view.database = self
+        # make sure there is a name
+        if self.name is None:
+            self.name = 'database'
 
+    @property
+    def namespace(self):
+        '''The namespace for this database.'''
+        return self.name.lower()
+
+    def nspaced(self, inp):
+        '''Prepend the namespace to given name.'''
+        return '%s::%s' % (self.namespace, inp)
+
+    def meta_nspaced(self, inp):
+        '''Prepend the meta namespace to given name.'''
+        return '%s::meta::%s' % (self.namespace, inp)
+        
+        
+        
 supermod.database.subclass = databaseSub
 # end class databaseSub
 

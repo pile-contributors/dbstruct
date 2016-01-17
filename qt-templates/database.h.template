@@ -24,6 +24,8 @@
 //
 /*  INCLUDES    ------------------------------------------------------------ */
 
+%(IMPORTH)s
+
 #include "all-meta-tables.h"
 #include <dbstruct/dbstruct.h>
 

@@ -81,7 +81,7 @@ public:
 public:
 
     //! constructor
-    explicit %(Table)s() : meta::%(Table)s(), %(RecordBaseClass)s(),
+    explicit %(Table)s() : meta::%(Table)s(), %(RecordBaseClass)s()
 %(DefaultConstructor)s
     {}
 
@@ -90,6 +90,8 @@ public:
 
     //! copy constructor
     %(Table)s (const %(Table)s & other) :
+        meta::%(Table)s ()
+        , %(RecordBaseClass)s ()
 %(CopyConstructor)s
     {}
 
