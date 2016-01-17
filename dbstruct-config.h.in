@@ -128,4 +128,11 @@
 #   endif
 #endif
 
+#if DBSTRUCT_MAJOR_VERSION < 1
+// forward-compatible
+#define DbDataType DbColumn
+#define DbColKb DbColumn::Callback
+#endif
+
+
 #endif // GUARD_DBSTRUCT_CONFIG_H_INCLUDE

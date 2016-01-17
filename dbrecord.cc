@@ -131,7 +131,8 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
         }
 
         // get the values to their variables
-        b_ret = retrieve (query);
+        /*b_ret = */retrieve (query);
+        b_ret = true;
 
         int additional_result = 0;
         while (query.next()) {

@@ -23,6 +23,7 @@ QT_END_NAMESPACE
 
 class DbTaew;
 
+
 //! The column of a database.
 class DBSTRUCT_EXPORT DbColumn : public DbObject {
 
@@ -182,6 +183,42 @@ public:
     inline bool
     isDynamic () const {
         return datatype_ == DTY_CALLBACK;
+    }
+
+    //! Real column id.
+    inline int
+    columnRealId () const {
+        return real_col_id_;
+    }
+
+    //! Column id.
+    inline int
+    columnId () const {
+        return col_id_;
+    }
+
+    //!
+    inline const QString &
+    columnLabel () const {
+        return col_label_;
+    }
+
+    //!
+    inline const QString &
+    columnName () const {
+        return col_name_;
+    }
+
+    //!
+    inline bool
+    readOnly () const {
+        return read_only_;
+    }
+
+    //!
+    inline DataType
+    columnType () const {
+        return datatype_;
     }
 
     //! Retrieve the data using the callback.
