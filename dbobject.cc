@@ -16,6 +16,8 @@
 #include "dbtable.h"
 #include "dbview.h"
 
+#include <QCryptographicHash>
+
 /**
  * @class DbObject
  *
@@ -24,7 +26,6 @@
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for conobjector.
  */
 DbObject::DbObject()
 {
@@ -36,7 +37,6 @@ DbObject::DbObject()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for deobjector.
  */
 DbObject::~DbObject()
 {
@@ -93,3 +93,11 @@ DbView * DbObject::asView ()
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
+QString DbObject::md5Hash (const QString &input)
+{
+    return QString(QCryptographicHash::hash(
+                       input.toLatin1(),
+                       QCryptographicHash::Md5)
+                   .toHex());
+}
+/* ========================================================================= */
