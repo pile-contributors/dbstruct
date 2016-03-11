@@ -48,14 +48,14 @@ public:
     }
 
     //! Initialize this instance from a given id.
-    bool
+    virtual bool
     initFromId (
             DbTaew * table,
             QSqlDatabase & db,
             long db_id);
 
     //! Initialize this instance from a given field
-    bool
+    virtual bool
     initFrom (
             DbTaew * table,
             QSqlDatabase & db,
@@ -72,7 +72,8 @@ public:
     remFromDb (
             DbTaew * table,
             QSqlDatabase &db,
-            int column);
+            int column,
+            const QString & s_col_value);
 
     //! Tell if this instance is a new one or it has a database correspondent.
     virtual bool

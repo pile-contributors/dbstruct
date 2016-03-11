@@ -43,7 +43,6 @@
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for conrecordor.
  */
 DbRecord::DbRecord()
 {
@@ -55,7 +54,6 @@ DbRecord::DbRecord()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for derecordor.
  */
 DbRecord::~DbRecord()
 {
@@ -91,11 +89,11 @@ bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
 
 /* ------------------------------------------------------------------------- */
 /**
- * The value that coresponds to the column inside this instance should have
+ * The value that corresponds to the column inside this instance should have
  * been initialized by the caller with the value to search for.
  *
  * @param column index of the column to use for initialization
- * @return true if the inistance was initialized
+ * @return true if the instance was initialized
  */
 bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
 {
@@ -111,9 +109,9 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
                 .arg(table->tableName())
                 .arg(s_col_name)
                 .arg(s_col_name);
-        DBREC_DEBUGM(TMP_A(statement));
+        DBREC_DEBUGM("%s\n", TMP_A(statement));
         if (!query.prepare(statement)) {
-            DBREC_DEBUGM(TMP_A(query.lastError().text()));
+            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
             DBG_ASSERT(false);
             break;
         }
@@ -123,7 +121,7 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
             break;
         }
         if (!query.next()) {
-            DBREC_DEBUGM("Querry succeded but no entry was found "
+            DBREC_DEBUGM("Query succeed but no entry was found "
                          "in the database (%s)\n",
                          TMP_A(query.lastError().text()));
             return false;
@@ -173,7 +171,7 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
                     .arg(table->columnName (table->idColumn ()))
                     .arg(table->columnName (table->idColumn ()));
         }
-        DBREC_DEBUGM(TMP_A(statement));
+        DBREC_DEBUGM("%s\n", TMP_A(statement));
 
         if (!query.prepare(statement)) {
             DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
@@ -187,7 +185,7 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
             break;
         }
         if (isNew ()) {
-            setId((long)query.lastInsertId().toLongLong ());
+            setId(static_cast<long>(query.lastInsertId().toLongLong ()));
         }
 
         b_ret = true;
@@ -198,7 +196,9 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
+bool DbRecord::remFromDb (
+        DbTaew * table, QSqlDatabase & db, int column,
+        const QString & s_col_value)
 {
     bool b_ret = false;
     for (;;) {
@@ -215,8 +215,8 @@ bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
                 QString("DELETE FROM %1 WHERE %2=:%3;\n")
                 .arg(table->modifyTableName())
                 .arg(s_col_name)
-                .arg(s_col_name);
-        DBREC_DEBUGM(TMP_A(statement));
+                .arg(s_col_value);
+        DBREC_DEBUGM("%s\n", TMP_A(statement));
         if (!query.prepare(statement)) {
             DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
             DBG_ASSERT(false);
@@ -224,7 +224,7 @@ bool DbRecord::remFromDb (DbTaew * table, QSqlDatabase & db, int column)
         }
         bindOne (query, column);
         if (!query.exec()) {
-            DBREC_DEBUGM(TMP_A(query.lastError().text()));
+            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
             break;
         }
         setId (DbTable::ID_NEW_INSTANCE);
