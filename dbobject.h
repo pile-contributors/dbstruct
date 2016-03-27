@@ -101,11 +101,12 @@ public:
         return type() == DBO_CUSTOM;
     }
 
+public:
 
-
-protected:
-
-private:
+    //! Create an MD5 hash for input string.
+    static QString
+    md5Hash (
+            const QString &input);
 
 };
 
