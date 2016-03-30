@@ -288,8 +288,13 @@ QVariant DbColumn::formattedData (const QVariant & original_value) const
     switch (datatype_) {
     case DbColumn::DTY_DATE: {
         // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
-        result = result.toDate().toString(
-                    QCoreApplication::translate("UserTime", "yyyy-MMM-dd"));
+        QDate dt = result.toDate ();
+        if (dt.year() == 1970 && dt.month() == 1 && dt.day() == 1) {
+            result = QString ();
+        } else {
+            result = dt.toString(
+                        QCoreApplication::translate("UserTime", "yyyy-MMM-dd"));
+        }
         break; }
     case DbColumn::DTY_TIME: {
         // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
@@ -303,10 +308,16 @@ QVariant DbColumn::formattedData (const QVariant & original_value) const
         if (!dt.isValid ()) {
             dt.fromString (result.toString ());
         }
-        QString s_result = dt.toString(
+        if (
+                dt.date ().year() == 1970 &&
+                dt.date ().month() == 1 &&
+                dt.date ().day() == 1) {
+            result = QString ();
+        } else {
+            result = dt.toString(
                 QCoreApplication::translate(
                     "UserTime", "yyyy-MMM-dd h:mm:ss"));
-        result = s_result;
+        }
         break; }
     case DbColumn::DTY_SMALLINT:
     case DbColumn::DTY_BIGINT:
