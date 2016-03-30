@@ -557,6 +557,7 @@ class QtDriver(Driver):
             col_mapping_nicety = '/* ' + dbc_name + ' -> */ '
             col_mapping_nicety += ' ' * (64 - len(col_mapping_nicety))
             real_column_mapping += 4*' ' + col_mapping_nicety
+            pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
             if not coldata['virtual']:
                 real_column_mapping += str(real_id) + ',\n'
                 virtual_column_mapping += 4*' ' + col_mapping_nicety + str(i) + ',\n'
@@ -577,7 +578,6 @@ class QtDriver(Driver):
                     comma_columns_no_id += ' ' * 12 + '"' + col + ',"\n'
                     column_columns += ' ' * 12 + '":' + col + ',"\n'
                     assign_columns += ' ' * 12 + '"' + col + '=:' + col + ',"\n'
-                pipe_columns += ' ' * 8 + '<< QLatin1String("' + col + '")\n'
                 bind_one_column += ' ' * 4 + 'case ' + dbc_name + \
                     ': query.bindValue (QLatin1String(":' + col + '"), ' + \
                     col_var_name + '); break;\n'

@@ -299,9 +299,14 @@ QVariant DbColumn::formattedData (const QVariant & original_value) const
         break; }
     case DbColumn::DTY_DATETIME: {
         // see [here](http://doc.qt.io/qt-5/qdatetime.html#toString)
-        result = result.toDateTime().toString(
+        QDateTime dt (result.toDateTime());
+        if (!dt.isValid ()) {
+            dt.fromString (result.toString ());
+        }
+        QString s_result = dt.toString(
                 QCoreApplication::translate(
                     "UserTime", "yyyy-MMM-dd h:mm:ss"));
+        result = s_result;
         break; }
     case DbColumn::DTY_SMALLINT:
     case DbColumn::DTY_BIGINT:
