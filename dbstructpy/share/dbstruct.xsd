@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="dbstruct"
+    targetNamespace="http://pile-contributors.github.io/trunk/dbstruct.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://pile-contributors.github.io/trunk/dbstruct.xsd"
+    xmlns:dbsm="http://pile-contributors.github.io/trunk/dbstruct.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+
+    <xs:complexType name="column">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                A column in a table.
+            </xs:documentation>
+        </xs:annotation>
+
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the
+                column inside the table definition.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+
+    <xs:complexType name="columnList">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">The list of columns
+            for a table.</xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element ref="column" maxOccurs="unbounded" minOccurs="1" />
+        </xs:choice>
+    </xs:complexType>
+
+
+    <xs:complexType name="table">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">An actual table
+            (not a view) inside the list 'tables'.</xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="columns" type="columnList"
+                        maxOccurs="1" minOccurs="1" />
+            <xs:element name="primaryKey" type="primaryKey"
+                        maxOccurs="1" minOccurs="0" />
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the
+                table inside the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="view">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A view
+            inside the list 'views'.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the
+                view inside the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="subset">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A view
+            inside the list 'subsets'.</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the
+                view inside the database.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="bstrapel">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">A view
+            inside the list 'bootstrap'.</xs:documentation>
+        </xs:annotation>
+
+    </xs:complexType>
+
+
+    <xs:complexType name="tables">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">May appear only once inside 
+                database definition and contains the list of actual tables 
+                (no view included).</xs:documentation>
+        </xs:annotation>
+         <xs:sequence>
+            <xs:element name="table" type="table"
+                        maxOccurs="unbounded" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="views">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">May appear only once inside 
+                database definition and contains the list of views, except for 
+                the ones in the subsets.</xs:documentation>
+        </xs:annotation>
+         <xs:sequence>
+            <xs:element ref="view" maxOccurs="unbounded"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="subsets">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Simplified views that draw their data 
+                from a single table and are also capable of writing the data
+                into the table they are based upon. May appear only once inside 
+                database definition and it only contains a list of subsets.</xs:documentation>
+        </xs:annotation>
+         <xs:sequence>
+            <xs:element ref="subset" maxOccurs="unbounded"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="bootstrap">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes the way this database should
+                be prepared for first run.</xs:documentation>
+        </xs:annotation>
+         <xs:sequence>
+            <xs:element ref="bstrapel" maxOccurs="unbounded"
+                        minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="database">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Describes a database structure.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="tables" maxOccurs="1" minOccurs="0" />
+            <xs:element ref="views" maxOccurs="1" minOccurs="0" />
+            <xs:element ref="subsets" maxOccurs="1" minOccurs="0" />
+            <xs:element ref="bootstrap" maxOccurs="1" minOccurs="0" />
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Name of the
+                database. This is going to be reflected in the name of the 
+                class for the database and the name of the namespace.
+                It should include at least one capital letter to avoid
+                collisions between the class name and the namespace name.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:element ref="database" />
+</xs:schema>
