@@ -340,12 +340,17 @@ QVariant DbColumn::formattedData (const QVariant & original_value) const
     case DbColumn::DTY_DECIMALSCALE:
     case DbColumn::DTY_DECIMAL: {
         if (!original_format_.isEmpty()) {
-            result = QString("%1").arg(
-                        result.toReal(),
-                        format_.width_,
-                        nr_format_,
-                        precision_,
-                        fill_char_);
+            double intermed = result.toReal();
+            if (result.isNull() || qIsNaN (intermed)) {
+                result = QString ();
+            } else {
+                result = QString("%1").arg(
+                            intermed,
+                            format_.width_,
+                            nr_format_,
+                            precision_,
+                            fill_char_);
+            }
         }
         break;}
     case DbColumn::DTY_BIT: {
