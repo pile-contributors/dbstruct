@@ -652,6 +652,28 @@
         </xs:attribute>
     </xs:complexType>
 
+    <xs:complexType name="varchar">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">TODO: What is this?</xs:documentation>
+        </xs:annotation>
+
+        <xs:attributeGroup ref="withDefaultExpression" />
+        <xs:attributeGroup ref="withStringDefault" />
+
+        <xs:attribute name="length" use="optional" type="ncharLength">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Maximum number of characters (an integer in 1-4000 range) or `max` to use maximum length.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>	
+	
+
 
     <xs:complexType name="vrtcol">
         <xs:annotation>
@@ -723,7 +745,7 @@
 
             <!--Character strings-->
             <xs:element name="char" type="char" />
-            <xs:element name="varchar" type="char" />
+            <xs:element name="varchar" type="varchar" />
             <xs:element name="text" type="parameterlessStringType" />
 
             <!--Unicode character strings-->

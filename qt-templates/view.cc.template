@@ -68,7 +68,7 @@ void %(Table)s::bind (QSqlQuery & query) const
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool %(Table)s::retrieve (const QSqlQuery & query)
+bool %(Table)s::retrieve (const QSqlQuery & query, QSqlDatabase & /*db*/)
 {
     bool b_ret = true;
     bool b_one = true;
@@ -79,7 +79,7 @@ bool %(Table)s::retrieve (const QSqlQuery & query)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool %(Table)s::retrieve (const QSqlRecord & rec)
+bool %(Table)s::retrieve (const QSqlRecord & rec, QSqlDatabase & /*db*/)
 {
     bool b_ret = true;
     bool b_one = true;
@@ -100,7 +100,7 @@ DbRecMap %(Table)s::toMap () const
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-bool %(Table)s::retrieve (const DbRecMap & map)
+bool %(Table)s::retrieve (const DbRecMap & map, QSqlDatabase & /*db*/)
 {
     bool b_ret = true;
     bool b_one = true;

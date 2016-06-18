@@ -37,6 +37,7 @@
 
 class QSqlQuery;
 class QSqlRecord;
+class QSqlDatabase;
 
 /*  DEFINITIONS    ========================================================= */
 //
@@ -117,17 +118,20 @@ public:
     //! Get values from a query.
     virtual bool
     retrieve (
-        const QSqlQuery & query);
+        const QSqlQuery & query,
+        QSqlDatabase & /*db*/);
 
     //! Get values from a record.
     virtual bool
     retrieve (
-        const QSqlRecord & rec);
+        const QSqlRecord & rec,
+        QSqlDatabase & /*db*/);
 
     //! Load values from an associative array.
     virtual bool
     retrieve (
-        const DbRecMap & map);
+        const DbRecMap & map,
+        QSqlDatabase & /*db*/);
 
     //! Set the index to given value (if the model has an id column).
     virtual void

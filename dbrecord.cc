@@ -13,6 +13,7 @@
 
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSqlDriver>
 #include <QString>
 #include <QVariant>
 
@@ -127,7 +128,7 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
         }
 
         // get the values to their variables
-        /*b_ret = */retrieve (query);
+        /*b_ret = */retrieve (query, db);
         b_ret = true;
 
         int additional_result = 0;
@@ -151,7 +152,6 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
     bool b_ret = false;
     for (;;) {
 
-        QSqlQuery query (db);
         QString statement;
 
         if (isNew ()) {
@@ -172,8 +172,20 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
         }
         DBREC_DEBUGM("%s\n", TMP_A(statement));
 
+        DBG_ASSERT(db.isOpen());
+        QSqlQuery query (db);
+
+        DBG_ASSERT(query.driver() != NULL);
+        DBG_ASSERT(query.driver()->isOpen());
+        DBG_ASSERT(!query.driver()->isOpenError());
+
         if (!query.prepare(statement)) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+            DBREC_DEBUGM("Driver error: %s\n",
+                         TMP_A(query.driver()->lastError().text()));
+            DBREC_DEBUGM("Querry error: %s\n",
+                         TMP_A(query.lastError().text()));
+            DBREC_DEBUGM("Database error: %s\n",
+                         TMP_A(db.lastError().text()));
             DBG_ASSERT(false);
             break;
         }

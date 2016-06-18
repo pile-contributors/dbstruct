@@ -99,17 +99,20 @@ public:
     //! Get values from a query.
     virtual bool
     retrieve (
-        const QSqlQuery & query) = 0;
+        const QSqlQuery & query,
+        QSqlDatabase & db) = 0;
 
     //! Get values from a record.
     virtual bool
     retrieve (
-        const QSqlRecord & rec) = 0;
+        const QSqlRecord & rec,
+        QSqlDatabase & db) = 0;
 
     //! Load values from an associative array.
     virtual bool
     retrieve (
-        const DbRecMap & map) = 0;
+        const DbRecMap & map,
+        QSqlDatabase & db) = 0;
 
     //! Set the index to given value (if the model has an id column).
     virtual void
