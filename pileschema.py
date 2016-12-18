@@ -24,7 +24,8 @@ if platform.system() == 'Windows':
     import win32api
     def username():
         '''Retrieves the name oif the current user'''
-        return win32api.GetUserNameEx(3)
+        result = win32api.GetUserNameEx(2).split('\\')[-1]
+        return result
 else:
     import pwd
     def username():
