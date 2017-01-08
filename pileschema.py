@@ -1068,10 +1068,14 @@ def process_with_driver(driver, database):
     views = database.views
 
     for table in tables.table:
+        # print(table.name)
         driver.table_start(table.name, table)
 
         columns = table.columns
         for column in columns.column:
+            #print('', column.name)
+            if column.name == 'duration':
+                pass
 
             datatype_name = ''
             datatype = None
@@ -1127,6 +1131,28 @@ def extract_common(args):
         SCHEMA_FILE = args.schema
         with open(args.schema, 'r') as finp:
             schema_root = etree.XML(finp.read())
+            
+#            def do_elem(elem, tmpl, prnt=False):
+#                if prnt:
+#                    print tmpl % (elem.tag)
+#                    print tmpl % (str(elem.keys()))
+#                    print tmpl % (str(elem.values()))
+#                if 'variablePrecisionTime' in elem.values():
+#                    for el1 in elem.iterchildren():
+#                        do_elem(el1, "\t%s", prnt=True)
+#                        for el2 in el1.iterchildren():
+#                            do_elem(el2, "\t\t%s", prnt=True)
+#                            for el3 in el2.iterchildren():
+#                                do_elem(el3, "\t\t\t%s", prnt=True)
+#                        
+#                
+#            for el1 in schema_root.iterchildren():
+#                do_elem(el1, "\t%s")
+#                for el2 in el1.iterchildren():
+#                    do_elem(el2, "\t\t%s")
+#                    for el3 in el2.iterchildren():
+#                        do_elem(el3, "\t\t\t%s")
+                
         schema = etree.XMLSchema(schema_root)
         PARSER = etree.XMLParser(schema=schema, attribute_defaults=True)
 
