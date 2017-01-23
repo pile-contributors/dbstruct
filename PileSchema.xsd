@@ -479,6 +479,12 @@
         <xs:attributeGroup ref="withStringDefault" />
 
         <xs:attribute name="fractionalSecondsPrecision" use="optional" type="fractionalSecondsPrecision" />
+
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QTime">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="dateType">
@@ -666,13 +672,13 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="qtype" use="optional" type="xs:string" default="QByteArray">
+        <xs:attribute name="qtype" use="optional" type="xs:string" default="QString">
             <xs:annotation>
                 <xs:documentation xml:lang="en">The type to use to represent this column in a Qt source file.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-    </xs:complexType>	
-	
+    </xs:complexType>
+
 
 
     <xs:complexType name="vrtcol">

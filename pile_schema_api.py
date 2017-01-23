@@ -2,23 +2,23 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Tue Jan 12 23:29:38 2016 by generateDS.py version 2.17a.
+# Generated Sun Jan 08 16:18:19 2017 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
 #   ('--member-specs', 'dict')
 #   ('--no-questions', '')
 #   ('-f', '')
-#   ('-o', 'H:\\prog\\agreece\\cpp-app\\lib_agreece\\support\\dbstruct\\pile_schema_api.py')
+#   ('-o', 'H:\\prog\\agreece2\\src\\lib_agreece\\support\\dbstruct\\pile_schema_api.py')
 #
 # Command line arguments:
-#   H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
+#   H:\prog\agreece2\src\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Command line:
-#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece\cpp-app\lib_agreece\support\dbstruct\PileSchema.xsd
+#   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece2\src\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece2\src\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   cpp-build-debug-64
+#   build-Debug-64
 #
 
 import sys
@@ -2408,19 +2408,22 @@ class uniqueidentifier(GeneratedsSuper):
 
 
 class variablePrecisionTime(GeneratedsSuper):
-    """Date and time column data type."""
+    """Date and time column data type.The type to use to represent this
+    column in a Qt source file."""
     member_data_items_ = {
         'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
         'default': MemberSpec_('default', 'xs:string', 0),
         'fractionalSecondsPrecision': MemberSpec_('fractionalSecondsPrecision', 'fractionalSecondsPrecision', 0),
+        'qtype': MemberSpec_('qtype', 'xs:string', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, defaultExpression=None, default=None, fractionalSecondsPrecision=None):
+    def __init__(self, defaultExpression=None, default=None, fractionalSecondsPrecision=None, qtype='QTime'):
         self.original_tagname_ = None
         self.defaultExpression = _cast(None, defaultExpression)
         self.default = _cast(None, default)
         self.fractionalSecondsPrecision = _cast(None, fractionalSecondsPrecision)
+        self.qtype = _cast(None, qtype)
     def factory(*args_, **kwargs_):
         if variablePrecisionTime.subclass:
             return variablePrecisionTime.subclass(*args_, **kwargs_)
@@ -2433,6 +2436,8 @@ class variablePrecisionTime(GeneratedsSuper):
     def set_default(self, default): self.default = default
     def get_fractionalSecondsPrecision(self): return self.fractionalSecondsPrecision
     def set_fractionalSecondsPrecision(self, fractionalSecondsPrecision): self.fractionalSecondsPrecision = fractionalSecondsPrecision
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
     def validate_fractionalSecondsPrecision(self, value):
         # Validate type fractionalSecondsPrecision, a restriction on xs:integer.
         if value is not None and Validate_simpletypes_:
@@ -2474,6 +2479,9 @@ class variablePrecisionTime(GeneratedsSuper):
         if self.fractionalSecondsPrecision is not None and 'fractionalSecondsPrecision' not in already_processed:
             already_processed.add('fractionalSecondsPrecision')
             outfile.write(' fractionalSecondsPrecision=%s' % (quote_attrib(self.fractionalSecondsPrecision), ))
+        if self.qtype != "QTime" and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
     def exportChildren(self, outfile, level, namespace_='dbsm:', name_='variablePrecisionTime', fromsubclass_=False, pretty_print=True):
         pass
     def build(self, node):
@@ -2500,6 +2508,10 @@ class variablePrecisionTime(GeneratedsSuper):
             except ValueError as exp:
                 raise_parse_error(node, 'Bad integer attribute: %s' % exp)
             self.validate_fractionalSecondsPrecision(self.fractionalSecondsPrecision)    # validate type fractionalSecondsPrecision
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
     def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
         pass
 # end class variablePrecisionTime
@@ -3080,6 +3092,110 @@ class nchar(GeneratedsSuper):
 # end class nchar
 
 
+class varchar(GeneratedsSuper):
+    """TODO: What is this?Maximum number of characters (an integer in
+    1-4000 range) or `max` to use maximum length.The type to use to
+    represent this column in a Qt source file."""
+    member_data_items_ = {
+        'defaultExpression': MemberSpec_('defaultExpression', 'xs:string', 0),
+        'default': MemberSpec_('default', 'xs:string', 0),
+        'length': MemberSpec_('length', 'ncharLength', 0),
+        'qtype': MemberSpec_('qtype', 'xs:string', 0),
+    }
+    subclass = None
+    superclass = None
+    def __init__(self, defaultExpression=None, default=None, length=None, qtype='QString'):
+        self.original_tagname_ = None
+        self.defaultExpression = _cast(None, defaultExpression)
+        self.default = _cast(None, default)
+        self.length = _cast(None, length)
+        self.qtype = _cast(None, qtype)
+    def factory(*args_, **kwargs_):
+        if varchar.subclass:
+            return varchar.subclass(*args_, **kwargs_)
+        else:
+            return varchar(*args_, **kwargs_)
+    factory = staticmethod(factory)
+    def get_defaultExpression(self): return self.defaultExpression
+    def set_defaultExpression(self, defaultExpression): self.defaultExpression = defaultExpression
+    def get_default(self): return self.default
+    def set_default(self, default): self.default = default
+    def get_length(self): return self.length
+    def set_length(self, length): self.length = length
+    def get_qtype(self): return self.qtype
+    def set_qtype(self, qtype): self.qtype = qtype
+    def validate_ncharLength(self, value):
+        # Validate type ncharLength, a restriction on None.
+        pass
+    def hasContent_(self):
+        if (
+
+        ):
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='dbsm:', name_='varchar', namespacedef_='xmlns:dbsm="http://pile-contributors.github.io/database/PileSchema.xsd"', pretty_print=True):
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        if self.original_tagname_ is not None:
+            name_ = self.original_tagname_
+        showIndent(outfile, level, pretty_print)
+        outfile.write('<%s%s%s' % (namespace_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
+        already_processed = set()
+        self.exportAttributes(outfile, level, already_processed, namespace_, name_='varchar')
+        if self.hasContent_():
+            outfile.write('>%s' % (eol_, ))
+            self.exportChildren(outfile, level + 1, namespace_='dbsm:', name_='varchar', pretty_print=pretty_print)
+            outfile.write('</%s%s>%s' % (namespace_, name_, eol_))
+        else:
+            outfile.write('/>%s' % (eol_, ))
+    def exportAttributes(self, outfile, level, already_processed, namespace_='dbsm:', name_='varchar'):
+        if self.defaultExpression is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            outfile.write(' defaultExpression=%s' % (self.gds_format_string(quote_attrib(self.defaultExpression).encode(ExternalEncoding), input_name='defaultExpression'), ))
+        if self.default is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            outfile.write(' default=%s' % (self.gds_format_string(quote_attrib(self.default).encode(ExternalEncoding), input_name='default'), ))
+        if self.length is not None and 'length' not in already_processed:
+            already_processed.add('length')
+            outfile.write(' length=%s' % (quote_attrib(self.length), ))
+        if self.qtype != "QString" and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            outfile.write(' qtype=%s' % (self.gds_format_string(quote_attrib(self.qtype).encode(ExternalEncoding), input_name='qtype'), ))
+    def exportChildren(self, outfile, level, namespace_='dbsm:', name_='varchar', fromsubclass_=False, pretty_print=True):
+        pass
+    def build(self, node):
+        already_processed = set()
+        self.buildAttributes(node, node.attrib, already_processed)
+        for child in node:
+            nodeName_ = Tag_pattern_.match(child.tag).groups()[-1]
+            self.buildChildren(child, node, nodeName_)
+        return self
+    def buildAttributes(self, node, attrs, already_processed):
+        value = find_attr_value_('defaultExpression', node)
+        if value is not None and 'defaultExpression' not in already_processed:
+            already_processed.add('defaultExpression')
+            self.defaultExpression = value
+        value = find_attr_value_('default', node)
+        if value is not None and 'default' not in already_processed:
+            already_processed.add('default')
+            self.default = value
+        value = find_attr_value_('length', node)
+        if value is not None and 'length' not in already_processed:
+            already_processed.add('length')
+            self.length = value
+            self.validate_ncharLength(self.length)    # validate type ncharLength
+        value = find_attr_value_('qtype', node)
+        if value is not None and 'qtype' not in already_processed:
+            already_processed.add('qtype')
+            self.qtype = value
+    def buildChildren(self, child_, node, nodeName_, fromsubclass_=False):
+        pass
+# end class varchar
+
+
 class vrtcol(GeneratedsSuper):
     """This is a virtual column that presents values from another table.
     The virtual column uses another, real column to locate the table
@@ -3237,7 +3353,7 @@ class column(GeneratedsSuper):
         'datetime2': MemberSpec_('datetime2', 'variablePrecisionTime', 0),
         'smalldatetime': MemberSpec_('smalldatetime', 'parameterlessStringType', 0),
         'char': MemberSpec_('char', 'char', 0),
-        'varchar': MemberSpec_('varchar', 'char', 0),
+        'varchar': MemberSpec_('varchar', 'varchar', 0),
         'text': MemberSpec_('text', 'parameterlessStringType', 0),
         'nchar': MemberSpec_('nchar', 'nchar', 0),
         'nvarchar': MemberSpec_('nvarchar', 'nchar', 0),
@@ -3728,7 +3844,7 @@ class column(GeneratedsSuper):
             self.char = obj_
             obj_.original_tagname_ = 'char'
         elif nodeName_ == 'varchar':
-            obj_ = char.factory()
+            obj_ = varchar.factory()
             obj_.build(child_)
             self.varchar = obj_
             obj_.original_tagname_ = 'varchar'
@@ -5676,7 +5792,6 @@ GDSClassesMapping = {
     'columns': columnList,
     'writeback': viewWriteBack,
     'rowversion': parameterlessType,
-    'varchar': char,
     'key': constraint,
     'date': dateType,
     'ntext': parameterlessStringType,
@@ -5848,6 +5963,7 @@ __all__ = [
     "tristate",
     "uniqueConstraints",
     "uniqueidentifier",
+    "varchar",
     "variablePrecisionTime",
     "view",
     "viewSubset",
