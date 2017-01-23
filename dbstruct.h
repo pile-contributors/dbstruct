@@ -172,6 +172,12 @@ public:
         return db_;
     }
 
+    //! Retrieve the database.
+    inline const QSqlDatabase &
+            database () const {
+        return db_;
+    }
+
     //! Set the database.
     inline void
             setDatabase (const QSqlDatabase & value) {
