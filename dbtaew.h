@@ -134,9 +134,6 @@ public:
     ///@}
     /*  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
-protected:
-
-private:
 };
 
 #endif // GUARD_DBTAEW_H_INCLUDE

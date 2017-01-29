@@ -16,12 +16,28 @@
 /**
  * @class DbTaew
  *
- * Detailed description.
+ * Tables and views share a lot of their characteristics which are grouped in
+ * this class.
+ *
+ * Internal columns are represented using a dual system (unique integers
+ * and text strings). Giveen that a table might have virtual
+ * columns we distinguish between regular columnIndex() and
+ * realColumnIndex(), with the real index being always smaller or equal
+ * with the regular column index. Use toRealIndex() and
+ * fromRealIndex() to convert between the two.
+ *
+ * The implementation is expected to provide the name of this table
+ * and the name of the table where changes should be written to (for
+ * example in case of a view that extracts its content from a table).
+ *
+ * The implementation should also provide the name of the column
+ * (for database backend) and the label (for the user). It will
+ * create a DbColumn using columnCtor().
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for contaewor.
+ * The constructor does nothing in this implementation.
  */
 DbTaew::DbTaew()
 {
@@ -33,7 +49,7 @@ DbTaew::DbTaew()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for detaewor.
+ * The destructor does nothing in this implementation.
  */
 DbTaew::~DbTaew()
 {

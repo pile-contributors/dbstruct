@@ -27,7 +27,7 @@
 
 /* ------------------------------------------------------------------------- */
 /**
- * The constructor does nonthing in this implementation.
+ * The constructor does nothing in this implementation.
  */
 DbObject::DbObject()
 {
@@ -38,7 +38,7 @@ DbObject::DbObject()
 
 /* ------------------------------------------------------------------------- */
 /**
- * The destructor does nonthing in this implementation.
+ * The destructor does nothing in this implementation.
  */
 DbObject::~DbObject()
 {

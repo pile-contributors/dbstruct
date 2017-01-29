@@ -198,7 +198,7 @@ public:
 
 //! A complete implementation for a DbStruct inheritant.
 #define META_DATA_BASE(__name__) \
-class %(EXPORT)s __name__ : public __name__ ## Meta, public DbStruct { \
+class __name__ : public __name__ ## Meta, public DbStruct { \
 public: \
     META_DATA_BASE_CTORS(__name__); \
     META_DATA_BASE_GETTER; \
