@@ -21,6 +21,7 @@
  *
  */
 
+/* ------------------------------------------------------------------------- */
 DbColumnData::DbColumnData () :
     QSharedData (),
     col_name_(),
@@ -33,7 +34,9 @@ DbColumnData::DbColumnData () :
     readonly_(false)
 {
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumnData::DbColumnData (
         const QString &col_name, const QString &col_label,
         int col_id, int real_col_id, int length,
@@ -49,7 +52,9 @@ DbColumnData::DbColumnData (
     readonly_(readonly)
 {
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumnData::DbColumnData(const DbColumnData &other) :
     QSharedData(other),
     col_name_(other.col_name_),
@@ -62,6 +67,4 @@ DbColumnData::DbColumnData(const DbColumnData &other) :
     readonly_(other.readonly_)
 {
 }
-
-
-
+/* ========================================================================= */
