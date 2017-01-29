@@ -24,7 +24,7 @@ class DbRecord;
 class DbTable;
 class DbView;
 
-//! The objecture of a database.
+//! Base class for all classes in the pile.
 class DBSTRUCT_EXPORT DbObject {
 
 public:
@@ -57,55 +57,60 @@ public:
     }
 
     //! Get this instance as a DbStruct.
-    DbStructMeta * asStruct ();
+    DbStructMeta *
+    asStruct ();
 
     //! Get this instance as a DbColumn.
-    DbColumn * asColumn ();
+    DbColumn *
+    asColumn ();
 
     //! Get this instance as a DbRecord.
-    DbRecord * asRecord ();
+    DbRecord *
+    asRecord ();
 
     //! Get this instance as a DbTable.
-    DbTable * asTable ();
+    DbTable *
+    asTable ();
 
     //! Get this instance as a DbView.
-    DbView * asView ();
+    DbView *
+    asView ();
 
     //! Tell if this instance is a DbStruct.
-    inline bool isStruct () {
+    inline bool
+    isStruct () const {
         return type() == DBO_STRUCT;
     }
 
     //! Tell if this instance is a DbColumn.
-    inline bool isColumn () {
+    inline bool
+    isColumn () const {
         return type() == DBO_COLUMN;
     }
 
     //! Tell if this instance is a DbRecord.
-    inline bool isRecord () {
+    inline bool
+    isRecord () const {
         return type() == DBO_RECORD;
     }
 
     //! Tell if this instance is a DbTable.
-    inline bool isTable () {
+    inline bool
+    isTable () const {
         return type() == DBO_TABLE;
     }
 
     //! Tell if this instance is a DbView.
-    inline bool isView () {
+    inline bool
+    isView () const {
         return (type() == DBO_SUBSET) || (type() == DBO_CPLX_VIEW);
     }
 
     //! Tell if this instance is a custom one.
-    inline bool isCustom () {
+    inline bool
+    isCustom () const {
         return type() == DBO_CUSTOM;
     }
-
-
-
-protected:
-
-private:
 
 };
 
