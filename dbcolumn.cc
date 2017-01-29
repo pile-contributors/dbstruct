@@ -14,6 +14,8 @@
 #include <QCoreApplication>
 
 #include "columns/dbcolumndata.h"
+
+
 /**
  * @class DbColumn
  *
@@ -46,17 +48,21 @@
  * @endcode
  */
 
+
+/* ------------------------------------------------------------------------- */
 /**
  * Default constructor creates an invalid instance
  * (columnType() evaluates to DbDataType::DTY_INVALID)
- * with no name and
+ * with no name.
  */
 DbColumn::DbColumn () :
     DbObject(),
     d (new DbColumnData ())
 {
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * To construct a simple column all one needs to provide to the constructor
  * is the name of the column, the type of data it carries and
@@ -93,67 +99,93 @@ DbColumn::DbColumn (
            length, datatype, allow_nulls, readonly))
 {
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumn::DbColumn(const DbColumn &other) :
     DbObject (other),
     d (other.d)
 {}
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumn &DbColumn::operator=(const DbColumn &other)
 {
     d = other.d;
     return *this;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumn::~DbColumn()
 {
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 bool DbColumn::isVirtual() const
 {
     return d->isVirtual ();
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 const QString &DbColumn::columnName() const
 {
     return d->col_name_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 const QString &DbColumn::columnLabel() const
 {
     return d->col_label_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 int DbColumn::columnId() const
 {
     return d->col_id_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 int DbColumn::columnRealId() const
 {
     return d->real_col_id_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 int DbColumn::columnLength() const
 {
     return d->length_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbDataType::Dty DbColumn::columnType() const
 {
     return d->datatype_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 bool DbColumn::allowNulls() const
 {
     return d->allow_nulls_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 bool DbColumn::readOnly() const
 {
     return d->readonly_;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * The name of a column is the name used to identify that column
  * in an actual database table, for example, but its use is not
@@ -174,7 +206,9 @@ void DbColumn::setColumnName(const QString &value)
         d->col_label_= value;
     }
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * Setting a label does not change the name of the column in any case.
  *
@@ -185,7 +219,9 @@ void DbColumn::setColumnLabel (const QString &value)
 {
     d->col_label_= value;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * We distinguish between indexes in the "general", "complete" table
  * and indexes in "real" table inside the database because our tables may
@@ -203,7 +239,9 @@ void DbColumn::setColumnId (int value)
 {
     d->col_id_= value;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * We distinguish between indexes in the "general", "complete" table
  * and indexes in "real" table inside the database because our tables may
@@ -221,7 +259,9 @@ void DbColumn::setColumnRealId(int value)
 {
     d->real_col_id_= value;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * This tells if the underlying column in a real table allows
  * NULL (or ommiting the value for this column).
@@ -232,7 +272,9 @@ void DbColumn::setAllowNulls (bool value)
 {
     d->allow_nulls_ = value;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 /**
  * One example use case is an id column that is auto-incremented by
  * the database.
@@ -244,7 +286,9 @@ void DbColumn::setReadOnly (bool value)
 {
     d->readonly_ = value;
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 DbColumn DbColumn::col (
         const QString &col_name, DbDataType::Dty datatype,
         int col_id, const QString &col_label,
@@ -256,5 +300,6 @@ DbColumn DbColumn::col (
                 col_id, col_label,
                 real_col_id, length, allow_nulls, readonly);
 }
+/* ========================================================================= */
 
 
