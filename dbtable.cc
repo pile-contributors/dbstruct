@@ -13,12 +13,14 @@
 /**
  * @class DbTable
  *
- * Detailed description.
+ * Represents a table (CREATE TABLE) inside the backend.
+ * This is mostly syntactic sugar as the bulk of the interface is provided
+ * by DbTaew class.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for contableor.
+ * The constructor does nothing in this implementation.
  */
 DbTable::DbTable()
 {
@@ -30,7 +32,7 @@ DbTable::DbTable()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for detableor.
+ * The destructor does nothing in this implementation.
  */
 DbTable::~DbTable()
 {

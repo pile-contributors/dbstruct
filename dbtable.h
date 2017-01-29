@@ -35,9 +35,6 @@ public:
         return DBO_TABLE;
     }
 
-protected:
-
-private:
 };
 
 #endif // GUARD_DBTABLE_H_INCLUDE

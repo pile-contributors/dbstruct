@@ -13,12 +13,14 @@
 /**
  * @class DbView
  *
- * Detailed description.
+ * Represents a view (CREATE VIEW) inside the backend.
+ * This is mostly syntactic sugar as the bulk of the interface is provided
+ * by DbTaew class.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for conviewor.
+ * The constructor does nothing in this implementation.
  */
 DbView::DbView()
 {
@@ -30,7 +32,7 @@ DbView::DbView()
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for deviewor.
+ * The destructor does nothing in this implementation.
  */
 DbView::~DbView()
 {
