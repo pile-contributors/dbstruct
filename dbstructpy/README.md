@@ -12,3 +12,6 @@ The simple idea is to let the user describe the database
 structure and initial configuration as an xml file,
 the process that xml file with this package to generate 
 C++ source files and headers.
+
+
+[1] - https://www.w3.org/TR/xmlschema-0
