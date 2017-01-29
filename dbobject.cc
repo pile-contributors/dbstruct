@@ -19,29 +19,30 @@
 /**
  * @class DbObject
  *
- * Detailed description.
+ * This base class provides the means to identify the kind of object
+ * by defining some predefined types and using inline predicates (is...).
+ * One can also use as... methods to cast to a type; returned pointer is NULL
+ * if the type is not the one that is assumed.
  */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for conobjector.
+ * The constructor does nonthing in this implementation.
  */
 DbObject::DbObject()
 {
     DBSTRUCT_TRACE_ENTRY;
-
     DBSTRUCT_TRACE_EXIT;
 }
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
 /**
- * Detailed description for deobjector.
+ * The destructor does nonthing in this implementation.
  */
 DbObject::~DbObject()
 {
     DBSTRUCT_TRACE_ENTRY;
-
     DBSTRUCT_TRACE_EXIT;
 }
 /* ========================================================================= */
@@ -91,5 +92,3 @@ DbView * DbObject::asView ()
     return NULL;
 }
 /* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
