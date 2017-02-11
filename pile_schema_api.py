@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sun Jan 08 16:18:19 2017 by generateDS.py version 2.17a.
+# Generated Sat Feb 11 17:07:46 2017 by generateDS.py version 2.17a.
 #
 # Command line options:
 #   ('--cleanup-name-list', "[(':', '__'), ('-', '___'), ('\\\\.', '____'), ('^int$', 'integer')]")
@@ -18,7 +18,7 @@
 #   C:\pf\Python27\Scripts\generateDS.py --cleanup-name-list="[(':', '__'), ('-', '___'), ('\\.', '____'), ('^int$', 'integer')]" --member-specs="dict" --no-questions -f -o "H:\prog\agreece2\src\lib_agreece\support\dbstruct\pile_schema_api.py" H:\prog\agreece2\src\lib_agreece\support\dbstruct\PileSchema.xsd
 #
 # Current working directory (os.getcwd()):
-#   build-Debug-64
+#   agreece2
 #
 
 import sys
@@ -5629,10 +5629,12 @@ class database(GeneratedsSuper):
         'port': MemberSpec_('port', 'xs:unsignedShort', 0),
         'tables': MemberSpec_('tables', 'tables', 0),
         'views': MemberSpec_('views', 'views', 0),
+        'sqlPrefix': MemberSpec_('sqlPrefix', 'xs:string', 0),
+        'sqlSuffix': MemberSpec_('sqlSuffix', 'xs:string', 0),
     }
     subclass = None
     superclass = None
-    def __init__(self, username=None, name=None, driver=None, host=None, path=None, password=None, port=None, tables=None, views=None):
+    def __init__(self, username=None, name=None, driver=None, host=None, path=None, password=None, port=None, tables=None, views=None, sqlPrefix=None, sqlSuffix=None):
         self.original_tagname_ = None
         self.username = _cast(None, username)
         self.name = _cast(None, name)
@@ -5643,6 +5645,8 @@ class database(GeneratedsSuper):
         self.port = _cast(int, port)
         self.tables = tables
         self.views = views
+        self.sqlPrefix = sqlPrefix
+        self.sqlSuffix = sqlSuffix
     def factory(*args_, **kwargs_):
         if database.subclass:
             return database.subclass(*args_, **kwargs_)
@@ -5653,6 +5657,10 @@ class database(GeneratedsSuper):
     def set_tables(self, tables): self.tables = tables
     def get_views(self): return self.views
     def set_views(self, views): self.views = views
+    def get_sqlPrefix(self): return self.sqlPrefix
+    def set_sqlPrefix(self, sqlPrefix): self.sqlPrefix = sqlPrefix
+    def get_sqlSuffix(self): return self.sqlSuffix
+    def set_sqlSuffix(self, sqlSuffix): self.sqlSuffix = sqlSuffix
     def get_username(self): return self.username
     def set_username(self, username): self.username = username
     def get_name(self): return self.name
@@ -5670,7 +5678,9 @@ class database(GeneratedsSuper):
     def hasContent_(self):
         if (
             self.tables is not None or
-            self.views is not None
+            self.views is not None or
+            self.sqlPrefix is not None or
+            self.sqlSuffix is not None
         ):
             return True
         else:
@@ -5724,6 +5734,12 @@ class database(GeneratedsSuper):
             self.tables.export(outfile, level, namespace_, name_='tables', pretty_print=pretty_print)
         if self.views is not None:
             self.views.export(outfile, level, namespace_, name_='views', pretty_print=pretty_print)
+        if self.sqlPrefix is not None:
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%ssqlPrefix>%s</%ssqlPrefix>%s' % (namespace_, self.gds_format_string(quote_xml(self.sqlPrefix).encode(ExternalEncoding), input_name='sqlPrefix'), namespace_, eol_))
+        if self.sqlSuffix is not None:
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%ssqlSuffix>%s</%ssqlSuffix>%s' % (namespace_, self.gds_format_string(quote_xml(self.sqlSuffix).encode(ExternalEncoding), input_name='sqlSuffix'), namespace_, eol_))
     def build(self, node):
         already_processed = set()
         self.buildAttributes(node, node.attrib, already_processed)
@@ -5774,6 +5790,14 @@ class database(GeneratedsSuper):
             obj_.build(child_)
             self.views = obj_
             obj_.original_tagname_ = 'views'
+        elif nodeName_ == 'sqlPrefix':
+            sqlPrefix_ = child_.text
+            sqlPrefix_ = self.gds_validate_string(sqlPrefix_, node, 'sqlPrefix')
+            self.sqlPrefix = sqlPrefix_
+        elif nodeName_ == 'sqlSuffix':
+            sqlSuffix_ = child_.text
+            sqlSuffix_ = self.gds_validate_string(sqlSuffix_, node, 'sqlSuffix')
+            self.sqlSuffix = sqlSuffix_
 # end class database
 
 
