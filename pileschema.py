@@ -250,6 +250,12 @@ class SqlDriver(Driver):
         self.sql_string += 'CREATE TABLE IF NOT EXISTS `' + name + '` (\n'
         self.foreign_keys = {}
 
+    def database_end(self, name, node):
+        '''Done processing database `name.`'''
+        #print node.sqlPrefix
+        #print node.sqlSuffix
+        self.sql_string = node.sqlPrefix + self.sql_string + node.sqlSuffix
+        
     def table_end(self, name, node):
         '''Done processing table `name`'''
         try:
