@@ -1226,6 +1226,8 @@
             <xs:element name="tables" maxOccurs="1" minOccurs="0" type="tables" />
             <xs:element name="views" maxOccurs="1" minOccurs="0" type="views" />
             <!--xs:element name="procedures" maxOccurs="1" minOccurs="1" /-->
+            <xs:element name="sqlPrefix" maxOccurs="1" minOccurs="1" type="xs:string">
+            <xs:element name="sqlSuffix" maxOccurs="1" minOccurs="1" type="xs:string">
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
