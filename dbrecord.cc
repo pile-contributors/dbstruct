@@ -16,6 +16,7 @@
 #include <QSqlDriver>
 #include <QString>
 #include <QVariant>
+#include <QDebug>
 
 #if 1
 #   define DBREC_DEBUGM DBSTRUCT_DEBUGM
@@ -69,7 +70,8 @@ bool DbRecord::initFromId (DbTaew * table, QSqlDatabase & db, long db_id)
     DBREC_TRACE_ENTRY;
     int id_column_index = table->idColumn ();
     if (id_column_index == -1) {
-        DBREC_DEBUGM("The model does not have an id column\n");
+        qWarning () << "The model "<< table->tableName()
+                    << "does not have an id column ";
         return false;
     }
     // set the id inside the instance
@@ -111,13 +113,15 @@ bool DbRecord::initFrom (DbTaew * table, QSqlDatabase & db, int column)
                 .arg(s_col_name);
         DBREC_DEBUGM("%s\n", TMP_A(statement));
         if (!query.prepare(statement)) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+            qWarning () << "prepare failed: " << statement;
+            qWarning () << query.lastError ().text ();
             DBG_ASSERT(false);
             break;
         }
         bindOne (query, column);
         if (!query.exec()) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+            qWarning () << "query failed: " << statement;
+            qWarning () << query.lastError ().text ();
             break;
         }
         if (!query.next()) {
@@ -180,23 +184,22 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
         DBG_ASSERT(!query.driver()->isOpenError());
 
         if (!query.prepare(statement)) {
-            DBREC_DEBUGM("Driver error: %s\n",
-                         TMP_A(query.driver()->lastError().text()));
-            DBREC_DEBUGM("Querry error: %s\n",
-                         TMP_A(query.lastError().text()));
-            DBREC_DEBUGM("Database error: %s\n",
-                         TMP_A(db.lastError().text()));
+            qWarning () << "prepare failed: " << statement;
+            qWarning () << "query error" << query.lastError ().text ();
+            qWarning () << "database error" << db.lastError ().text ();
+            qWarning () << "driver error" << query.driver()->lastError ().text ();
             DBG_ASSERT(false);
             break;
         }
         bind (query);
 
         if (!query.exec()) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+            qWarning () << "query failed: " << statement;
+            qWarning () << query.lastError ().text ();
             break;
         }
         if (isNew ()) {
-            setId(static_cast<long>(query.lastInsertId().toLongLong ()));
+            setId (static_cast<long>(query.lastInsertId().toLongLong ()));
         }
 
         b_ret = true;
@@ -215,7 +218,7 @@ bool DbRecord::remFromDb (
     for (;;) {
 
         if (isNew ()) {
-            DBREC_DEBUGM("record is new/already deleted\n");
+            qWarning () << "record is new/already deleted";
             b_ret = true;
             break;
         }
@@ -228,14 +231,16 @@ bool DbRecord::remFromDb (
                 .arg(s_col_name)
                 .arg(s_col_value);
         DBREC_DEBUGM("%s\n", TMP_A(statement));
-        if (!query.prepare(statement)) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+        if (!query.prepare (statement)) {
+            qWarning () << "prepare failed: " << statement;
+            qWarning () << query.lastError ().text ();
             DBG_ASSERT(false);
             break;
         }
         bindOne (query, column);
         if (!query.exec()) {
-            DBREC_DEBUGM("%s\n", TMP_A(query.lastError().text()));
+            qWarning () << "query failed: " << statement;
+            qWarning () << query.lastError ().text ();
             break;
         }
         setId (DbTable::ID_NEW_INSTANCE);
