@@ -146,6 +146,10 @@ public:
         return %(GET_ID_RESULT)s;
     }
 
+    QList<int>
+    listChangedColumns (
+                const %(Table)s & other) const;
+
     /*  FUNCTIONS    ======================================================= */
     //
     //

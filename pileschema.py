@@ -29,7 +29,7 @@ if platform.system() == 'Windows':
 else:
     import pwd
     def username():
-        '''Retrieves the name oif the current user'''
+        '''Retrieves the name of the current user'''
         return pwd.getpwuid(os.getuid())[0]
 
 PARSER = None
@@ -255,7 +255,7 @@ class SqlDriver(Driver):
         #print node.sqlPrefix
         #print node.sqlSuffix
         self.sql_string = node.sqlPrefix + self.sql_string + node.sqlSuffix
-        
+
     def table_end(self, name, node):
         '''Done processing table `name`'''
         try:
@@ -461,6 +461,7 @@ class QtDriver(Driver):
         self.data['DB_VIEWS_NAME_CASE'] = db_view_name_case
         self.data['DB_COMPONENTS_NAME_TO_ID'] = db_name_to_id
         self.data['DB_NEW_COMPONENTS'] = db_new_components
+        self.data['DB_CHANGED_COMPONENTS'] = db_new_components
 
         fname = os.path.join(self.out_dir, self.data['database'] + '.h')
         with open(fname, 'w') as foutp:
@@ -527,6 +528,7 @@ class QtDriver(Driver):
         model_label = ''
         bind_columns = ''
         bind_one_column = ''
+        changed_column = ''
         comma_columns = ''
         column_columns = ''
         assign_columns = ''
@@ -588,6 +590,9 @@ class QtDriver(Driver):
                 bind_one_column += ' ' * 4 + 'case ' + dbc_name + \
                     ': query.bindValue (QLatin1String(":' + col + '"), ' + \
                     col_var_name + '); break;\n'
+                changed_column += ' ' * 4 + 'if (other.' + col_var_name + \
+                    ' != ' + col_var_name + ') result << ' +\
+                    dbc_name + ';\n'
                 bind_columns += ' ' * 4 + 'query.bindValue (QLatin1String(":' + \
                     col + '"), ' + col_var_name + ');\n'
                 comma_columns += ' ' * 12 + '"' + col + ',"\n'
@@ -751,6 +756,7 @@ class QtDriver(Driver):
         self.data['RETREIVE_COLUMNS'] = retrieve_columns
         self.data['RECORD_COLUMNS'] = record_columns
         self.data['BIND_ONE_COLUMN'] = bind_one_column
+        self.data['CHANGED_COLUMNS'] = changed_column
         self.data['ID_COLUMN'] = str(id_column)
         self.data['GET_ID_RESULT'] = str(get_id_result)
         self.data['SET_ID_RESULT'] = str(set_id)
@@ -1138,7 +1144,7 @@ def extract_common(args):
         SCHEMA_FILE = args.schema
         with open(args.schema, 'r') as finp:
             schema_root = etree.XML(finp.read())
-            
+
 #            def do_elem(elem, tmpl, prnt=False):
 #                if prnt:
 #                    print tmpl % (elem.tag)
@@ -1151,15 +1157,15 @@ def extract_common(args):
 #                            do_elem(el2, "\t\t%s", prnt=True)
 #                            for el3 in el2.iterchildren():
 #                                do_elem(el3, "\t\t\t%s", prnt=True)
-#                        
-#                
+#
+#
 #            for el1 in schema_root.iterchildren():
 #                do_elem(el1, "\t%s")
 #                for el2 in el1.iterchildren():
 #                    do_elem(el2, "\t\t%s")
 #                    for el3 in el2.iterchildren():
 #                        do_elem(el3, "\t\t\t%s")
-                
+
         schema = etree.XMLSchema(schema_root)
         PARSER = etree.XMLParser(schema=schema, attribute_defaults=True)
 
