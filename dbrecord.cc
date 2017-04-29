@@ -161,7 +161,7 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
         if (isNew ()) {
             // a new record is being added
             statement =
-                    QString("INSERT INTO %1 (%2) VALUES (%3);\n")
+                    QString("INSERT INTO %1 (%2) VALUES (%3);")
                     .arg(table->modifyTableName())
                     .arg(table->commaColumnsNoId ())
                     .arg(table->columnColumns ());
@@ -184,7 +184,7 @@ bool DbRecord::save (DbTaew * table, QSqlDatabase & db)
         DBG_ASSERT(!query.driver()->isOpenError());
 
         if (!query.prepare(statement)) {
-            qWarning () << "prepare failed: " << statement;
+            qWarning () << "prepare failed: " << query.lastQuery();
             qWarning () << "query error" << query.lastError ().text ();
             qWarning () << "database error" << db.lastError ().text ();
             qWarning () << "driver error" << query.driver()->lastError ().text ();
